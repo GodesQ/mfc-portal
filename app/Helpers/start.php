@@ -4,23 +4,21 @@ use App\Models\User;
 if(!function_exists("generateNextMfcId")) {
     function generateNextMfcId()
     {
-        // Get the latest MFC ID from the database
-        $lastUser = User::orderBy('mfc_id_number', 'desc')->first();
+        $mfc_number = generateRandomSevenNumber();
 
-        // Extract the numeric part and increment it
-        if ($lastUser && $lastUser->mfc_id_number) {
-            $lastNumberPart = (int)substr($lastUser->mfc_id_number, 4);
-            $nextNumber = $lastNumberPart + 1;
-        } else {
-            // Start from 1 if no MFC ID exists
-            $nextNumber = 1;
+        $user = User::select('mfc_id_number')->where('mfc_id_number', $mfc_number)->exists();
+
+        while($user) {
+                $mfc_number = generateRandomSevenNumber();
         }
 
-        // Pad the number with leading zeros to maintain the length of 7 digits
-        $newNumberPart = str_pad($nextNumber, 7, '0', STR_PAD_LEFT);
+        return $mfc_number;
+    }
+}
 
-        // Concatenate with the prefix "MFC-"
-        return "MFC-" . $newNumberPart;
+if(!function_exists("generateRandomSevenNumber")) {
+    function generateRandomSevenNumber() {
+        return rand(1000000, 9999999);
     }
 }
 
