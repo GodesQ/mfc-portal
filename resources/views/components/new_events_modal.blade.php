@@ -4,13 +4,15 @@
 ])
 <div class="modal fade" id="addEventModal" data-id="0" tabindex="-1" aria-hidden="true">
     <style>
-        .pac-container { z-index: 100000 !important; }
+        .pac-container {
+            z-index: 100000 !important;
+        }
     </style>
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" data-simplebar>
         <div class="modal-content border-0">
             <div class="modal-body">
-                <form autocomplete="off" id="event-form" class="needs-validation" novalidate
-                    action="{{ $route }}" method="POST" enctype="multipart/form-data">
+                <form autocomplete="off" id="event-form" class="needs-validation" novalidate action="{{ $route }}"
+                    method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="col-lg-12">
@@ -74,8 +76,9 @@
 
                                 <div class="col-6">
                                     <div class="mb-3">
-                                        <label for="event_section" class="form-label">Event Type</label>
-                                        <select name="section_id" id="event_section" class="form-select">
+                                        <label for="event_section" class="form-label">Event Section</label>
+                                        <select name="section_ids[]" id="event_section" multiple="multiple"
+                                            class="form-select">
                                             <option value="">Select Event Section</option>
                                             <option value="1">Kids</option>
                                             <option value="2">Youth</option>
@@ -94,9 +97,8 @@
                                         <label class="form-label" for="event_date">Event Date <span
                                                 class="text-danger">*</span></label>
                                         <div class="form-icon right">
-                                            <input class="form-control event_date" type="text" name="event_date"
-                                                id="event_date" data-provider="flatpickr" data-date-format="Y-m-d"
-                                                data-range-date="true" placeholder="Select Date...">
+                                            <input class="form-control" type="text" name="event_date" id="event_date"
+                                                placeholder="Select Date...">
                                             <i class='bx bx-calendar'></i>
                                         </div>
                                     </div>
@@ -106,9 +108,9 @@
                                     <div class="mb-3">
                                         <label for="event_time" class="form-label">Event Time</label>
                                         <div class="form-icon right">
-                                            <input type="text" name="time" id="event_time"
-                                                class="form-control event_time" placeholder="Select Time..."
-                                                data-provider="timepickr" data-time-basic="true">
+                                            <input type="text" name="time" id="event_time" class="form-control"
+                                                placeholder="Select Time..." data-provider="timepickr"
+                                                data-time-basic="true">
                                             <i class="ri-time-line"></i>
                                         </div>
                                     </div>
@@ -139,8 +141,7 @@
                                     </div>
                                 </div>
                                 <div class="col-6">
-                                    <label for="" class="form-label">Category <span
-                                            class="text-danger">*</span></label>
+                                    <label for="" class="form-label"></label>
                                     <div class="d-flex gap-5 mt-2">
                                         <div class="form-check form-radio-primary">
                                             <input type="checkbox" class="form-check-input"
@@ -183,7 +184,7 @@
 
                             <div class="hstack gap-2 justify-content-end">
                                 <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary" id="addNewEvent">Create
+                                <button type="button" class="btn btn-primary" id="addNewEvent">Create
                                     Event</button>
                             </div>
 
@@ -197,111 +198,85 @@
     </div>
     <!--end modal-dialog-->
 </div>
-<!-- Warning Toast -->
-<div style="z-index: 9999999; position: absolute; top: 20px; right: 20px;">
-    <div id="warningToast" class="toast toast-border-warning overflow-hidden mt-3" role="alert"
-        aria-live="assertive" aria-atomic="true">
-        <div class="toast-body">
-            <div class="d-flex align-items-center">
-                <div class="flex-shrink-0 me-2">
-                    <i class="ri-notification-off-line align-middle"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <h6 class="mb-0">Please fill out the required fields.</h6>
-                </div>
-                <div class="flex-shrink-0 me-2 close" style="cursor: pointer;">
-                    <i class="ri-close-fill align-middle"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<!-- Success Toast -->
-<div style="z-index: 9999999; position: absolute; top: 20px; right: 20px;">
-    <div id="successToast" class="toast toast-border-success overflow-hidden mt-3" role="alert"
-        aria-live="assertive" aria-atomic="true">
-        <div class="toast-body">
-            <div class="d-flex align-items-center">
-                <div class="flex-shrink-0 me-2">
-                    <i class="ri-checkbox-circle-fill align-middle"></i>
-                </div>
-                <div class="flex-grow-1">
-                    <h6 class="mb-0">Yey! Registration Successful.</h6>
-                </div>
-                <div class="flex-shrink-0 me-2 close" style="cursor: pointer;">
-                    <i class="ri-close-fill align-middle"></i>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initialize" async defer></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-    function initialize() {
-        const eventLocationInput = document.getElementById('event_location');
-        const latitudeInput = document.getElementById('latitude');
-        const longitudeInput = document.getElementById('longitude');
+    $("#event_section").select2();
+    document.addEventListener('DOMContentLoaded', function() {
+        var pond;
 
-        if (!eventLocationInput) {
-            console.error('Event location input not found.');
-            return;
+        let dateInput = document.getElementById('event_date');
+        let timeInput = document.getElementById('event_time');
+
+
+        setUpFlatPicker(dateInput, timeInput);
+
+        setUpQuillEditor();
+
+        setUpFilePond();
+
+        $('#event-form').on('submit', function(e) {
+            e.preventDefault();
+        })
+
+        let add_new_event_btn = document.getElementById('addNewEvent');
+
+        add_new_event_btn.addEventListener('click', submitCreatedEvent);
+    });
+
+    function submitCreatedEvent(e) {
+        e.preventDefault();
+
+        let description_content = $('#edit_event_description .ql-editor').html();
+        var desc = document.getElementById('event_description_input');
+        desc.value = description_content;
+
+        var form = document.getElementById('event-form');
+        const formData = new FormData(form);
+
+        const files = pond.getFiles();
+        if (files.length > 0) {
+            formData.append('poster', files[0].file);
         }
 
-        // Initialize Google Places SearchBox
-        const searchBox = new google.maps.places.SearchBox(eventLocationInput);
+        e.target.innerHTML = "Saving...";
+        e.target.setAttribute("disabled", true);
 
-        searchBox.addListener('places_changed', () => {
-            console.log("test");
-            const places = searchBox.getPlaces();
-            if (places.length === 0) {
-                return;
+        removeFieldsBorder();
+
+        $.ajax({
+            url: "{{ route('events.store') }}",
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            },
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function(data) {
+                $('#addEventModal').modal('hide');
+                $('#addEventModal').attr('data-id', 1);
+
+                e.target.innerHTML = "Create Event";
+                e.target.removeAttribute("disabled");
+
+                location.reload();
+            },
+            error: function(xhr, textStatus, errorThrown) {
+                if (xhr.status === 422) {
+                    const errors = xhr.responseJSON.errors;
+                    handleFieldsError(errors);
+                }
+                toastr.error(xhr.responseJSON.message);
+
+                e.target.innerHTML = "Create Event";
+                e.target.removeAttribute("disabled");
             }
-
-            const place = places[0];
-            const lat = place.geometry.location.lat();
-            const lng = place.geometry.location.lng();
-
-            // Set latitude and longitude values
-            latitudeInput.value = lat;
-            longitudeInput.value = lng;
         });
     }
 
-
-    // Prevent form submission on Enter key in event location input
-    document.getElementById('event_location').addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-        }
-    });
-
-    $('#addEventModal').on('shown.bs.modal', function () {
-        initialize();
-    });
-</script>
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        var warningToastEl = document.getElementById('warningToast');
-        var warningToast = new bootstrap.Toast(warningToastEl);
-
-        $('.close').on('click', function() {
-            warningToast.hide();
-        });
-
-        var successToastEl = document.getElementById('successToast');
-        var successToast = new bootstrap.Toast(successToastEl);
-
-        $('.close').on('click', function() {
-            successToast.hide();
-        });
-
+    const setUpFlatPicker = (dateInput, timeInput) => {
         let tomorrow = moment().add(1, 'days').format('YYYY-MM-DD');
-
-        var dateInput = document.getElementById('event_date');
-        var timeInput = document.getElementById('event_time');
 
         flatpickr(dateInput, {
             mode: "range",
@@ -320,7 +295,9 @@
             altFormat: "h:i K",
             dateFormat: "h:i",
         })
+    }
 
+    const setUpQuillEditor = () => {
         var snowEditorData = {};
 
         snowEditorData.theme = 'snow',
@@ -333,142 +310,45 @@
                     }],
                     ['bold', 'italic', 'underline', 'strike'],
                     [{
-                        'color': []
-                    }, {
-                        'background': []
-                    }],
-                    [{
-                        'script': 'super'
-                    }, {
-                        'script': 'sub'
-                    }],
-                    [{
                         'header': [false, 1, 2, 3, 4, 5, 6]
-                    }, 'blockquote', 'code-block'],
-                    [{
-                        'list': 'ordered'
-                    }, {
-                        'list': 'bullet'
-                    }, {
-                        'indent': '-1'
-                    }, {
-                        'indent': '+1'
                     }],
                     ['direction', {
                         'align': []
                     }],
                     ['link', 'image', 'video'],
-                    ['clean']
                 ]
             }
 
 
         var quill = new Quill('#event_description', snowEditorData);
+    }
 
-        // Configure FilePond
+    const setUpFilePond = () => {
         const inputElement = document.querySelector('#event_poster');
 
-        const pond = FilePond.create(inputElement, {
+        pond = FilePond.create(inputElement, {
             acceptedFileTypes: ['image/*'],
             allowMultiple: false,
         });
+    }
 
-        var form = document.getElementById('event-form');
+    const removeFieldsBorder = () => {
+        $('input').removeClass('border-danger');
+        $('select').removeClass('border-danger');
+        $('.filepond--drop-label').removeClass('border-danger');
+    }
 
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            var editorContent = quill.root.innerHTML;
-            var desc = document.getElementById('event_description_input');
-            desc.value = editorContent;
+    const handleFieldsError = (errors) => {
+        for (const property in errors) {
+            $(`input[name="${property}"]`).addClass('border-danger');
+            $(`select[name="${property}"]`).addClass('border-danger');
 
-            if (!dateInput.value) {
-                $('input.form-control.event_date.form-control.input').removeClass('border-success');
-                $('input.form-control.event_date.form-control.input').addClass('border-danger');
-            } else {
-                $('input.form-control.event_date.form-control.input').removeClass('border-danger');
-                $('input.form-control.event_date.form-control.input').addClass('border-success');
-            }
+            if (property == "event_date") $('input[name="event_date"]').next('input').addClass('border-danger');
+            if (property == "time") $('input[name="time"]').next('input').addClass('border-danger');
 
-            $('input.form-control.event_time.form-control.input').addClass('border-success');
-
-
-            const files = pond.getFiles();
-            if (files.length === 0) {
+            if (property == "poster") {
                 $('.filepond--drop-label').addClass('border-dashed border-danger rounded border-2');
             }
-
-
-            if (editorContent == '<p><br></p>') {
-                $('.ql-snow.ql-container').removeClass('border-success', 'border-top-0');
-                $('.ql-snow.ql-toolbar').removeClass('border-success');
-
-                $('.ql-snow.ql-container').addClass('border-danger', 'border-top-0');
-                $('.ql-snow.ql-toolbar').addClass('border-danger');
-            } else {
-                $('.ql-snow.ql-container').removeClass('border-danger', 'border-top-0');
-                $('.ql-snow.ql-toolbar').removeClass('border-danger');
-
-                $('.ql-snow.ql-container').addClass('border-success', 'border-top-0');
-                $('.ql-snow.ql-toolbar').addClass('border-success');
-            }
-
-            // const editorContent = document.querySelector('.ql-editor').innerHTML;
-
-            // Create a FormData object
-            const formData = new FormData(this);
-
-            if (files.length > 0) {
-                formData.append('poster', files[0].file);
-            }
-
-            $.ajax({
-                url: "{{ route('events.store') }}",
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                },
-                processData: false,
-                contentType: false,
-                data: formData,
-                success: function(data) {
-                    $('#addEventModal').modal('hide');
-
-                    $('#addEventModal').attr('data-id', 1);
-                    $('#event-form')[0].reset();
-
-                    if ($('#event-form')[0].reset()) {
-                        console.log('reset');
-                    }
-                    successToast.show();
-
-                    location.reload();
-                    // Handle the response as needed
-                },
-                error: function(xhr, textStatus, errorThrown, response) {
-                    if (xhr.status === 422) {
-                        // Handle validation errors
-                        const errors = xhr.responseJSON.errors;
-
-                        warningToast.show();
-
-                        if (errors.event_date[0]) {
-                            console.log(errors.event_date[0]);
-
-                            $('input.form-control.event_date.input').addClass(
-                                'border-danger');
-                        } else {
-                            $('input.form-control.event_date.input').removeClass(
-                                'border-danger');
-                            $('input.form-control.event_date.input').addClass(
-                                'border-success');
-                        }
-                    }
-                    console.error('Error:', textStatus, errorThrown);
-                }
-            });
-
-            // this.submit();
-        });
-
-    });
+        }
+    }
 </script>

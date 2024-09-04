@@ -461,5 +461,41 @@
             location.href = `/dashboard/attendances/report/${event_id}`;
         })
     </script>
+
+    {{-- Google Location Places Search Javascript --}}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initialize" async></script>
+    <script>
+        function initialize() {
+            const activeModal = document.querySelector('.modal.show');  // Detect the currently active modal
+            if (activeModal) {
+                const isAddEventModal = activeModal.id === 'addEventModal';
+                const eventLocationInput = document.getElementById(isAddEventModal ? 'event_location' : 'event-location-field');
+                const latitudeInput = document.getElementById(isAddEventModal ? 'latitude' : 'event-latitude-field');
+                const longitudeInput = document.getElementById(isAddEventModal ? 'longitude' : 'event-longitude-field');
+
+                if (!eventLocationInput) {
+                    console.error('Event location input not found.');
+                    return;
+                }
+
+                const searchBox = new google.maps.places.SearchBox(eventLocationInput);
+                searchBox.addListener('places_changed', () => {
+                    const place = searchBox.getPlaces()[0];
+                    if (place) {
+                        latitudeInput.value = place.geometry.location.lat();
+                        longitudeInput.value = place.geometry.location.lng();
+                    }
+                });
+
+                eventLocationInput.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter') event.preventDefault();
+                });
+            }
+        }
+
+        // Trigger initialization when modals are shown
+        $('#addEventModal, #event-modal').on('shown.bs.modal', initialize);
+
+    </script>
     
 @endsection

@@ -54,19 +54,17 @@
         <!--end col-->
     </div>
 
+    <!-- View Modal -->
+    @component('components.events.edit-form', ['sections' => $sections])
+        <!-- Any other slots or content you want to pass -->
+    @endcomponent
+
     <!-- Create Modal -->
     @component('components.new_events_modal')
         @slot('route')
             {{ route('events.store') }}
         @endslot
     @endcomponent
-
-    <!-- View Modal -->
-    @component('components.events.edit-form', ['sections' => $sections])
-        <!-- Any other slots or content you want to pass -->
-    @endcomponent
-
-
 @endsection
 @section('script')
     <script src="{{ URL::asset('build/libs/filepond/filepond.min.js') }}"></script>
@@ -75,7 +73,7 @@
     <script
         src="{{ URL::asset('build/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js') }}">
     </script>
-    <script 
+    <script
         src="{{ URL::asset('build/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js') }}">
     </script>
     <script src="{{ URL::asset('build/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js') }}"></script>
@@ -132,8 +130,7 @@
 
             var quill = new Quill('#edit_event_description', snowEditorData);
 
-            quill.on('text-change', (delta, oldDelta, source) => {
-            });
+            quill.on('text-change', (delta, oldDelta, source) => {});
 
             // make sure that the table is loaded correctly
             $('#events_datatable').on('draw.dt', function() {
@@ -153,9 +150,11 @@
                                     id: id,
                                     _token: "{{ csrf_token() }}"
                                 },
-                                success: function (response) {
+                                success: function(response) {
                                     showSuccessMessage(response.message);
-                                    $('#events_datatable').DataTable().ajax.reload(null, false); // false to keep the current page
+                                    $('#events_datatable').DataTable().ajax
+                                        .reload(null,
+                                        false); // false to keep the current page
                                 },
                                 error: function(xhr, status, error) {
                                     showErrorMessage(xhr.statusText);
@@ -165,7 +164,7 @@
                     });
                 });
 
-                $('.edit-btn').click(function () {
+                $('.edit-btn').click(function() {
                     editEvent.show();
                     var id = $(this).attr('id');
 
@@ -176,7 +175,8 @@
                             displayEventValues(response.event);
 
                             var editorContent = quill.root;
-                            editorContent.innerHTML = document.getElementById('event-description-field').value;
+                            editorContent.innerHTML = document.getElementById(
+                                'event-description-field').value;
                         }
                     })
                 })
@@ -192,11 +192,11 @@
                     document.getElementById("event-longitude-field").value = event.longitude;
                     document.getElementById("event-description-field").value = event.description;
 
-                    if(event.is_open_for_non_community) {
+                    if (event.is_open_for_non_community) {
                         document.getElementById("is-open-for-non-community-checkbox").checked = true;
                     }
 
-                    if(event.is_enable_event_registration) {
+                    if (event.is_enable_event_registration) {
                         document.getElementById("is-enable-event-registration-checkbox").checked = true;
                     }
 
@@ -217,20 +217,21 @@
 
                     var updateDay = null;
 
-                    if(ed_date != null){
+                    if (ed_date != null) {
                         var endUpdateDay = new Date(ed_date);
                         updateDay = endUpdateDay.setDate(endUpdateDay.getDate());
                     }
-                    
-                    var er_date = ed_date == null ? (date_r(st_date)) : (date_r(st_date)) + ' to ' + (date_r(updateDay));
-                
+
+                    var er_date = ed_date == null ? (date_r(st_date)) : (date_r(st_date)) + ' to ' + (
+                        date_r(updateDay));
+
                     flatpickr(document.getElementById('event-date-field'), {
                         defaultDate: er_date,
                         altInput: true,
                         altFormat: "j F Y",
                         dateFormat: "Y-m-d",
                         mode: ed_date !== null ? "range" : "range",
-                        onChange: function (selectedDates, dateStr, instance) {
+                        onChange: function(selectedDates, dateStr, instance) {
                             var date_range = dateStr;
                         },
                     });
@@ -239,8 +240,8 @@
                         defaultDate: event.time, // Set default value
                         noCalendar: true,
                         enableTime: true,
-                        dateFormat: "H:i", 
-                        time_24hr: false 
+                        dateFormat: "H:i",
+                        time_24hr: false
                     });
                 }
 
@@ -382,5 +383,41 @@
 
             initializeTables();
         })
+    </script>
+
+    {{-- Google Location Places Search Javascript --}}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initialize" async></script>
+    <script>
+        function initialize() {
+            const activeModal = document.querySelector('.modal.show');  // Detect the currently active modal
+            if (activeModal) {
+                const isAddEventModal = activeModal.id === 'addEventModal';
+                const eventLocationInput = document.getElementById(isAddEventModal ? 'event_location' : 'event-location-field');
+                const latitudeInput = document.getElementById(isAddEventModal ? 'latitude' : 'event-latitude-field');
+                const longitudeInput = document.getElementById(isAddEventModal ? 'longitude' : 'event-longitude-field');
+
+                if (!eventLocationInput) {
+                    console.error('Event location input not found.');
+                    return;
+                }
+
+                const searchBox = new google.maps.places.SearchBox(eventLocationInput);
+                searchBox.addListener('places_changed', () => {
+                    const place = searchBox.getPlaces()[0];
+                    if (place) {
+                        latitudeInput.value = place.geometry.location.lat();
+                        longitudeInput.value = place.geometry.location.lng();
+                    }
+                });
+
+                eventLocationInput.addEventListener('keydown', function(event) {
+                    if (event.key === 'Enter') event.preventDefault();
+                });
+            }
+        }
+
+        // Trigger initialization when modals are shown
+        $('#addEventModal, #event-modal').on('shown.bs.modal', initialize);
+
     </script>
 @endsection

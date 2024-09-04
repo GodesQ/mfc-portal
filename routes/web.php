@@ -4,7 +4,7 @@ use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventAttendanceController;
-use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventsController;
 use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PaymayaController;
@@ -12,7 +12,7 @@ use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\RedirectController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\TithesController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,7 +33,7 @@ Route::middleware(['guest', 'nocache'])->group(function () {
     Route::get('/forgot-password', [AuthenticatedSessionController::class, 'reset_password'])->name('password.update');
 });
 
-Route::get('/events/show/{identifier}', [EventController::class, 'show'])->name('events.show');
+Route::get('/events/show/{identifier}', [EventsController::class, 'show'])->name('events.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     //Language Translation
@@ -45,21 +45,23 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('dashboard')->middleware(['auth', 'verified', 'checkSession'])->group(function () {
         Route::resource('/announcements', AnnouncementController::class);
 
-        Route::get('/users/search', [UserController::class, 'search'])->name('search');
+        Route::get('/users/search', [UsersController::class, 'search'])->name('search');
         Route::get('/users/profile/{user_id}');
-        Route::resource('/users', UserController::class)->except(['index']);
+        Route::resource('/users', UsersController::class)->except(['index']);
         
-        Route::get('/directory/{section}', [UserController::class, 'index'])->name('users.index');
+        Route::get('/directory/{section}', [UsersController::class, 'index'])->name('users.index');
 
-        Route::get('/profile/{user}', [UserController::class, 'profile'])->name('users.profile');
-        Route::put('/profile/update/{user}', [UserController::class, 'updateProfile'])->name('users.profile.update');
-        Route::put('/profile/services/{user}', [UserController::class, 'updateProfileService'])->name('users.profile.services.put');
-        Route::put('/profile/change-password/{user}', [UserController::class, 'updatePassword'])->name('users.profile.change_password');
+        Route::get('/profile/{user}', [UsersController::class, 'profile'])->name('users.profile');
+        Route::put('/profile/update/{user}', [UsersController::class, 'updateProfile'])->name('users.profile.update');
+        Route::put('/profile/services/{user}', [UsersController::class, 'updateProfileService'])->name('users.profile.services.put');
+        Route::put('/profile/change-password/{user}', [UsersController::class, 'updatePassword'])->name('users.profile.change_password');
 
-        Route::get('/events/calendar', [EventController::class, 'calendar'])->name('events.calendar');
-        Route::get('events/all', [EventController::class, 'all'])->name('events.all');
-        Route::get('/events/full-calendar', [EventController::class, 'fullCalendar'])->name('events.c');
-        Route::resource('/events', EventController::class)->except(['show']);
+        Route::get('/events/calendar', [EventsController::class, 'calendar'])->name('events.calendar');
+        Route::get('events/all', [EventsController::class, 'all'])->name('events.all');
+        Route::get('/events/full-calendar', [EventsController::class, 'fullCalendar'])->name('events.c');
+        Route::resource('/events', EventsController::class)->except(['show']);
+        
+        Route::get('/events/{event}/registrations', [EventRegistrationController::class,'list'])->name('');
         Route::get('/events/{event_id}/register', [EventRegistrationController::class, 'register'])->name('events.register');
         Route::post('/events/register', [EventRegistrationController::class, 'save_registration'])->name('events.register.post');
         

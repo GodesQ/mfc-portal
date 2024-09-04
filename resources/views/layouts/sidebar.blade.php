@@ -14,18 +14,18 @@
         <!-- Light Logo-->
         <a href="index" class="logo logo-light">
             <span class="logo-sm">
-                <img src="{{ URL::asset('build/images/logo-sm.png') }}" alt="" width="22" height="22">
+                <img src="{{ URL::asset('build/images/logo-wide-white.png') }}" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img class="rounded-circle mt-3" src="{{ URL::asset('build/images/MFC-Logo.jpg') }}" alt=""
-                    height="80" width="80">
+                <img class="mt-3" src="{{ URL::asset('build/images/logo-wide-white.png') }}" alt=""
+                    height="80">
             </span>
         </a>
         <button type="button" class="btn btn-sm p-0 fs-20 header-item float-end btn-vertical-sm-hover"
             id="vertical-hover">
             <i class="ri-record-circle-line"></i>
         </button>
-        <p class="text-white mt-1">MFC Portal</p>
+        <p id="mportal" class="text-white mt-1">Missionary Portal</p>
     </div>
 
     {{-- <div class="dropdown sidebar-user m-1 rounded">

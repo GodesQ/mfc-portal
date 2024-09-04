@@ -1,0 +1,141 @@
+div#choices--mfc_section-item-choice-2 {
+    background-image: url(/build/images/kids-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 45px;
+    background-position: left center;
+    background-position-x: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+div#choices--mfc_section-item-choice-3 {
+    background-image: url(/build/images/youth-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 45px;
+    background-position: left center;
+    background-position-x: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+div#choices--mfc_section-item-choice-4 {
+    background-image: url(/build/images/singles-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 45px;
+    background-position: left center;
+    background-position-x: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+div#choices--mfc_section-item-choice-5 {
+    background-image: url(/build/images/handmaid-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 45px;
+    background-position: left center;
+    background-position-x: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+div#choices--mfc_section-item-choice-6 {
+    background-image: url(/build/images/servant-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 45px;
+    background-position: left center;
+    background-position-x: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+div#choices--mfc_section-item-choice-7 {
+    background-image: url(/build/images/couples-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 45px;
+    background-position: left center;
+    background-position-x: 10px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.choices__item.choices__item--selectable[data-value="kids"] {
+    background-image: url(/build/images/kids-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 35px;
+    background-position: left center;
+    background-position-x: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.choices__item.choices__item--selectable[data-value="youth"] {
+    background-image: url(/build/images/youth-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 35px;
+    background-position: left center;
+    background-position-x: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.choices__item.choices__item--selectable[data-value="singles"] {
+    background-image: url(/build/images/singles-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 35px;
+    background-position: left center;
+    background-position-x: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.choices__item.choices__item--selectable[data-value="couples"] {
+    background-image: url(/build/images/couples-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 35px;
+    background-position: left center;
+    background-position-x: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.choices__item.choices__item--selectable[data-value="handmaids"] {
+    background-image: url(/build/images/handmaid-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 35px;
+    background-position: left center;
+    background-position-x: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+.choices__item.choices__item--selectable[data-value="servants"] {
+    background-image: url(/build/images/servant-logo.png);
+    background-size: contain;
+    background-repeat: no-repeat;
+    padding-left: 35px;
+    background-position: left center;
+    background-position-x: 0;
+    padding-bottom: 5px;
+    padding-top: 5px;
+}
+
+#mportal {
+    font-size: 18px;
+    border-top: 1px solid #ffffff63;
+    border-bottom: 1px solid #ffffff63;
+}
+
+footer.footer {
+    z-index: 2;
+}

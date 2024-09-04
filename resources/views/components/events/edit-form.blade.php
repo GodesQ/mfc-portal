@@ -130,49 +130,7 @@
     </div> <!-- end modal dialog-->
 </div> <!-- end modal-->
 
-
 <script>
-    function initialize() {
-        const eventLocationInput = document.getElementById('event-location-field');
-        const latitudeInput = document.getElementById('latitude');
-        const longitudeInput = document.getElementById('longitude');
-
-        if (!eventLocationInput) {
-            console.error('Event location input not found.');
-            return;
-        }
-
-        // Initialize Google Places SearchBox
-        const searchBox = new google.maps.places.SearchBox(eventLocationInput);
-
-        searchBox.addListener('places_changed', () => {
-            const places = searchBox.getPlaces();
-            if (places.length === 0) {
-                return;
-            }
-
-            const place = places[0];
-            const lat = place.geometry.location.lat();
-            const lng = place.geometry.location.lng();
-
-            // Set latitude and longitude values
-            latitudeInput.value = lat;
-            longitudeInput.value = lng;
-        });
-    }
-
-
-    // Prevent form submission on Enter key in event location input
-    document.getElementById('event_location').addEventListener('keydown', function(event) {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-        }
-    });
-
-    $('#event-modal').on('shown.bs.modal', function () {
-        initialize();
-    });
-
     $("#edit-event-form").submit(function (e) {
         e.preventDefault();
         let description_content = $('#edit_event_description .ql-editor').html();
