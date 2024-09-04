@@ -15,6 +15,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class EventRegistrationController extends Controller
 {   
@@ -22,11 +23,47 @@ class EventRegistrationController extends Controller
     public function __construct(PaymayaService $paymayaService) {
         $this->paymayaService = $paymayaService;
     }
+
+    public function list(Request $request, Event $event) {
+
+        if($request->ajax()) {
+            $registrations = EventRegistration::with('user', 'event', 'transaction');
+            return DataTables::of($registrations)
+                ->addColumn('user', function ($row) {
+                    return $row->user->first_name . ' ' . $row->user->last_name;
+                })
+                ->addColumn('event', function ($row) {
+                    return $row->event->title;
+                })
+                ->editColumn('amount', function ($row) {
+                    return "₱ " . number_format($row->amount, 2);
+                })
+                ->addColumn('status', function ($row) {
+                    return $row->transaction->status;
+                })
+                ->addColumn('attendance_status', function ($row) {
+                    return "";
+                })
+                ->addColumn('actions', function ($row) {
+                    $actions = "<div class='hstack gap-2'>
+                        <a href='" . route('events.registrations.show', ['id' => $row->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Show'><i class='ri-eye-fill align-bottom'></i></a>
+                        <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $row->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
+                    </div>";
+
+                    return $actions;
+                })
+                ->rawColumns(['actions', 'user', 'event', 'status', 'attendance_status'])
+                ->make(true);
+        }
+
+        return view('pages.event-registrations.index', compact('event'));
+    }
     
     public function register(Request $request) {
         $endPoint = "Event Registration";
         $event = Event::where('id', $request->event_id)->first();
 
+        // Return 404 if the event is not for registration
         if(!$event->is_enable_event_registration) abort(404);
 
         return view('pages.events.register', compact('endPoint', 'event'));
@@ -39,8 +76,10 @@ class EventRegistrationController extends Controller
             $users_count = count($request->users);
             $auth_user = Auth::user();
 
+            $convenience_fee = 10.00;
+
             // Add the request donation in total amount
-            $total_amount = 0 + $request->donation;
+            $total_amount = (0 + $convenience_fee) + $request->donation;
 
             for ($i=0; $i < $users_count; $i++) { 
                 $total_amount += $event->reg_fee;
@@ -53,6 +92,7 @@ class EventRegistrationController extends Controller
                 'transaction_code' => $transaction_code,
                 'reference_code' => $reference_code,
                 'donation' => $request->donation,
+                'convenience_fee' => $convenience_fee,
                 'sub_amount' => $event->reg_fee,
                 'total_amount' => $total_amount,
                 'payment_mode' => "N/A",

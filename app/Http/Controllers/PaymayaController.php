@@ -16,19 +16,17 @@ class PaymayaController extends Controller
 
         abort_if(!$transaction, 404);
 
-        if($request->isPaid) {
-            $transaction->update([
-                'transaction_response_json' => json_encode($request->all()),
-                'status' => 'paid',
+        $transaction->update([
+            'transaction_response_json' => json_encode($request->all()),
+            'status' => 'paid',
+        ]);
+
+        if($transaction->payment_type === PaymentType::TITHE) {
+            $tithe = Tithe::where('transaction_id', $transaction->id)->first();
+
+            $tithe->update([
+                'status' => "paid",
             ]);
-
-            if($transaction->payment_type === PaymentType::TITHE) {
-                $tithe = Tithe::where('transaction_id', $transaction->id)->first();
-
-                $tithe->update([
-                    'status' => "paid",
-                ]);
-            }
         }
 
         return response(['message' => "OK"], 200);
@@ -41,19 +39,17 @@ class PaymayaController extends Controller
 
         abort_if(!$transaction, 404);
 
-        if($request->isPaid) {
-            $transaction->update([
-                'transaction_response_json' => json_encode($request->all()),
-                'status' => 'failed',
+        $transaction->update([
+            'transaction_response_json' => json_encode($request->all()),
+            'status' => 'failed',
+        ]);
+
+        if($transaction->payment_type === PaymentType::TITHE) {
+            $tithe = Tithe::where('transaction_id', $transaction->id)->first();
+
+            $tithe->update([
+                'status' => "failed",
             ]);
-
-            if($transaction->payment_type === PaymentType::TITHE) {
-                $tithe = Tithe::where('transaction_id', $transaction->id)->first();
-
-                $tithe->update([
-                    'status' => "failed",
-                ]);
-            }
         }
 
         return response(['message' => "OK"], 200);
@@ -66,19 +62,17 @@ class PaymayaController extends Controller
 
         abort_if(!$transaction, 404);
 
-        if($request->isPaid) {
-            $transaction->update([
-                'transaction_response_json' => json_encode($request->all()),
-                'status' => 'paid',
+        $transaction->update([
+            'transaction_response_json' => json_encode($request->all()),
+            'status' => 'paid',
+        ]);
+
+        if($transaction->payment_type === PaymentType::TITHE) {
+            $tithe = Tithe::where('transaction_id', $transaction->id)->first();
+
+            $tithe->update([
+                'status' => "paid",
             ]);
-
-            if($transaction->payment_type === PaymentType::TITHE) {
-                $tithe = Tithe::where('transaction_id', $transaction->id)->first();
-
-                $tithe->update([
-                    'status' => "paid",
-                ]);
-            }
         }
 
         return response(['message' => "OK"], 200);

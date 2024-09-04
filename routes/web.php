@@ -61,7 +61,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/events/full-calendar', [EventsController::class, 'fullCalendar'])->name('events.c');
         Route::resource('/events', EventsController::class)->except(['show']);
         
-        Route::get('/events/{event}/registrations', [EventRegistrationController::class,'list'])->name('');
+        Route::get('/events/registrations/{id}', [EventRegistrationController::class, 'show'])->name('events.registrations.show');
+        Route::get('/events/{event}/registrations', [EventRegistrationController::class,'list'])->name('events.registrations.index');
         Route::get('/events/{event_id}/register', [EventRegistrationController::class, 'register'])->name('events.register');
         Route::post('/events/register', [EventRegistrationController::class, 'save_registration'])->name('events.register.post');
         

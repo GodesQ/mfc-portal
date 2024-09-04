@@ -108,6 +108,10 @@
                                                 <td class="text-end" id="registration-donation">₱ 0.00</td>
                                             </tr>
                                             <tr>
+                                                <td>Convenience Fee : </td>
+                                                <td class="text-end" id="registration-donation">₱ 10.00</td>
+                                            </tr>
+                                            <tr>
                                                 <td>Number of Registrations : </td>
                                                 <td class="text-end" id="registration-pax">0 x</td>
                                             </tr>
@@ -115,7 +119,7 @@
                                                 <th>Total (Peso) :</th>
                                                 <td class="text-end">
                                                     <span class="fw-semibold" id="registration-total">
-                                                        ₱ 0.00
+                                                        ₱ 10.00
                                                     </span>
                                                 </td>
                                             </tr>
@@ -356,8 +360,9 @@
             let user_ids = document.querySelectorAll(".user-id");
             let eventRegistrationFee = document.querySelector('#event-registration-fee-field').value;
             let donation_amount = document.getElementById("donation-field").value ?? 0;
+            let convenience_fee = 10.00;
 
-            let totalAmount = 0 + parseFloat(donation_amount);
+            let totalAmount = (0 + convenience_fee) + parseFloat(donation_amount);
             if (user_ids.length > 0) {
                 for (let i = 0; i < user_ids.length; i++) {
                     totalAmount += parseFloat(eventRegistrationFee);

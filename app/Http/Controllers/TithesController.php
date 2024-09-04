@@ -84,14 +84,23 @@ class TithesController extends Controller
             $user = User::where('mfc_id_number', $request->mfc_user_id)->first();
             if(!$user) throw new Exception("User not found based on your mfc user id.", 404);
 
+            $convenience_fee = 50.00;
+
+            if($request->amount >= 50) {
+                $convenience_fee = 0.00;
+            }
+
+            $total_amount = $request->amount + $convenience_fee;
+
             $transaction_code = generateTransactionCode();
             $reference_code = generateReferenceCode();
     
             $transaction = Transaction::create([
                 "transaction_code" => $transaction_code,
                 "reference_code" => $reference_code,
+                "convenience_fee" => $convenience_fee,
                 "sub_amount" => $request->amount,
-                "total_amount" => $request->amount,
+                "total_amount" => $total_amount,
                 "payment_mode" => "N/A",
                 "payment_type" => "tithe",
                 "status" => "pending",

@@ -13,6 +13,7 @@ class Transaction extends Model
         "transaction_code", 
         "reference_code", 
         "donation",
+        "convenience_fee",
         "sub_amount", 
         "total_amount", 
         "payment_mode", 

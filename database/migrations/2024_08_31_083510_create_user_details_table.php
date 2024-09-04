@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('user_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->nullable()->cascadeOnDelete();
-            $table->string('god_given_skill')->nullable();
+            $table->json('god_given_skill')->nullable();
             $table->string('address')->nullable();
+            $table->date('birthday')->nullable();
             $table->string('facebook_link')->nullable();
             $table->string('instagram_link')->nullable();
+            $table->string('twitter_link')->nullable();
             $table->timestamps();
         });
     }

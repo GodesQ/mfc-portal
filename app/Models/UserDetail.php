@@ -14,7 +14,13 @@ class UserDetail extends Model
         "user_id",
         "god_given_skill",
         "address",
+        "birthday",
         "facebook_link",
         "instagram_link",
+        "twitter_link"
+    ];
+
+    protected $casts = [
+        "god_given_skill" => "array",
     ];
 }

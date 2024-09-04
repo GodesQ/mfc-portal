@@ -32,6 +32,7 @@ return [
 
     'paymaya' => [
         'url' => 'https://pg.maya.ph/checkout/v1/checkouts',
+        'test_url' => 'https://pg-sandbox.paymaya.com/checkout/v1/checkouts',
         'api_key' => env('PAYMAYA_API_KEY'),
         'secret_key' => env('PAYMAYA_SECRET_KEY'),
         'test_api_key' => env('PAYMAYA_TEST_API_KEY'),

@@ -257,4 +257,6 @@ return [
     "links" => "Links",
     "range-area" => "Range Area",
     "funnel" => "Funnel",
+    
+    "event_registrations" => "Event Registrations",
 ];

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
 
-class UserController extends Controller
+class UsersController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -87,19 +87,26 @@ class UserController extends Controller
     }
 
     public function updateProfile(Request $request, string $id) {
-        $data = $request->except('_token', '_method');
+        $user_data = $request->except('_token', '_method', 'god_given_skills');
         $user = User::where('id', $id)->with('user_details')->firstOrFail();
 
-        $user->update($data);
+        $user->update(array_merge($user_data));
+
+        $skills = [];
+
+        if($request->has('god_given_skills') && is_array($request->god_given_skills)) {
+            foreach ($request->god_given_skills as $key => $skill) {
+                array_push($skills, $skill);
+            }
+        }
 
         if($user->user_details) {
-            $user->user_details->update($data);
+            $user->user_details->update(array_merge($user_data, ['god_given_skill' => $skills]));
         } else {
-            UserDetail::create(array_merge($data, ['user_id' => $user->id]));
+            UserDetail::create(array_merge($user_data, ['user_id' => $user->id, 'god_given_skill' => $skills]));
         }
         
         return back()->withSuccess("Profile Updated Successfully");
-        
     }
 
     public function updateProfileService(Request $request, $id) {

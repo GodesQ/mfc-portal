@@ -229,5 +229,7 @@ return [
     
     "attendance" => "Attendance",
     "attendance_report" => "Attendance Report",
+    
+    "event_registrations" => "Event Registrations",
 ];
 

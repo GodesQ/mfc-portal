@@ -26,7 +26,7 @@ class StoreRequest extends FormRequest
             'type' => ['required', 'string', 'max:255'],
             'section_id' => ['required', 'integer'],
             'event_date' => ['required'],
-            'time' => ['nullable'],
+            'time' => ['required'],
             'location' => ['required', 'string', 'max:255'],
             'latitude' => ['nullable', 'numeric'],
             'longitude' => ['nullable', 'numeric'],
