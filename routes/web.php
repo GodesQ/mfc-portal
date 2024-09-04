@@ -85,7 +85,7 @@ Route::post('/paymaya/webhook/checkout-failed', [PaymayaController::class, 'chec
 Route::post('/paymaya/webhook/payment-success', [PaymayaController::class, 'payment_success']);
 Route::post('/paymaya/webhook/payment-failed', [PaymayaController::class, 'checkout_failed']);
 
-Route::get('/payments/success', [RedirectController::class, 'payment_success']);
+Route::get('/payments/success', [RedirectController::class, 'payment_success'])->name('payments/success');
 
 Route::fallback( function() {
     return redirect()->route('root');
