@@ -165,9 +165,9 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("event-registrationfee-tag").innerHTML = selectedEvent.extendedProps.registration_fee === undefined ? "No Registration Fee" : selectedEvent.extendedProps.registration_fee;
     
         document.getElementById("register-event-btn").setAttribute('data-event-id', selectedEvent.id);
-        document.getElementById("attendances-btn").setAttribute('data-event-id', selectedEvent.id);
-        document.getElementById("attendance-report-btn").setAttribute('data-event-id', selectedEvent.id);
-        document.getElementById("search-event-user-btn").setAttribute('data-event-id', selectedEvent.id);
+        // document.getElementById("attendances-btn").setAttribute('data-event-id', selectedEvent.id);
+        // document.getElementById("attendance-report-btn").setAttribute('data-event-id', selectedEvent.id);
+        // document.getElementById("search-event-user-btn").setAttribute('data-event-id', selectedEvent.id);
         document.getElementById("btn-delete-event").setAttribute('data-event-id', selectedEvent.id);
 
         // If the event is not available for registration

@@ -12,7 +12,7 @@ class Event extends Model
     protected $fillable = [
         'title',
         'type',
-        'section_id',
+        'section_ids',
         'start_date',
         'end_date',
         'time',
@@ -34,6 +34,7 @@ class Event extends Model
      * @var array
      */
     protected  $casts = [
+        'section_ids' => 'array',
         'is_open_for_non_community' => 'boolean',
         'is_enable_event_registration' => 'boolean',
     ];

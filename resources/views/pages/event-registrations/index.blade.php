@@ -14,6 +14,20 @@
         @endslot
     @endcomponent
 
+    <style>
+        .attendance-checkbox {
+            text-align: center;
+            width: 40px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #3e5287;
+        }
+        .form-switch-success .form-check-input {
+            background-color: rgb(116, 2, 2);
+            border-color: rgb(116, 2, 2);
+        }
+    </style>
+
     <div class="row my-3">
         <div class="col-lg-12">
             <div class="card-header border-0 mb-3">
@@ -82,6 +96,31 @@
                     }
                 });
             });
+
+            $('.attendance-checkbox').click(function (e) {
+                let user_id = e.target.getAttribute('data-user-id');
+                let event_id = e.target.getAttribute('data-event-id');
+                let checked = e.target.checked ? 1 : 0;
+                let token = "{{ csrf_token() }}";
+
+                $.ajax({
+                    method: "POST",
+                    url: "{{ route('attendances.save') }}",
+                    data: {
+                        _token: token,
+                        event_id: event_id,
+                        user_id: user_id,
+                        checked: checked,
+                    },
+                    success: function (response) {
+                        toastr.success(response.message, "Success");
+                    },
+                    error: function(XMLHttpRequest, textStatus, errorThrown) {
+                        alert("some error");
+                        console.log(XMLHttpRequest);
+                    }
+                })
+            })
         });
 
         function initializeTables() {

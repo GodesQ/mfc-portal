@@ -17,7 +17,7 @@ return new class extends Migration
 
             $table->string('title')->nullable();
             $table->string('type')->nullable();
-            $table->foreignId('section_id')->nullable()->constrained('sections')->cascadeOnDelete();
+            $table->json('section_ids')->nullable();
             $table->date('start_date')->nullable();
             $table->date('end_date')->nullable();
             $table->time('time')->nullable();

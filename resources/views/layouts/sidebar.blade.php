@@ -175,11 +175,11 @@
                     </a>
                 </li>
 
-                {{-- <li class="nav-item">
-                    <a class="nav-link menu-link" href="{{ route('attendances.report') }}">
-                        <i class="ri-folder-user-line"></i> <span>@lang('translation.attendance_report')</span>
+                <li class="nav-item">
+                    <a class="nav-link menu-link" href="{{ route('attendances.index') }}">
+                        <i class="ri-folder-user-line"></i> <span>@lang('translation.attendance')</span>
                     </a>
-                </li> --}}
+                </li>
 
                 <li class="menu-title"><i class="ri-more-fill"></i> <span>@lang('translation.management')</span></li>
 

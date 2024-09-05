@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enum\PaymentType;
 use App\Http\Requests\EventRegistration\StoreRequest;
 use App\Models\Event;
+use App\Models\EventAttendance;
 use App\Models\EventRegistration;
 use App\Models\EventUserDetail;
 use App\Models\Transaction;
@@ -28,6 +29,7 @@ class EventRegistrationController extends Controller
 
         if($request->ajax()) {
             $registrations = EventRegistration::with('user', 'event', 'transaction');
+
             return DataTables::of($registrations)
                 ->addColumn('user', function ($row) {
                     return $row->user->first_name . ' ' . $row->user->last_name;
@@ -39,10 +41,23 @@ class EventRegistrationController extends Controller
                     return "₱ " . number_format($row->amount, 2);
                 })
                 ->addColumn('status', function ($row) {
-                    return $row->transaction->status;
+                    if($row->transaction->status == 'paid') {
+                        return "<div class='badge bg-success'>{$row->transaction->status}</div>";
+                    } else {
+                        return "<div class='badge bg-warning'>{$row->transaction->status}</div>";
+                    }
                 })
                 ->addColumn('attendance_status', function ($row) {
-                    return "";
+                    $event_registration = EventAttendance::where('event_id', $row->event->id)
+                                                        ->where('user_id', $row->user->id)
+                                                        ->where('attendance_date', date('Y-m-d'))
+                                                        ->exists();
+
+                    return "<div class='form-check form-switch form-switch-success'>
+                                <input class='attendance-checkbox form-check-input' style='width: 3em !important;' data-event-id='{$row->event->id}' data-user-id='{$row->user->id}' type='checkbox' role='switch' id='SwitchCheck3' ". ($event_registration ? 'checked' : '') .">
+                            </div>";
+
+                    // return "<input type='checkbox' ". ($event_registration ? 'checked' : '') ." class='attendance-checkbox'  />";
                 })
                 ->addColumn('actions', function ($row) {
                     $actions = "<div class='hstack gap-2'>
@@ -57,6 +72,12 @@ class EventRegistrationController extends Controller
         }
 
         return view('pages.event-registrations.index', compact('event'));
+    }
+
+    public function show(Request $request, $id) {
+        $event_registration = EventRegistration::findOrFail($id);
+
+        return view('pages.event-registrations.show', compact('event_registration'));
     }
     
     public function register(Request $request) {

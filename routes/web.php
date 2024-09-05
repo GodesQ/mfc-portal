@@ -67,6 +67,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/events/register', [EventRegistrationController::class, 'save_registration'])->name('events.register.post');
         
         Route::resource('/tithes', TithesController::class);
+
+        Route::get('attendances', [EventAttendanceController::class, 'index'])->name('attendances.index');
         Route::post('attendances/save', [EventAttendanceController::class, 'saveAttendance'])->name('attendances.save');
         Route::get('attendances/events/{event_id}/users', [EventAttendanceController::class, 'getEventUsers'])->name('attendances.users');
         Route::get('attendances/report/{event_id}', [EventAttendanceController::class, 'report'])->name('attendances.report');

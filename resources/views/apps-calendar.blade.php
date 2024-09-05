@@ -75,8 +75,8 @@
                                 <div class="text-end">
                                     <a href="#" class="btn btn-sm btn-soft-primary" id="edit-event-btn"
                                         data-id="edit-event" onclick="editEvent(this)" role="button">Edit</a>
-                                    <button class="btn btn-info btn-sm" id="attendances-btn" type="button" data-bs-toggle="offcanvas"
-                                        data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Attendance</button>
+                                    {{-- <button class="btn btn-info btn-sm" id="attendances-btn" type="button" data-bs-toggle="offcanvas"
+                                        data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Attendance</button> --}}
                                 </div>
                                 <div class="event-details">
                                     <div class="d-flex mb-2">
@@ -227,7 +227,7 @@
             <!-- end modal-->
 
             <!-- right offcanvas -->
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight"
+            {{-- <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight"
                 aria-labelledby="offcanvasRightLabel">
                 <div class="offcanvas-header">
                     <h5 id="offcanvasRightLabel">Event Attendance</h5>
@@ -317,7 +317,7 @@
                     <div class="users-list d-flex flex-wrap gap-3 py-3" id="attendeesDiv">
                     </div>
                 </div>
-            </div>
+            </div> --}}
             <!-- end right offcanvas -->
         </div>
     </div> <!-- end row-->
@@ -350,7 +350,7 @@
     <script src="{{ URL::asset('build/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script src="{{ URL::asset('build/js/app.js') }}"></script>
 
-    <script>
+    {{-- <script>
         $("#attendances-btn").click((e) => {
             let event_id = e.target.getAttribute('data-event-id');
             $('#event-modal').modal('hide');
@@ -460,7 +460,7 @@
             let event_id = e.target.getAttribute('data-event-id');
             location.href = `/dashboard/attendances/report/${event_id}`;
         })
-    </script>
+    </script> --}}
 
     {{-- Google Location Places Search Javascript --}}
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initialize" async></script>

@@ -6,12 +6,44 @@ use App\Models\Event;
 use App\Models\EventAttendance;
 use App\Models\User;
 use Carbon\Carbon;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class EventAttendanceController extends Controller
-{
+{   
+    public function index(Request $request) {
+        if($request->ajax()) {
+            $attendances = EventAttendance::select("user_id", DB::raw("MAX(event_id) as event_id"));
+
+            $attendances = $attendances->where('event_id', $request->event_id)
+                            ->groupBy("user_id");
+
+            return DataTables::of($attendances)
+                    ->addIndexColumn() 
+                    ->addColumn('user', function ($row) {
+                        return '<h6 style="line-height: 5px !important;" class="fw-semibold">' . $row->user->first_name . ' ' . $row->user->last_name .'</h6>
+                                <small>#' . $row->user->mfc_id_number .'</small>';
+                    })
+                    ->addColumn('event', function ($row) {
+                        return '<h5 class="fw-semibold">' .$row->event->title  .'</h5>
+                                <small>' . Carbon::parse($row->event->start_date)->format('M d, Y') . " to " . Carbon::parse($row->event->end_date)->format('M d, Y') .'</small>';
+                    })
+                    ->addColumn('actions', function ($row) {
+                        $actions = "<button type='button' class='btn btn-soft-success btn-sm edit-btn' id='" . $row->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit'><i class='ri-pencil-fill align-bottom'></i></button>";
+    
+                        return $actions;
+                    })
+                    ->rawColumns(['actions', "event", "user"])
+                    ->make(true);
+        }
+
+        $events = Event::latest()->get();
+        return view("pages.event-attendances.index", compact("events"));
+    }
+
     public function getEventUsers(Request $request) {
         $users = User::query();
         $event_attendances = EventAttendance::where("event_id", $request->event_id)->get();
@@ -44,23 +76,37 @@ class EventAttendanceController extends Controller
     }
 
     public function saveAttendance(Request $request) {
-        $user = User::where("id", $request->user_id)->first();
-        $event = Event::where("id", $request->event_id)->first();
-        
-        if($request->checked) {
-            EventAttendance::updateOrCreate([
-                'event_id' => $event->id,
-                'user_id' => $user->id,
-                'attendance_date' => Carbon::now()
-            ], []);
-        } else {
-            EventAttendance::where('event_id', $request->event_id)->where('user_id', $request->user_id)->delete();
-        }
+        try {
+            $user = User::where("id", $request->user_id)->first();
+            if(!$user) throw new Exception("User Not Found", 404);
+            
+            $event = Event::where("id", $request->event_id)->first();
+            if(!$event) throw new Exception("Event Not Found", 404);
 
-        return response()->json([
-            "status" => "success",
-            "message" => "Attendance recorded successfully",
-        ]);
+            if($request->checked) {
+                EventAttendance::updateOrCreate([
+                    'event_id' => $event->id,
+                    'user_id' => $user->id,
+                    'attendance_date' => Carbon::now()
+                ], []);
+            } else {
+                EventAttendance::where('event_id', $request->event_id)->where('user_id', $request->user_id)->delete();
+            }
+
+            return response()->json([
+                "status" => "success",
+                "message" => "Attendance recorded successfully",
+            ]); 
+
+        } catch (Exception $exception) {
+            $exception_code = $exception->getCode() === 0 ? 500 : $exception->getCode();
+            return response()->json([
+                "errors" => [
+                    "error" => $exception,
+                    "message" => $exception->getMessage(),
+                ]
+            ], $exception_code);
+        }
     }
 
     public function report(Request $request) {

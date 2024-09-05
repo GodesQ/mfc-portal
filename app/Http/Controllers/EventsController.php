@@ -43,7 +43,6 @@ class EventsController extends Controller
 
                     // Return 'N/A' if no section is found
                     return $section ? $section->name : 'N/A';
-
                 })
                 ->rawColumns(['actions'])
                 ->make(true);
@@ -58,7 +57,7 @@ class EventsController extends Controller
      */
     public function create()
     {
-        
+        return view('');
     }
 
     /**
