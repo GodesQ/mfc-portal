@@ -9,5 +9,5 @@ class EventUserDetail extends Model
 {
     use HasFactory;
     protected $table = "event_user_details";
-    protected $fillable = ['transaction_id', 'first_name', 'last_name', 'email', 'contact_number', 'address'];
+    protected $fillable = ['event_registration_id', 'first_name', 'last_name', 'email', 'contact_number', 'address'];
 }

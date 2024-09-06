@@ -22,9 +22,10 @@
             cursor: pointer;
             accent-color: #3e5287;
         }
+
         .form-switch-success .form-check-input {
-            background-color: rgb(116, 2, 2);
-            border-color: rgb(116, 2, 2);
+            background-color: #fee8e2;
+            border-color: #fa7d5b;
         }
     </style>
 
@@ -34,11 +35,10 @@
                 <div class="d-flex align-items-center justify-content-end">
                     <div class="flex-shrink-0">
                         <div class="d-flex flex-wrap gap-2">
+                            <button class="btn btn-outline-dark" id="refresh-btn">Refresh <i class="ri-restart-line"></i></button>
                             <a href="{{ route('events.register', $event->id) }}"
                                 class="btn btn-primary add-btn text-capitalize">
                                 <i class="ri-add-line align-bottom me-1"></i>Register User</a>
-                            <button class="btn btn-soft-danger" id="remove-actions"><i
-                                    class="ri-delete-bin-2-line"></i></button>
                         </div>
                     </div>
                 </div>
@@ -50,6 +50,7 @@
                         <thead>
                             <tr>
                                 <th class="" data-sort="id">ID</th>
+                                <th class="" data-sort="registration_code">Registration Code</th>
                                 <th class="" data-sort="user">User</th>
                                 <th class="" data-sort="event">Event</th>
                                 <th class="" data-sort="amount">Amount</th>
@@ -61,13 +62,32 @@
                     </table>
                 </div>
             </div>
+
+            <div class="modal fade bs-example-modal-center" tabindex="-1" role="dialog"
+                aria-labelledby="mySmallModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header bg-primary-subtle py-3">
+                            <h5 class="modal-title" id="myModalLabel">QR Code</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body d-flex justify-content-center align-items-center p-5">
+                            <div class="d-flex justify-content-center align-items-center flex-column" id="qrcode-loading">
+                                <img src="{{ URL::asset('build/icons/qr-code.gif') }}" style="width: 100px; height: 100px;" alt="">
+                                <h5 class="fw-bold">Generating QR Code...</h5>
+                            </div>
+                            <div class="qr-code-div"></div>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
         </div>
     </div>
 @endsection
 
 @section('script')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script>
-        // make sure that the table is loaded correctly
         $('#event_registrations_datatable').on('draw.dt', function() {
             $('[data-bs-toggle="tooltip"]').tooltip();
 
@@ -86,8 +106,9 @@
                             },
                             success: function(response) {
                                 showSuccessMessage(response.message);
-                                $('#event_registrations_datatable').DataTable().draw(
-                                    false);
+                                $('#event_registrations_datatable').DataTable()
+                                    .draw(
+                                        false);
                             },
                             error: function(xhr, response, error) {
                                 showErrorMessage(xhr.statusText);
@@ -97,7 +118,7 @@
                 });
             });
 
-            $('.attendance-checkbox').click(function (e) {
+            $('.attendance-checkbox').click(function(e) {
                 let user_id = e.target.getAttribute('data-user-id');
                 let event_id = e.target.getAttribute('data-event-id');
                 let checked = e.target.checked ? 1 : 0;
@@ -112,7 +133,7 @@
                         user_id: user_id,
                         checked: checked,
                     },
-                    success: function (response) {
+                    success: function(response) {
                         toastr.success(response.message, "Success");
                     },
                     error: function(XMLHttpRequest, textStatus, errorThrown) {
@@ -120,13 +141,58 @@
                         console.log(XMLHttpRequest);
                     }
                 })
-            })
+            });
+
+
+            // Listen for clicks on any button with the class 'qr-btn'
+            $('.qr-btn').click(function(e) {
+                // Get the registration code for the clicked button
+                let registration_code = this.getAttribute('data-registration-code');
+                
+                // Clear any previous QR code
+                let qrCodeDiv = document.querySelector('.qr-code-div');
+                qrCodeDiv.innerHTML = '';
+                $('#qrcode-loading').removeClass('d-none');
+
+                // Wait for the modal to be fully shown before generating the QR code
+                $('.bs-example-modal-center').one('shown.bs.modal', function() {
+                    setTimeout(() => {
+                        $('#qrcode-loading').addClass('d-none');
+                        generateQRCode(registration_code);
+                    }, 2500);
+                });
+            });
         });
+
+        $('#refresh-btn').click(function () {
+            $('#event_registrations_datatable').DataTable().draw(false);
+        })
+
+        const generateQRCode = (qrContent) => {
+            let qrCodeDiv = document.querySelector('.qr-code-div');
+            // Clear the previous QR code before generating a new one
+            qrCodeDiv.innerHTML = '';
+
+            if(qrContent == '') qrContent = qrContent;
+
+            return new QRCode(qrCodeDiv, {
+                text: qrContent,
+                width: 256,
+                height: 256,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H,
+            });
+        }
 
         function initializeTables() {
             let columns = [{
                     data: "id",
                     name: "id",
+                },
+                {
+                    data: "registration_code",
+                    name: "registration_code"
                 },
                 {
                     data: "user",

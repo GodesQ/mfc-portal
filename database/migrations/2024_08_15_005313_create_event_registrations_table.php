@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('event_registrations', function (Blueprint $table) {
             $table->id();
+            $table->string('registration_code');
             $table->foreignId('transaction_id')->nullable()->constrained('transactions')->cascadeOnDelete();
             $table->foreignId('event_id')->nullable()->constrained('events')->cascadeOnDelete();
             $table->string('mfc_id_number');

@@ -9,7 +9,7 @@ class EventRegistration extends Model
 {
     use HasFactory;
     protected $table = "event_registrations";
-    protected $fillable = ["transaction_id", "event_id", "mfc_id_number", "amount", "registered_by", "registered_at"];
+    protected $fillable = ["transaction_id", "registration_code", "event_id", "mfc_id_number", "amount", "registered_by", "registered_at"];
 
     public function user() {
         return $this->hasOne(User::class, "mfc_id_number", "mfc_id_number");

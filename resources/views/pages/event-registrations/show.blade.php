@@ -14,7 +14,7 @@
         @endslot
     @endcomponent
 
-    <div class="container">
+    <div class="container-fluid">
         <div class="d-flex justify-content-end align-items-center">
             <a href="{{ route('events.registrations.index', $event_registration->event_id) }}" class="btn btn-dark">
                 <i class="ri-arrow-left-line"></i>
@@ -68,13 +68,13 @@
                             </div>
                         </div>
                         <div class="my-3 px-3">
-                            <div class="row g-3">
-                                <div class="col-xl-6 col-6">
+                            <div class="row gap-3">
+                                <div class="col-xl-5 col-5">
                                     <p class="text-muted mb-2 fw-medium">Transaction Code</p>
                                     <h5 class="fs-14 mb-0"><span id="invoice-no">{{ $event_registration->transaction->transaction_code }}</span></h5>
                                 </div>
                                 <!--end col-->
-                                <div class="col-xl-6 col-6">
+                                <div class="col-xl-5 col-5">
                                     <p class="text-muted mb-2 fw-medium">Date</p>
                                     <h5 class="fs-14 mb-0">
                                         <span id="invoice-date">{{ Carbon::parse($event_registration->transaction->created_at)->format('M d, Y') }}</span> 
@@ -82,13 +82,13 @@
                                     </h5>
                                 </div>
                                 <!--end col-->
-                                <div class="col-xl-6 col-6">
+                                <div class="col-xl-5 col-5">
                                     <p class="text-muted mb-2 fw-medium">Payment Status</p>
                                     <span class="badge bg-success-subtle text-success fs-11"
                                         id="payment-status">Paid</span>
                                 </div>
                                 <!--end col-->
-                                <div class="col-xl-6 col-6">
+                                <div class="col-xl-5 col-5">
                                     <p class="text-muted mb-2 fw-medium">Total Amount</p>
                                     <h5 class="fs-14 mb-0">₱<span id="total-amount"> {{ number_format($event_registration->transaction->total_amount, 2) }}</span></h5>
                                 </div>

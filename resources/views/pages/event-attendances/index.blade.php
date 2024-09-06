@@ -47,7 +47,7 @@
                 <div class="row g-2">
                     <div class="col-lg">
                         <div class="search-box">
-                            <input type="text" id="search-field" class="form-control search" placeholder="Search user name">
+                            <input type="text" id="search-field" class="form-control search" placeholder="Search MFC ID">
                             <i class="ri-search-line search-icon"></i>
                         </div>
                     </div>
@@ -60,8 +60,9 @@
                         <table id="attendance_datatables" class="table align-middle position-relative table-nowrap">
                             <thead class="table-active">
                                 <tr>
-                                    <th scope="col">Event</th>
                                     <th scope="col">User</th>
+                                    <th scope="col">Attendance Date</th>
+                                    <th scope="col">Event</th>
                                     <th scope="col">Action</th>
                                 </tr>
                             </thead>
@@ -75,7 +76,7 @@
         <div class="modal fade zoomIn" id="createProjectModal" tabindex="-1" aria-labelledby="createProjectModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
-                    <div class="modal-header p-3 bg-success-subtle">
+                    <div class="modal-header p-3 bg-primary-subtle">
                         <h5 class="modal-title" id="createProjectModalLabel">MFC Members</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" id="addProjectBtn-close" aria-label="Close"></button>
                     </div>
@@ -83,20 +84,9 @@
                         <label for="projectname-input" class="form-label">MFC ID Number</label>
                         <div class="input-group">
                             <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2">
-                            <button class="btn btn-outline-success" type="button" id="button-addon2">Button</button>
+                            <button class="btn btn-outline-primary" type="button" id="button-addon2">Search</button>
                         </div>
-                        <form action="#" autocomplete="off" class="createProject-form">
-                            <div class="mb-4">
-                                <input type="text" class="form-control" id="projectname-input" autocomplete="off" placeholder="Enter MFC ID" required>
-                                <div class="invalid-feedback">Please enter a MFC ID</div>
-                                <input type="hidden" class="form-control" id="projectid-input" value="" placeholder="Enter project name">
-                            </div>
-                            
-                            <div class="hstack gap-2 justify-content-end">
-                                <button type="submit" class="btn btn-primary" id="addNewProject">Search</button>
-                            </div>
-                        </form>
-                        <div class="search-result mb-4">
+                        <div class="search-result my-4">
                             <h6>Search Result</h6>
                             <div id="mfc-member-result">No user found!</div>
                         </div>
@@ -123,13 +113,18 @@
             });
 
             function initializeTables() {
-                let columns = [{
-                        data: "event",
-                        name: "event",
-                    },
+                let columns = [
                     {
                         data: "user",
                         name: "user",
+                    },
+                    {
+                        data: "attendance_date",
+                        name: "attendance_date"
+                    },
+                    {
+                        data: "event",
+                        name: "event",
                     },
                     {
                         data: "actions",

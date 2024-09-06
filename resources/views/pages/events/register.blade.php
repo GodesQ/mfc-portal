@@ -248,7 +248,7 @@
                                     <div style="width: 70%;">
                                         <h5>${user.first_name} ${user.last_name}</h5>
                                         <h6>${user.mfc_id_number}</h6>
-                                        <button class="btn btn-primary btn-sm" data-mfc-id="${user.mfc_id_number}" data-user-id="${user.id}" id="register-user-btn">
+                                        <button type="button" class="btn btn-primary btn-sm" data-mfc-id="${user.mfc_id_number}" data-user-id="${user.id}" id="register-user-btn">
                                             Confirm
                                         </button>
                                     </div>
@@ -257,8 +257,8 @@
 
                     mfcMembersDiv.innerHTML = output;
 
-                    // let registerUserBtn = document.querySelector("#register-user-btn");
-                    // registerUserBtn.addEventListener('click', registerUser);
+                    let registerUserBtn = document.querySelector("#register-user-btn");
+                    registerUserBtn.addEventListener('click', registerUser);
                 }
             })
         })

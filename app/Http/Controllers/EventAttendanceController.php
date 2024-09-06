@@ -16,23 +16,28 @@ class EventAttendanceController extends Controller
 {   
     public function index(Request $request) {
         if($request->ajax()) {
-            $attendances = EventAttendance::select("user_id", DB::raw("MAX(event_id) as event_id"));
+            $attendances = EventAttendance::select("user_id", DB::raw("MAX(event_id) as event_id"), DB::raw("MAX(attendance_date) as attendance_date"));
 
             $attendances = $attendances->where('event_id', $request->event_id)
                             ->groupBy("user_id");
 
             return DataTables::of($attendances)
                     ->addIndexColumn() 
+                    ->editColumn("attendance_date",function ($row) {
+                        return Carbon::parse($row->attendance_date)->format("M d, Y");
+                    })
                     ->addColumn('user', function ($row) {
                         return '<h6 style="line-height: 5px !important;" class="fw-semibold">' . $row->user->first_name . ' ' . $row->user->last_name .'</h6>
                                 <small>#' . $row->user->mfc_id_number .'</small>';
                     })
                     ->addColumn('event', function ($row) {
-                        return '<h5 class="fw-semibold">' .$row->event->title  .'</h5>
+                        return '<h6 style="line-height: 5px !important;" class="fw-semibold">' .$row->event->title  .'</h6>
                                 <small>' . Carbon::parse($row->event->start_date)->format('M d, Y') . " to " . Carbon::parse($row->event->end_date)->format('M d, Y') .'</small>';
                     })
                     ->addColumn('actions', function ($row) {
-                        $actions = "<button type='button' class='btn btn-soft-success btn-sm edit-btn' id='" . $row->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit'><i class='ri-pencil-fill align-bottom'></i></button>";
+                        $actions = "<button type='button' class='btn btn-soft-danger btn-sm edit-btn' id='" . $row->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Delete'>
+                                            <i class='ri-delete-bin-5-fill align-bottom'></i>
+                                    </button>";
     
                         return $actions;
                     })
@@ -95,7 +100,7 @@ class EventAttendanceController extends Controller
 
             return response()->json([
                 "status" => "success",
-                "message" => "Attendance recorded successfully",
+                "message" => $request->checked ? "Attendance recorded successfully" : "Attendance updated successfully",
             ]); 
 
         } catch (Exception $exception) {

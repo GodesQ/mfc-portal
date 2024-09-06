@@ -55,9 +55,9 @@
     <script>
         toastr.options = {
             closeButton: true, // Add close button
-            timeOut: 2000
+            timeOut: 3000
         };
-        toastr.error("{{ Session::get('fail') }}", 'Fail');
+        toastr.error("{{ Session::get('fail') }}", 'Failed');
     </script>
 @endif
 

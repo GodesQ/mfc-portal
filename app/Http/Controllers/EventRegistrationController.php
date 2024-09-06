@@ -16,6 +16,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Str;
 use Yajra\DataTables\DataTables;
 
 class EventRegistrationController extends Controller
@@ -28,11 +29,13 @@ class EventRegistrationController extends Controller
     public function list(Request $request, Event $event) {
 
         if($request->ajax()) {
-            $registrations = EventRegistration::with('user', 'event', 'transaction');
+            $registrations = EventRegistration::where('event_id', $event->id)
+                                ->with('user', 'event', 'transaction');
 
             return DataTables::of($registrations)
                 ->addColumn('user', function ($row) {
-                    return $row->user->first_name . ' ' . $row->user->last_name;
+                    return '<h6 style="line-height: 5px !important;" class="fw-semibold">' . $row->user->first_name . ' ' . $row->user->last_name .'</h6>
+                            <small>#' . $row->user->mfc_id_number .'</small>';
                 })
                 ->addColumn('event', function ($row) {
                     return $row->event->title;
@@ -61,6 +64,7 @@ class EventRegistrationController extends Controller
                 })
                 ->addColumn('actions', function ($row) {
                     $actions = "<div class='hstack gap-2'>
+                        <button type='button' class='btn btn-soft-primary btn-sm qr-btn' data-registration-code='" . $row->registration_code . "' id='" . $row->id . "' data-bs-toggle='modal' data-bs-target='.bs-example-modal-center' data-bs-toggle='tooltip' data-bs-placement='top' title='QR Code'><i class='ri-qr-code-line'></i></button>
                         <a href='" . route('events.registrations.show', ['id' => $row->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Show'><i class='ri-eye-fill align-bottom'></i></a>
                         <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $row->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
                     </div>";
@@ -99,6 +103,8 @@ class EventRegistrationController extends Controller
 
             $convenience_fee = 10.00;
 
+            $this->checkExistingRegistrationRecord($request);
+
             // Add the request donation in total amount
             $total_amount = (0 + $convenience_fee) + $request->donation;
 
@@ -124,7 +130,10 @@ class EventRegistrationController extends Controller
             foreach ($request->users as $user_id) {
                 $user = User::where('id', $user_id)->first();
 
+                $registration_code = "REG" . date("y-m") . "-" . Str::upper(Str::random(7));
+
                 $event_registration = EventRegistration::create([
+                    "registration_code" => $registration_code,
                     'transaction_id' => $transaction->id,
                     'event_id' => $event->id,
                     'mfc_id_number' => $user->mfc_id_number,
@@ -164,5 +173,33 @@ class EventRegistrationController extends Controller
             DB::rollBack();
             return back()->with('fail', $exception->getMessage());
         }
-    }    
+    }
+
+    public function userRegistrations(Request $request, $user_id) {
+        if($request->ajax()) {
+            $registrations = EventRegistration::whereHas('user', function ($query) use ($user_id) {
+                $query->where('user_id', $user_id);
+            });
+        }
+
+    }
+
+    private function checkExistingRegistrationRecord($request) {
+        $event_registration = false;
+        
+        foreach ($request->users as $key => $user_id) {
+            $event_registration = EventRegistration::where('event_id', $request->event_id)
+                                ->whereHas('user', function ($q) use ($user_id) {
+                                    $q->where('id', $user_id);
+                                })
+                                ->exists();
+            
+            if($event_registration) break;
+        }
+
+        if($event_registration) throw new Exception('One or more users in the list have already completed registration for this event. Duplicate registrations are not allowed.', 400);
+
+        
+
+    }
 }

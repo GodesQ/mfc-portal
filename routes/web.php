@@ -65,6 +65,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/events/{event}/registrations', [EventRegistrationController::class,'list'])->name('events.registrations.index');
         Route::get('/events/{event_id}/register', [EventRegistrationController::class, 'register'])->name('events.register');
         Route::post('/events/register', [EventRegistrationController::class, 'save_registration'])->name('events.register.post');
+        Route::get('/users/{user_id}/events/registrations', [EventRegistrationController::class, 'userRegistrations'])->name('users.events.registrations');
         
         Route::resource('/tithes', TithesController::class);
 

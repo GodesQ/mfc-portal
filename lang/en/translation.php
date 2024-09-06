@@ -231,5 +231,6 @@ return [
     "attendance_report" => "Attendance Report",
     
     "event_registrations" => "Event Registrations",
+
 ];
 
