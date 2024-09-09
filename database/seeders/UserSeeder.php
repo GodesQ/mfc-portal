@@ -15,7 +15,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {   
         /******** AREA SERVANT USER ********/
-        $area_servant = User::create([
+        $member_one = User::create([
             'first_name' => 'George', 
             'last_name' => 'Steve', 
             'email' => 'georgesteve123@gmail.com', 
@@ -26,13 +26,13 @@ class UserSeeder extends Seeder
             'email_verified_at' => now()
         ]);
 
-        $area_servant->update([
+        $member_one->update([
             'mfc_id_number' => generateNextMfcId(),
         ]);
 
-        $area_servant->assignRole('area_servant');
-        $area_servant->role_id = 3;
-        $area_servant->save();
+        $member_one->assignRole('member');
+        $member_one->role_id = 7;
+        $member_one->save();
 
         /******** CHAPTER SERVANT USER ********/
         $chapter_servant = User::create([

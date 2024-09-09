@@ -57,7 +57,6 @@ class EventsController extends Controller
      */
     public function create()
     {
-        return view('');
     }
 
     /**
@@ -65,6 +64,7 @@ class EventsController extends Controller
      */
     public function store(StoreRequest $request)
     {   
+
         try {
             DB::beginTransaction();
 

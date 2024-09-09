@@ -116,7 +116,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 defaultDate: [info.dateStr, info.dateStr]
             });
         },
-        events: defaultEvents,
+        // events: defaultEvents,
         eventReceive: function (info) {
             var newid = parseInt(info.event.id);
             var newEvent = {
@@ -163,19 +163,22 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("event-location-tag").innerHTML = selectedEvent.extendedProps.location === undefined ? "No Location" : selectedEvent.extendedProps.location;
         document.getElementById("event-description-tag").innerHTML = selectedEvent.extendedProps.description === undefined ? "No Description" : selectedEvent.extendedProps.description;
         document.getElementById("event-registrationfee-tag").innerHTML = selectedEvent.extendedProps.registration_fee === undefined ? "No Registration Fee" : selectedEvent.extendedProps.registration_fee;
-    
+        
+        if(selectedEvent.extendedProps.is_enable_event_registration) {
+            document.getElementById("register-event-btn").classList.add('d-block');
+        } else {
+            document.getElementById("register-event-btn").classList.add('d-none');
+        }
+
         document.getElementById("register-event-btn").setAttribute('data-event-id', selectedEvent.id);
+        
+
         // document.getElementById("attendances-btn").setAttribute('data-event-id', selectedEvent.id);
         // document.getElementById("attendance-report-btn").setAttribute('data-event-id', selectedEvent.id);
         // document.getElementById("search-event-user-btn").setAttribute('data-event-id', selectedEvent.id);
-        document.getElementById("btn-delete-event").setAttribute('data-event-id', selectedEvent.id);
+        if(document.getElementById("btn-delete-event"))
+            document.getElementById("btn-delete-event").setAttribute('data-event-id', selectedEvent.id);
 
-        // If the event is not available for registration
-        if(!selectedEvent.extendedProps.is_enable_event_registration) {
-            document.getElementById("register-event-btn").style.display = "none";
-        } else {
-            document.getElementById("register-event-btn").style.display = "block";
-        }
     
         // Edit Modal
         document.getElementById("event-title").value = selectedEvent.title;

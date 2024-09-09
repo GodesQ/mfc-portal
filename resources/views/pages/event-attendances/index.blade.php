@@ -83,8 +83,8 @@
                     <div class="modal-body">
                         <label for="projectname-input" class="form-label">MFC ID Number</label>
                         <div class="input-group">
-                            <input type="text" class="form-control" aria-label="Recipient's username" aria-describedby="button-addon2">
-                            <button class="btn btn-outline-primary" type="button" id="button-addon2">Search</button>
+                            <input type="text" class="form-control" id="mfc-id-number-search" aria-describedby="button-addon2">
+                            <button class="btn btn-outline-primary" type="button" id="search-mfc-btn">Search</button>
                         </div>
                         <div class="search-result my-4">
                             <h6>Search Result</h6>
@@ -102,6 +102,57 @@
     <script>
         $(document).ready(function() {
             $('#event-select-field').select2();
+
+            $('#search-mfc-btn').click(function (e) {
+                let mfcIdNumber = document.querySelector('#mfc-id-number-search').value;
+                if(!mfcIdNumber) return toastr.warning("No MFC ID Found");
+
+                $.ajax({
+                    method: "GET",
+                    url: `/dashboard/users/search?mfc_user_id=${mfcIdNumber}`,
+                    success: function (response) {
+                        const users = response.users;
+                        let mfc_member_result = document.querySelector('#mfc-member-result');
+                        let output = "";
+
+                        users.forEach(user => {
+                            output += `<div class="my-2 border p-2 d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5>${user.first_name} ${user.last_name}</h5>
+                                            <h6># ${user.mfc_id_number}</h6>
+                                        </div>
+                                        <button id="add-user-attendance" data-user-id="${user.id}" class="btn btn-sm btn-primary">
+                                            Add User <i class="ri-add-line"></i>
+                                        </button>
+                                    </div>`;
+                        });
+
+                        mfc_member_result.innerHTML = output;
+
+                        $('#add-user-attendance').click(function (e) {
+                            let user_id = this.getAttribute('data-user-id');
+                            let event_id = $('#event-select-field').val();
+
+                            $.ajax({
+                                method: "POST",
+                                url: "{{ route('attendances.users.store') }}",
+                                data: {
+                                    _token: "{{ csrf_token() }}",
+                                    user_id: user_id,
+                                    event_id: event_id,
+                                },
+                                success: function (response) {
+                                    toastr.success(response.message);
+                                },
+                                error: function (error) {
+                                    let responseJSON = error.responseJSON;
+                                    toastr.error(responseJSON.errors.message);
+                                }
+                            })
+                        })
+                    }
+                })
+            })
         })
     </script>
 

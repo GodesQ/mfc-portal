@@ -136,7 +136,8 @@
 
                 @role('super_admin')
                     <li class="nav-item">
-                        <a class="nav-link menu-link" href="{{ route('attendances.index') }}">
+                        <a class="nav-link menu-link" {{ preg_match('/^dashboard\/attendances/', Request::path()) ? 'active' : '' }}
+                                 href="{{ route('attendances.index') }}">
                             <i class="ri-folder-user-line"></i> <span>@lang('translation.attendance')</span>
                         </a>
                     </li>
@@ -144,8 +145,8 @@
 
                 @role('super_admin')
                     <li class="nav-item">
-                        <a class="nav-link menu-link"
-                            href="{{ route('tithes.index') }}">
+                        <a class="nav-link menu-link" {{ preg_match('/^dashboard\/transactions/', Request::path()) ? 'active' : '' }}
+                            href="{{ route('transactions.index') }}">
                             <i class="ri-wallet-3-line"></i> <span>@lang('translation.transactions')</span>
                         </a>
                     </li>

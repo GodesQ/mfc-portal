@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Event;
 use App\Models\EventRegistration;
+use App\Models\Tithe;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -11,9 +13,16 @@ class DashboardController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        $recent_event_registrations = EventRegistration::latest()->with('event','user')->limit(10)->get();
-        return view('pages.dashboards.index', compact('recent_event_registrations'));
+    {   
+        $user = auth()->user();
+        $recent_event_registrations = EventRegistration::latest()->with('event','user')->get();
+        $upcoming_events = Event::where('start_date', '>=', date('Y-m-d'))
+                                ->orderBy('start_date', 'asc')
+                                ->limit(5)
+                                ->get();
+        
+        $latest_tithes = Tithe::latest()->limit(5)->get();
+        return view('pages.dashboards.index', compact('recent_event_registrations', 'upcoming_events', 'latest_tithes'));
     }
 
     /**

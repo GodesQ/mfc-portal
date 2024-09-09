@@ -78,6 +78,10 @@ class EventRegistrationController extends Controller
         return view('pages.event-registrations.index', compact('event'));
     }
 
+    public function users_list(Request $request) {
+
+    }
+
     public function show(Request $request, $id) {
         $event_registration = EventRegistration::findOrFail($id);
 
@@ -178,10 +182,37 @@ class EventRegistrationController extends Controller
     public function userRegistrations(Request $request, $user_id) {
         if($request->ajax()) {
             $registrations = EventRegistration::whereHas('user', function ($query) use ($user_id) {
-                $query->where('user_id', $user_id);
+                $query->where('id', $user_id);
             });
+
+            return DataTables::of($registrations)
+                ->addColumn('event', function ($row) {
+                    return $row->event->title;
+                })
+                ->editColumn('amount', function ($row) {
+                    return "₱ " . number_format($row->amount, 2);
+                })
+                ->addColumn('status', function ($row) {
+                    if($row->transaction->status == 'paid') {
+                        return "<div class='badge bg-success'>{$row->transaction->status}</div>";
+                    } else {
+                        return "<div class='badge bg-warning'>{$row->transaction->status}</div>";
+                    }
+                })
+                ->addColumn('actions', function ($row) {
+                    $actions = "<div class='hstack gap-2'>
+                        <button type='button' class='btn btn-soft-primary btn-sm qr-btn' data-registration-code='" . $row->registration_code . "' id='" . $row->id . "' data-bs-toggle='modal' data-bs-target='.bs-example-modal-center' data-bs-toggle='tooltip' data-bs-placement='top' title='QR Code'><i class='ri-qr-code-line'></i></button>
+                        <a href='" . route('events.registrations.show', ['id' => $row->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Show'><i class='ri-eye-fill align-bottom'></i></a>
+                    </div>";
+
+                    return $actions;
+                })
+                ->rawColumns(['actions', 'user', 'event', 'status'])
+                ->make(true);
+
         }
 
+        return view('pages.event-registrations.users-index');
     }
 
     private function checkExistingRegistrationRecord($request) {
@@ -198,8 +229,5 @@ class EventRegistrationController extends Controller
         }
 
         if($event_registration) throw new Exception('One or more users in the list have already completed registration for this event. Duplicate registrations are not allowed.', 400);
-
-        
-
     }
 }

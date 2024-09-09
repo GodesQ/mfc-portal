@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\EventAttendance;
+use App\Models\EventRegistration;
 use App\Models\User;
 use Carbon\Carbon;
 use Exception;
@@ -113,6 +114,64 @@ class EventAttendanceController extends Controller
             ], $exception_code);
         }
     }
+
+    public function storeUser(Request $request) {
+        DB::beginTransaction(); // Start transaction
+    
+        try {
+            // Check if the event exists
+            $event = Event::find($request->event_id);
+            if(!$event) throw new Exception('No Event Found.',404);
+    
+            // Check if the user exists
+            $user = User::find($request->user_id);
+            if(!$user) throw new Exception('No User Found.',404);
+    
+            $attendance = null;
+    
+            // If event registration is enabled, ensure the user is registered
+            if($event->is_enable_event_registration) {
+                $user_event_registration = EventRegistration::where('event_id', $request->event_id)
+                                        ->where('mfc_id_number', $user->mfc_id_number)
+                                        ->exists();
+    
+                // If the user is registered, update or create the attendance
+                if($user_event_registration) {
+                    $attendance = EventAttendance::updateOrCreate([
+                        'event_id' => $request->event_id,
+                        'user_id' => $request->user_id,
+                    ], []);
+                } else {
+                    throw new Exception('User is not registered for this event.', 400);
+                }
+            } else {
+                // If registration is not enabled, allow adding attendance directly
+                $attendance = EventAttendance::updateOrCreate([
+                    'event_id' => $request->event_id,
+                    'user_id' => $request->user_id,
+                ], []);
+            }
+    
+            DB::commit(); // Commit transaction
+    
+            return response()->json([
+                'message' => "Attendance Added Successfully",
+                'attendance' => $attendance,
+            ]);
+            
+        } catch (Exception $exception) {
+            DB::rollBack(); // Rollback in case of an error
+            $exception_code = (int) ($exception->getCode() === 0 ? 500 : $exception->getCode());
+    
+            return response()->json([
+                'errors'=> [
+                    'message' => $exception->getMessage(),
+                    'error' => $exception,
+                ],
+            ], $exception_code);
+        }
+    }
+    
 
     public function report(Request $request) {
         $event = Event::where('id', $request->event_id)->first();

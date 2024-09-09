@@ -35,7 +35,7 @@
                     <div class="card card-h-100">
                         <div class="card-body">
                             <button class="btn btn-primary w-100" id="btn-new-event" data-bs-toggle="modal"
-                                data-bs-target="#addEventModal"><i class="mdi mdi-plus"></i> Create New
+                                data-bs-target="#addEventModal" {{ auth()->user()->can('create-event') ? null : "disabled" }}><i class="mdi mdi-plus"></i> Create New
                                 Event</button>
 
                         </div>
@@ -73,10 +73,10 @@
                         <div class="modal-body p-4">
                             <form class="needs-validation" name="event-form" id="form-event" novalidate>
                                 <div class="text-end">
-                                    <a href="#" class="btn btn-sm btn-soft-primary" id="edit-event-btn"
-                                        data-id="edit-event" onclick="editEvent(this)" role="button">Edit</a>
-                                    {{-- <button class="btn btn-info btn-sm" id="attendances-btn" type="button" data-bs-toggle="offcanvas"
-                                        data-bs-target="#offcanvasRight" aria-controls="offcanvasRight">Attendance</button> --}}
+                                    <button href="#" class="btn btn-sm btn-soft-primary" id="edit-event-btn"
+                                        data-id="edit-event" {{ auth()->user()->can('edit-event') ? null : "disabled" }} onclick="editEvent(this)" role="button">
+                                        Edit
+                                    </button>                                   
                                 </div>
                                 <div class="event-details">
                                     <div class="d-flex mb-2">
@@ -123,9 +123,7 @@
                                             <p class="d-block text-muted mb-0" id="event-description-tag"></p>
                                         </div>
                                     </div>
-
-                                    <button type="button" class="btn btn-primary" id="register-event-btn">Register Now
-                                    </button>
+                                    <button type="button" class="btn btn-primary" id="register-event-btn">Register Now</button>
                                 </div>
                                 <div class="row event-form">
                                     <div class="col-12">

@@ -12,6 +12,7 @@ use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\RedirectController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\TithesController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Route;
@@ -70,9 +71,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/tithes', TithesController::class);
 
         Route::get('attendances', [EventAttendanceController::class, 'index'])->name('attendances.index');
+        Route::post('attendances/users', [EventAttendanceController::class, 'storeUser'])->name('attendances.users.store');
         Route::post('attendances/save', [EventAttendanceController::class, 'saveAttendance'])->name('attendances.save');
         Route::get('attendances/events/{event_id}/users', [EventAttendanceController::class, 'getEventUsers'])->name('attendances.users');
         Route::get('attendances/report/{event_id}', [EventAttendanceController::class, 'report'])->name('attendances.report');
+
+        Route::get('transactions/{transaction}/show', [TransactionController::class, 'show'])->name('transactions.show');
+        Route::get('transactions', [TransactionController::class, 'index'])->name('transactions.index');
 
         Route::resource('roles', RolesController::class);
 

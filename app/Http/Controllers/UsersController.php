@@ -212,12 +212,13 @@ class UsersController extends Controller
 
     public function search(Request $request) {
         $users = User::query();
+        $mfc_id_number = $request->query('mfc_user_id');
 
-        if($request->query('mfc_user_id')) {
-            $users = $users->where('mfc_id_number', $request->query('mfc_user_id'));
+        if($mfc_id_number) {
+            $users = $users->where('mfc_id_number', $mfc_id_number)->get();
+        } else {
+            $users = [];
         }
-
-        $users = $users->get();
 
         return response()->json([
             'status' => 'success',
