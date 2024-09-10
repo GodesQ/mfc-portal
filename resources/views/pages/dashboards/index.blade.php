@@ -192,9 +192,6 @@
                             @endforelse
                         </ul><!-- end ul -->
                     </div>
-                    <div class="p-3 pt-2">
-                        <a href="javascript:void(0);" class="text-muted text-decoration-underline">Show more...</a>
-                    </div>
                 </div><!-- end card body -->
             </div><!-- end card -->
         </div><!-- end col -->
