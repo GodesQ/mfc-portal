@@ -21,7 +21,7 @@ class VerifyEmailController extends Controller
         // dd($request->all());
 
         if ($request->user()->hasVerifiedEmail()) {
-            return redirect()->route('users.profile');
+            return redirect()->route('users.profile', auth()->user()->id);
         }
 
         $user = Auth::user();
@@ -39,7 +39,7 @@ class VerifyEmailController extends Controller
             $user->email_verified_at = Carbon::now();
             $user->save();
 
-            return redirect()->route('users.profile');
+            return redirect()->route('users.profile', auth()->user()->id);
         }
 
         if ($request->user()->markEmailAsVerified()) {
@@ -52,7 +52,7 @@ class VerifyEmailController extends Controller
     public function notice()
     {
         if (Auth::user()->hasVerifiedEmail()) {
-            return redirect()->route('users.profile');
+            return redirect()->route('users.profile', auth()->user()->id);
         }
         
         return view('auth.verify');
