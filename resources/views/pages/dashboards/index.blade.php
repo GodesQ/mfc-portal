@@ -23,8 +23,8 @@
                 <div class="mt-3 mt-lg-0">
                     <div class="row g-3 mb-0 align-items-center">
                         <div class="col-auto">
-                            <button type="button" class="btn btn-primary material-shadow-none"><i
-                                    class="mdi mdi-hands-pray fs-15"></i> Send Prayer Intention</button>
+                            <button type="button" class="btn btn-disabled border material-shadow-none" disabled><i
+                                    class="mdi mdi-hands-pray fs-15" ></i> Send Prayer Intention</button>
                         </div>
                         <div class="col-auto">
                             <a href="{{ route('events.calendar') }}" class="btn btn-info material-shadow-none"><i

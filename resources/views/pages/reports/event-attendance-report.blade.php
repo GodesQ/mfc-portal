@@ -26,7 +26,7 @@
                     <h3>{{ $event->title }}</h3>
                     <div class="flex gap-2">
                         <span class="bg-primary badge text-uppercase">Worldwide</span>
-                        <span class="badge bg-primary text-uppercase">{{ $event->section->name }}</span>
+                        <span class="badge bg-primary text-uppercase"></span>
                     </div>
                     <div class="my-2">
                         {!! $event->description !!}

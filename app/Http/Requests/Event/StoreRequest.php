@@ -24,7 +24,7 @@ class StoreRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'type' => ['required', 'string', 'max:255'],
-            'section_id' => ['required', 'integer'],
+            'section_ids' => ['required', 'array'],
             'event_date' => ['required'],
             'time' => ['required'],
             'location' => ['required', 'string', 'max:255'],

@@ -21,9 +21,9 @@ class EventsController extends Controller
     {
         //
         $endPoint = 'list';
-        $events = Event::all();
 
         if ($request->ajax()) {
+            $events = Event::get();
             return DataTables::of($events)
                 ->editColumn('start_date', function ($event) {
                     return Carbon::parse($event->start_date)->format('F d, Y');    
@@ -39,12 +39,43 @@ class EventsController extends Controller
                     return $actions;
                 })
                 ->addColumn('section', function ($event) {
-                    $section = Section::find($event->section_id);
+                    $sections = Section::whereIn('id', $event->section_ids)->get();
+                    $output = "<div class='d-flex flex-wrap gap-1'>";
 
-                    // Return 'N/A' if no section is found
-                    return $section ? $section->name : 'N/A';
+                    foreach ($sections as $section) {
+                        switch($section->name) {
+                            case 'kids':
+                                $classname = 'bg-orange-subtle';
+                                break;
+                            case 'youth':
+                                $classname = 'bg-blue-subtle';
+                                break;
+                            case 'singles':
+                                $classname = 'bg-success';
+                                break;
+                            case 'servants':
+                                $classname = 'bg-warning';
+                                    break;
+                            case 'handmaids':
+                                $classname = 'bg-red';
+                                    break;
+                            case 'couples':
+                                $classname = 'bg-info';
+                                    break;       
+                            default:
+                                $classname = 'bg-primary';
+                                    break;
+                        }
+
+                        $output .= "<div class='badge $classname'>$section->name</div>";
+                    }
+    
+                    $output .= "</div>";
+                    // // Return 'N/A' if no section is found
+                    // return $sections ? $sections->name : 'N/A';
+                    return $output;
                 })
-                ->rawColumns(['actions'])
+                ->rawColumns(['actions', 'section'])
                 ->make(true);
         }
 
@@ -89,6 +120,7 @@ class EventsController extends Controller
             }
 
             Event::create(array_merge($data, [
+                'section_ids' => json_encode($request->section_ids),
                 'poster' => $filename,
                 'start_date' => $start_date,
                 'end_date' => $end_date,
@@ -199,7 +231,7 @@ class EventsController extends Controller
             $events = $events->where("start_date", '>', $today);
         }
 
-        $events = $events->with('section')->get();
+        $events = $events->get();
 
         return response()->json([
             'status' => 'success',
@@ -208,39 +240,56 @@ class EventsController extends Controller
     }
 
     public function fullCalendar(Request $request) {
-        $events = Event::where('status', 'Active')->with('section')->get()->map(function($event) {
+        $events = Event::where('status', 'Active')->get()->map(function($event) {
+            $sections = Section::whereIn('id', $event->section_ids)->get();
 
-            switch($event->section->name) {
-                case 'kids':
-                    $classname = 'bg-orange-subtle';
-                    break;
-                case 'youth':
-                    $classname = 'bg-blue-subtle';
-                    break;
-                case 'singles':
-                    $classname = 'bg-success-subtle';
-                    break;
-                case 'servants':
-                    $classname = 'bg-warning-subtle';
+            $colors = [];
+            foreach ($sections as $key => $section) {
+                switch($section->name) {
+                    case 'kids':
+                        $color = '#fd6a08' ;
                         break;
-                case 'handmaids':
-                    $classname = 'bg-danger-subtle';
+                    case 'youth':
+                        $color = '#0362a4';
                         break;
-                case 'couples':
-                    $classname = 'bg-info-subtle';
-                        break;       
-                default:
-                    $classname = 'bg-primary-subtle';
+                    case 'singles':
+                        $color = '#0ab39c';
                         break;
+                    case 'servants':
+                        $color = '#f7b84b';
+                            break;
+                    case 'handmaids':
+                        $color = '#e83029';
+                            break;
+                    case 'couples':
+                        $color = '#f06548';
+                            break;       
+                    default:
+                        $color = '#0ab39c';
+                            break;
+                }
+                array_push($colors, $color);
             }
 
+            $percentage = 100 / count($colors);
+            $colorStops = [];
+            foreach ($colors as $index => $color) {
+                $colorStops[] = "$color";
+            }
 
+            if(count($colors) > 1) {
+                $background = "#7852a9";
+                // $background = "linear-gradient(90deg, ";
+                // $background .= implode(', ', $colorStops) . ")";
+            } else {
+                $background = $colors[0];
+            }
+            
             return [
                 'id' => $event->id,
                 'title' => $event->title,
                 'start' => $event->start_date,
                 'end' => Carbon::parse($event->end_date)->addDay(), 
-                'className' => $classname,
                 'extendedProps' => [
                     'time' => $event->time,
                     'location' => $event->location,
@@ -249,6 +298,7 @@ class EventsController extends Controller
                     'description' => $event->description,
                     'registration_fee' => $event->reg_fee, 
                     'is_enable_event_registration' => $event->is_enable_event_registration,
+                    'background' => $background,
                 ],
                 'allDay' => true
             ];

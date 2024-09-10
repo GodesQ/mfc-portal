@@ -12,7 +12,7 @@ class Event extends Model
     protected $fillable = [
         'title',
         'type',
-        'section_id',
+        'section_ids',
         'start_date',
         'end_date',
         'time',
@@ -39,7 +39,7 @@ class Event extends Model
         'is_enable_event_registration' => 'boolean',
     ];
 
-    public function section() {
-        return $this->belongsTo(Section::class, 'section_id');
-    }
+    // public function section() {
+    //     return $this->belongsTo(Section::class, 'section_id');
+    // }
 }

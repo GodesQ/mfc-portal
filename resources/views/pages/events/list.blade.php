@@ -277,53 +277,10 @@
                     {
                         data: "section",
                         name: "section",
-                        render: function(data) {
-                            if (data == null) {
-                                return '<span class="text-capitalize">N/A</span>';
-                            }
-
-                            switch (data) {
-                                case 'kids':
-                                    return '<span class="text-capitalize badge bg-danger" style="font-size: 12px;">' +
-                                        data + '</span>';
-                                    break;
-                                case 'youth':
-                                    return '<span class="text-capitalize badge bg-primary" style="font-size: 12px;">' +
-                                        data + '</span>';
-                                    break;
-                                case 'singles':
-                                    return '<span class="text-capitalize badge bg-success" style="font-size: 12px;">' +
-                                        data + '</span>';
-                                    break;
-                                case 'handmaids':
-                                    return '<span class="text-capitalize badge bg-red" style="font-size: 12px;">' +
-                                        data + '</span>';
-                                    break;
-                                case 'servants':
-                                    return '<span class="text-capitalize badge bg-warning" style="font-size: 12px;">' +
-                                        data + '</span>';
-                                    break;
-                                case 'couples':
-                                    return '<span class="text-capitalize badge bg-info" style="font-size: 12px;">' +
-                                        data + '</span>';
-                                    break;
-                            }
-
-                            return '<span class="text-capitalize">' + data + '</span>';
-                        }
                     },
                     {
                         data: "status",
                         name: "status",
-                        render: function(data, type, row) {
-                            if (data == 'Active') {
-                                return '<span class="text-uppercase badge bg-success-subtle text-success">' +
-                                    data + '</span>';
-                            } else {
-                                return '<span class="text-uppercase badge bg-warning-subtle text-warning">' +
-                                    data + '</span>';
-                            }
-                        }
                     },
                     {
                         data: "actions",

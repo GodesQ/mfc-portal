@@ -106,13 +106,18 @@ class EventRegistrationController extends Controller
             $auth_user = Auth::user();
 
             $convenience_fee = 10.00;
+            $total_convenience_fee = 0;
+
+            for ($i=0; $i < $users_count; $i++) { 
+                $total_convenience_fee += $convenience_fee;
+            }
 
             $this->checkExistingRegistrationRecord($request);
 
             // Add the request donation in total amount
-            $total_amount = (0 + $convenience_fee) + $request->donation;
+            $total_amount = (0 + $total_convenience_fee) + $request->donation;
 
-            for ($i=0; $i < $users_count; $i++) { 
+            for ($i=0; $i < $users_count; $i++) {
                 $total_amount += $event->reg_fee;
             }
             

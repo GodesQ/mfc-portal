@@ -109,7 +109,7 @@
                                             </tr>
                                             <tr>
                                                 <td>Convenience Fee : </td>
-                                                <td class="text-end" id="registration-donation">₱ 10.00</td>
+                                                <td class="text-end" id="registration-convenience-fee">0.00</td>
                                             </tr>
                                             <tr>
                                                 <td>Number of Registrations : </td>
@@ -119,7 +119,7 @@
                                                 <th>Total (Peso) :</th>
                                                 <td class="text-end">
                                                     <span class="fw-semibold" id="registration-total">
-                                                        ₱ 10.00
+                                                        ₱ 0.00
                                                     </span>
                                                 </td>
                                             </tr>
@@ -140,7 +140,7 @@
                                 <h3>{{ $event->title }}</h3>
                                 <div class="flex gap-2">
                                     <span class="bg-primary badge text-uppercase">Worldwide</span>
-                                    <span class="badge bg-primary text-uppercase">{{ $event->section->name }}</span>
+                                    <span class="badge bg-primary text-uppercase"></span>
                                 </div>
                                 <div class="my-2">
                                     {!! $event->description !!}
@@ -361,14 +361,23 @@
             let eventRegistrationFee = document.querySelector('#event-registration-fee-field').value;
             let donation_amount = document.getElementById("donation-field").value ?? 0;
             let convenience_fee = 10.00;
+            
 
-            let totalAmount = (0 + convenience_fee) + parseFloat(donation_amount);
+            let total_convenience_fee = 0;
+
+            for (let index = 0; index < user_ids.length; index++) {
+                total_convenience_fee += convenience_fee;
+            }
+
+            let totalAmount = (0 + total_convenience_fee) + parseFloat(donation_amount);
+            
             if (user_ids.length > 0) {
                 for (let i = 0; i < user_ids.length; i++) {
                     totalAmount += parseFloat(eventRegistrationFee);
                 }
             }
 
+            $('#registration-convenience-fee').html(`₱ ${total_convenience_fee.toFixed(2)}`);
             $('#registration-pax').html(`${user_ids.length} x`);
             $('#registration-total').html(`₱ ${totalAmount.toFixed(2)}`);
         }

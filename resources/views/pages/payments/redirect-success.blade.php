@@ -10,24 +10,54 @@
     <link rel="stylesheet" href="{{ URL::asset('build/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ URL::asset('build/css/icons.min.css') }}">
     <link rel="stylesheet" href="{{ URL::asset('build/css/app.min.css') }}">
+
+    <style>
+        #header-details {
+            width: 35%;
+        }
+        @media print {
+            #header-details {
+                width: 45%;
+            }
+        }
+    </style>
 </head>
 
 <body>
     <div class="my-4">
         <div class="row justify-content-center">
-            <div class="col-xxl-6">
+            <div class="col-xxl-7">
                 <div class="card" id="demo">
                     <div class="row">
                         <div class="col-lg-12">
-                            <div class="card-header border-bottom-dashed p-4">
-                                <div class="d-flex">
-                                    <div class="flex-grow-1">
-                                        <img src="{{ URL::asset('build/images/MFC-Logo.jpg') }}"
-                                            class="card-logo card-logo-dark" alt="logo dark" height="80">
-                                        <img src="{{ URL::asset('build/images/MFC-Logo.jpg') }}"
-                                            class="card-logo card-logo-light" alt="logo light" height="80">
+                            <div class="card-header border-bottom-dashed border-2 pt-4 pb-2 px-4">
+                                <div class="d-flex mb-3 align-items-center justify-content-between">
+                                    <div class="header-logo">
+                                        <img src="{{ URL::asset('build/images/mfc-logo-retina.png') }}"
+                                            class="card-logo card-logo-dark" alt="logo dark" width="360">
+                                        <img src="{{ URL::asset('build/images/mfc-logo-retina.png') }}"
+                                            class="card-logo card-logo-light" alt="logo light" width="360">
+                                    </div>
+                                    <div class="flex-shrink mt-sm-0 mt-3" id="header-details">
+                                        <h6>
+                                            <span class=" fw-normal text-wrap" style="line-height: 20px !important;">
+                                            12 Starmall Complex, Shaw Blvd., Wack-Wack Greenhills, 1555 City of Mandaluyong NCR, Second District, Philippines
+                                        </h6>
+                                        <h6>
+                                            <span class="fw-normal">Email:</span>
+                                            <span id="email" class="link-primary">Email@missionaryfamiliesofChrist.org</span>
+                                        </h6>
+                                        <h6 >
+                                            <span class="fw-normal">Tel/Fax No: </span>
+                                            <span id="contact-no">63(2) 77182213</span>
+                                        </h6>
+                                        <h6>
+                                            <span class="fw-normal">Non-VAT Reg. TIN:</span>
+                                            <span id="vat-no">010-349-685-00000</span>
+                                        </h6>
                                     </div>
                                 </div>
+                                {{-- <h3 class="text-center mt-4">ACKNOWLEDGEMENT RECEIPT</h3> --}}
                             </div>
                             <!--end card-header-->
                         </div>
@@ -36,8 +66,8 @@
                             <div class="card-body p-4">
                                 <div class="row g-3">
                                     <div class="col-lg-3 col-6">
-                                        <p class="text-muted mb-2 text-uppercase fw-semibold">Transaction Code</p>
-                                        <h5 class="fs-14 mb-0"><span id="invoice-no">{{ $transaction->transaction_code }}</span></h5>
+                                        <p class="text-muted mb-2 text-uppercase fw-semibold">Reference Code</p>
+                                        <h5 class="fs-14 mb-0"><span id="invoice-no">{{ $transaction->reference_code }}</span></h5>
                                     </div>
                                     <!--end col-->
                                     <div class="col-lg-3 col-6">
@@ -73,8 +103,8 @@
                                         <thead>
                                             <tr class="table-active">
                                                 <th scope="col" style="width: 50px;">#</th>
-                                                <th scope="col">Details</th>
-                                                <th scope="col">Payment Type</th>
+                                                <th scope="col" style="text-align: left;">Details</th>
+                                                <th scope="col" style="text-align: left;">As Payment For</th>
                                                 <th scope="col">Date</th>
                                                 <th scope="col" class="text-end">Amount</th>
                                             </tr>
@@ -85,10 +115,10 @@
                                                     <th scope="row">{{ $item['id'] }}</th>
                                                     <td class="text-start">
                                                         <span class="fw-medium">{{ $item['name'] }}</span>
-                                                        <p class="text-muted mb-0">{{ $item['mfc_id_number'] }}
+                                                        <p class="text-muted mb-0">#{{ $item['mfc_id_number'] }}
                                                         </p>
                                                     </td>
-                                                    <td>{{ $item['payment_type'] }}</td>
+                                                    <td class="text-start">{{ $item['payment_type'] }}</td>
                                                     <td>{{ $item['date'] }}</td>
                                                     <td class="text-end">₱ {{ number_format($item['amount'], 2) }}</td>
                                                 </tr>

@@ -12,6 +12,10 @@
             cursor: pointer;
         } 
 
+        /* .fc-h-event .fc-event-main {
+            color: #141414;
+        } */
+
         @media (min-width: 1024px) {
             .offcanvas-end {
                 width: 40% !important;
@@ -37,7 +41,43 @@
                             <button class="btn btn-primary w-100" id="btn-new-event" data-bs-toggle="modal"
                                 data-bs-target="#addEventModal" {{ auth()->user()->can('create-event') ? null : "disabled" }}><i class="mdi mdi-plus"></i> Create New
                                 Event</button>
-
+                            {{-- <div class="mt-3">
+                                <h3>Legends</h3>
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="py-2 px-2 my-2 text-white rounded" style="background: #7852a9;">
+                                            Multiple Selection
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="py-2 px-2 my-2 text-white rounded" style="background: #fd6a08;">
+                                            Kids
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="py-2 px-2 my-2 text-white rounded" style="background: #0362a4;">
+                                            Youth
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="py-2 px-2 my-2 text-white rounded" style="background: #0ab39c;">
+                                            Singles
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="py-2 px-2 my-2 text-white rounded" style="background: #f7b84b;">
+                                            Servants
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="py-2 px-2 my-2 text-white rounded" style="background: #2883d3;">
+                                        Handmaids
+                                    </div>
+                                    <div class="py-2 px-2 my-2 text-white rounded" style="background: #f06548;">
+                                        Couples
+                                    </div>
+                                </div>
+                            </div> --}}
                         </div>
                     </div>
                     <div>
@@ -76,7 +116,7 @@
                                     <button href="#" class="btn btn-sm btn-soft-primary" id="edit-event-btn"
                                         data-id="edit-event" {{ auth()->user()->can('edit-event') ? null : "disabled" }} onclick="editEvent(this)" role="button">
                                         Edit
-                                    </button>                                   
+                                    </button>
                                 </div>
                                 <div class="event-details">
                                     <div class="d-flex mb-2">
@@ -124,7 +164,9 @@
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-primary" id="register-event-btn">Register Now</button>
-                                    <p class="alert alert-warning" id="registration-ended-message">The event has already ended and registration is no longer available</p>
+                                    <p class="alert alert-warning" id="registration-ended-message">
+                                        The event has already ended and registration is no longer available
+                                    </p>
                                 </div>
                                 <div class="row event-form">
                                     <div class="col-12">
