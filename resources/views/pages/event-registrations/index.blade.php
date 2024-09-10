@@ -155,7 +155,7 @@
                 $('#qrcode-loading').removeClass('d-none');
 
                 // Wait for the modal to be fully shown before generating the QR code
-                $('.bs-example-modal-center').one('shown.bs.modal', function() {
+                $('.bs-example-modal-center').on('shown.bs.modal', function() {
                     setTimeout(() => {
                         $('#qrcode-loading').addClass('d-none');
                         generateQRCode(registration_code);
