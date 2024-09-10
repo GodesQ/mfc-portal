@@ -164,11 +164,26 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("event-description-tag").innerHTML = selectedEvent.extendedProps.description === undefined ? "No Description" : selectedEvent.extendedProps.description;
         document.getElementById("event-registrationfee-tag").innerHTML = selectedEvent.extendedProps.registration_fee === undefined ? "No Registration Fee" : selectedEvent.extendedProps.registration_fee;
         
-        if(selectedEvent.extendedProps.is_enable_event_registration) {
+        if (selectedEvent.extendedProps.is_enable_event_registration) {
+            document.getElementById("register-event-btn").classList.remove('d-none');
             document.getElementById("register-event-btn").classList.add('d-block');
         } else {
+            document.getElementById("register-event-btn").classList.remove('d-block');
             document.getElementById("register-event-btn").classList.add('d-none');
         }
+
+        if(selectedEvent.start >= new Date()) {
+            document.getElementById("register-event-btn").classList.remove('d-none');
+            document.getElementById("register-event-btn").classList.add('d-block');
+            document.getElementById("registration-ended-message").classList.add('d-none');
+            document.getElementById("registration-ended-message").classList.remove('d-block');
+        } else {
+            document.getElementById("register-event-btn").classList.remove('d-block');
+            document.getElementById("register-event-btn").classList.add('d-none');
+            document.getElementById("registration-ended-message").classList.add('d-block');
+            document.getElementById("registration-ended-message").classList.remove('d-none');
+        }
+        
 
         document.getElementById("register-event-btn").setAttribute('data-event-id', selectedEvent.id);
         

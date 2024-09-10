@@ -124,6 +124,7 @@
                                         </div>
                                     </div>
                                     <button type="button" class="btn btn-primary" id="register-event-btn">Register Now</button>
+                                    <p class="alert alert-warning" id="registration-ended-message">The event has already ended and registration is no longer available</p>
                                 </div>
                                 <div class="row event-form">
                                     <div class="col-12">
