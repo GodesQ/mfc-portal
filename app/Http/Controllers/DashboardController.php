@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Announcement;
 use App\Models\Event;
 use App\Models\EventRegistration;
 use App\Models\Tithe;
@@ -21,8 +22,9 @@ class DashboardController extends Controller
                                 ->limit(5)
                                 ->get();
         
-        $latest_tithes = Tithe::latest()->limit(5)->get();
-        return view('pages.dashboards.index', compact('recent_event_registrations', 'upcoming_events', 'latest_tithes'));
+        $latest_tithes = Tithe::where('status', 'paid')->latest()->limit(5)->get();
+        $announcements = Announcement::latest()->limit(5)->get();
+        return view('pages.dashboards.index', compact('recent_event_registrations', 'upcoming_events', 'latest_tithes', 'announcements'));
     }
 
     /**

@@ -174,66 +174,22 @@
                 <div class="card-body p-0">
                     <div data-simplebar>
                         <ul class="list-group list-group-flush border-dashed px-3">
-                            <li class="list-group-item ps-0">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <label class="form-check-label mb-0 ps-2" for="task_one">Due to inclement weather condition, we are going to work from home</label>
+                            @forelse ($announcements as $announcement)
+                                <li class="list-group-item ps-0">
+                                    <div class="d-flex align-items-start">
+                                        <div class="flex-grow-1">
+                                            <label class="form-check-label mb-0 ps-2" for="task_one">{{ $announcement->title }}</label>
+                                        </div>
+                                        <div class="flex-shrink-0 ms-2">
+                                            <p class="text-muted fs-12 mb-0">{{ Carbon::parse($announcement->created_at)->format('M d, Y') }}</p>
+                                        </div>
                                     </div>
-                                    <div class="flex-shrink-0 ms-2">
-                                        <p class="text-muted fs-12 mb-0">15 Sep, 2021</p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="list-group-item ps-0">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <label class="form-check-label mb-0 ps-2" for="task_two">Send meeting invites for sales upcampaign</label>
-                                    </div>
-                                    <div class="flex-shrink-0 ms-2">
-                                        <p class="text-muted fs-12 mb-0">20 Sep, 2021</p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="list-group-item ps-0">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <label class="form-check-label mb-0 ps-2" for="task_three">Weekly closed sales won checking with sales team</label>
-                                    </div>
-                                    <div class="flex-shrink-0 ms-2">
-                                        <p class="text-muted fs-12 mb-0">24 Sep, 2021</p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="list-group-item ps-0">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <label class="form-check-label mb-0 ps-2" for="task_four">Add notes that can be viewed from the individual view</label>
-                                    </div>
-                                    <div class="flex-shrink-0 ms-2">
-                                        <p class="text-muted fs-12 mb-0">27 Sep, 2021</p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="list-group-item ps-0">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <label class="form-check-label mb-0 ps-2" for="task_five">Move stuff to another page</label>
-                                    </div>
-                                    <div class="flex-shrink-0 ms-2">
-                                        <p class="text-muted fs-12 mb-0">27 Sep, 2021</p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li class="list-group-item ps-0">
-                                <div class="d-flex align-items-start">
-                                    <div class="flex-grow-1">
-                                        <label class="form-check-label mb-0 ps-2" for="task_six">Styling wireframe design and documentation for velzon admin</label>
-                                    </div>
-                                    <div class="flex-shrink-0 ms-2">
-                                        <p class="text-muted fs-12 mb-0">27 Sep, 2021</p>
-                                    </div>
-                                </div>
-                            </li>
+                                </li>
+                            @empty
+                                <li class="list-group-item ps-0">
+                                    <h6 class="text-center">No Announcement Found</h6>                                
+                                </li><!-- end -->
+                            @endforelse
                         </ul><!-- end ul -->
                     </div>
                     <div class="p-3 pt-2">
