@@ -46,7 +46,7 @@ class VerifyEmailController extends Controller
             event(new Verified($request->user()));
         }
 
-        return redirect()->route('users.profile');
+        return redirect()->route('users.profile', auth()->user()->id);
     }
 
     public function notice()
