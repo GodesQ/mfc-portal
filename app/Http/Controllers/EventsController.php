@@ -247,25 +247,25 @@ class EventsController extends Controller
             foreach ($sections as $key => $section) {
                 switch($section->name) {
                     case 'kids':
-                        $color = '#fd6a08' ;
+                        $color = '#fa6b02' ;
                         break;
                     case 'youth':
-                        $color = '#0362a4';
+                        $color = '#0066ab';
                         break;
                     case 'singles':
-                        $color = '#0ab39c';
+                        $color = '#1c8265';
                         break;
                     case 'servants':
-                        $color = '#f7b84b';
+                        $color = '#ffad09';
                             break;
                     case 'handmaids':
-                        $color = '#e83029';
+                        $color = '#ee2c2e';
                             break;
                     case 'couples':
-                        $color = '#f06548';
+                        $color = '#2a81d9';
                             break;       
                     default:
-                        $color = '#0ab39c';
+                        $color = '#7852a9';
                             break;
                 }
                 array_push($colors, $color);
