@@ -25,6 +25,7 @@ class RedirectController extends Controller
                         'name' => ($row->user->first_name ?? " ") . ' ' . ($row->user->last_name ?? " "),
                         'mfc_id_number' => ($row->user->mfc_id_number ?? " "),
                         'payment_type' => "Event Registration",
+                        'event' => $row->event,
                         'date' => Carbon::parse($row->created_at)->format('M d, Y'),
                         'amount' => $row->amount,
                     ];
@@ -38,6 +39,7 @@ class RedirectController extends Controller
                         'name' => ($row->user->first_name ?? " ") . ' ' . ($row->user->last_name ?? " "),
                         'mfc_id_number' => ($row->user->mfc_id_number ?? " "),
                         'payment_type' => "Tithe",
+                        'event' => null,
                         'date' => Carbon::parse($row->created_at)->format('M d, Y'),
                         'amount' => $row->amount,
                     ];

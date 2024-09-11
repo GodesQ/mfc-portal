@@ -38,7 +38,7 @@
                                 </label>
                             </div>
                         </div>
-                        <h5 class="fs-16 mb-1">{{ Auth::user()->fist_name ?? 'Sample' }}
+                        <h5 class="fs-16 mb-1">{{ Auth::user()->first_name ?? 'Sample' }}
                             {{ Auth::user()->last_name ?? 'User' }}</h5>
                         <p class="text-muted mb-0">MFC ID: <span id="mfc-id">{{ Auth::user()->mfc_id_number }}</span> <a
                                 href="javascript:void(0);" class="ri-file-copy-line" id="copy-mfc-id"
