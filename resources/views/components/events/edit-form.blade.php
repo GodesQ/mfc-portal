@@ -40,7 +40,7 @@
                         <div class="col-lg-6">
                             <div class="mb-3">
                                 <label for="event-section-field" class="form-label">Event Type</label>
-                                <select name="section_id" id="event-section-field" class="form-select">
+                                <select name="section_ids[]" id="event-section-field" class="form-select" multiple>
                                     <option value="">Select Event Section</option>
                                     @foreach ($sections as $section)
                                       <option value="{{ $section->id }}">{{ $section->name}}</option>  
@@ -130,7 +130,10 @@
     </div> <!-- end modal dialog-->
 </div> <!-- end modal-->
 
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
+    $("#event-section-field").select2();
+
     $("#edit-event-form").submit(function (e) {
         e.preventDefault();
         let description_content = $('#edit_event_description .ql-editor').html();

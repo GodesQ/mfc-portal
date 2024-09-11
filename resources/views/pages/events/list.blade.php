@@ -185,7 +185,6 @@
                     document.getElementById("event-id-field").value = event.id;
                     document.getElementById("title-field").value = event.title;
                     document.getElementById("event-type-field").value = event.type;
-                    document.getElementById("event-section-field").value = event.section_id;
                     document.getElementById("event-reg-fee").value = event.reg_fee;
                     document.getElementById("event-location-field").value = event.location;
                     document.getElementById("event-latitude-field").value = event.latitude;
@@ -199,6 +198,10 @@
                     if (event.is_enable_event_registration) {
                         document.getElementById("is-enable-event-registration-checkbox").checked = true;
                     }
+
+                    // let selectField = document.getElementById("event-section-field");
+                    $('#event-section-field').val(event.section_ids).trigger('change');
+
 
                     var st_date = event.start_date;
                     var ed_date = event.end_date;

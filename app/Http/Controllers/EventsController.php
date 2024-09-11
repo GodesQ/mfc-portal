@@ -45,29 +45,29 @@ class EventsController extends Controller
                     foreach ($sections as $section) {
                         switch($section->name) {
                             case 'kids':
-                                $classname = 'bg-orange-subtle';
+                                $color = '#fa6b02' ;
                                 break;
                             case 'youth':
-                                $classname = 'bg-blue-subtle';
+                                $color = '#0066ab';
                                 break;
                             case 'singles':
-                                $classname = 'bg-success';
+                                $color = '#1c8265';
                                 break;
                             case 'servants':
-                                $classname = 'bg-warning';
+                                $color = '#ffad09';
                                     break;
                             case 'handmaids':
-                                $classname = 'bg-red';
+                                $color = '#ee2c2e';
                                     break;
                             case 'couples':
-                                $classname = 'bg-info';
+                                $color = '#2a81d9';
                                     break;       
                             default:
-                                $classname = 'bg-primary';
+                                $color = '#7852a9';
                                     break;
                         }
 
-                        $output .= "<div class='badge $classname'>$section->name</div>";
+                        $output .= "<div class='badge' style='background: $color'>$section->name</div>";
                     }
     
                     $output .= "</div>";
@@ -120,7 +120,7 @@ class EventsController extends Controller
             }
 
             Event::create(array_merge($data, [
-                'section_ids' => json_encode($request->section_ids),
+                'section_ids' => json_encode(value: $request->section_ids),
                 'poster' => $filename,
                 'start_date' => $start_date,
                 'end_date' => $end_date,
@@ -190,6 +190,7 @@ class EventsController extends Controller
         }
 
         $event->update(array_merge($data, [
+            'section_ids' => $request->has('section_ids') ? $request->section_ids : null,
             'start_date' => $start_date,
             'end_date' => $end_date,
         ]));
