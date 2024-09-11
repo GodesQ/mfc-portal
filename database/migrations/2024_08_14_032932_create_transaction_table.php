@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('transaction_code');
             $table->string('reference_code');
+            $table->foreignId('received_from_id')->nullable()->constrained('users')->cascadeOnDelete();
             $table->double('donation', 10,2)->default(0.00);
             $table->double('convenience_fee', 10,2)->default(0.00);
             $table->double('sub_amount', 10, 2)->default(0.00);

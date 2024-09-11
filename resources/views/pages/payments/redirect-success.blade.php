@@ -63,6 +63,14 @@
                         </div>
                         <!--end col-->
                         <div class="col-lg-12">
+                            <div class="row py-4 w-full">
+                                <div class="col-lg-11 col-sm-8 text-center">
+                                    <h3 style="font-size: 25px; font-weight: 500;">Acknowledgement Receipt</h3>
+                                </div>
+                                <div class="col-lg-1 col-sm-4 text-sm-center">
+                                    <h4 style="font-size: 16px;"><span class="fw-bold">No.</span> <span>{{ sprintf("%02d", $transaction->id) }}</span></h4>
+                                </div>
+                            </div>
                             <div class="card-body p-4">
                                 <div class="row g-3">
                                     <div class="col-lg-3 col-6">
@@ -87,6 +95,15 @@
                                     <div class="col-lg-3 col-6">
                                         <p class="text-muted mb-2 text-uppercase fw-semibold">Total Amount</p>
                                         <h5 class="fs-14 mb-0">₱<span id="total-amount"> {{ number_format($transaction->total_amount, 2) }}</span></h5>
+                                    </div>
+                                    <!--end col-->
+                                    <div class="col-lg-3 col-6">
+                                        <p class="text-muted mb-2 text-uppercase fw-semibold">Received From</p>
+                                        <h5 class="fs-14 mb-0">
+                                            <span id="received-from"> {{ $transaction->received_from_user->first_name . ' ' . $transaction->received_from_user->last_name }}</span>
+                                            <br>
+                                            <span class="text-muted fs-12">#{{ $transaction->received_from_user->mfc_id_number }}</span>
+                                        </h5>
                                     </div>
                                     <!--end col-->
                                 </div>

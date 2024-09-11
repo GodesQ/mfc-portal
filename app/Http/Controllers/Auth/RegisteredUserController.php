@@ -28,6 +28,7 @@ class RegisteredUserController extends Controller
         $section = Section::where('name', $request->section)->first();
 
         $user = User::create([
+            'username' => $request->username,
             'email' => $request->email,
             'first_name' => $request->firstname,
             'last_name' => $request->lastname, 

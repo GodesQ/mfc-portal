@@ -13,9 +13,9 @@ class PaymayaService {
 
     public function pay(array $request_model) {
         try {
-            $authToken = base64_encode(config('services.paymaya.api_key') . ":");
+            $authToken = config('app.env') === "development" ? base64_encode(config("services.paymaya.test_api_key") . ":") : base64_encode(config("services.paymaya.api_key") . ":");
             
-            $url = config('services.paymaya.url');
+            $url = config('app.env') === "development" ? config("services.paymaya.test_url") : config("services.paymaya.url");
 
             $response = Http::withHeaders([
                 'accept' => 'application/json',

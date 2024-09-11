@@ -127,8 +127,9 @@ class EventRegistrationController extends Controller
             $transaction = Transaction::create([
                 'transaction_code' => $transaction_code,
                 'reference_code' => $reference_code,
+                'received_from_id' => auth()->user()->id,
                 'donation' => $request->donation,
-                'convenience_fee' => $convenience_fee,
+                'convenience_fee' => $total_convenience_fee,
                 'sub_amount' => $event->reg_fee,
                 'total_amount' => $total_amount,
                 'payment_mode' => "N/A",

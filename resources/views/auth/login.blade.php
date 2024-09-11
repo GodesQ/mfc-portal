@@ -45,9 +45,9 @@
                                 <form action="{{ route('login') }}" method="POST">
                                     @csrf
                                     <div class="mb-3">
-                                        <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
-                                        <input type="text" class="form-control @error('email') is-invalid @enderror" value="{{ old('email', 'admin@mfcportal.com') }}" id="username" name="email" placeholder="Enter username">
-                                        @error('email')
+                                        <label for="username" class="form-label">Username/Email <span class="text-danger">*</span></label>
+                                        <input type="text" class="form-control @error('login') is-invalid @enderror" value="{{ old('login', 'admin@mfcportal.com') }}" id="username" name="login" placeholder="Enter username">
+                                        @error('login')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
                                             </span>

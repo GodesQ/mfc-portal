@@ -24,11 +24,11 @@
                         <div class="text-center mt-sm-5 mb-4 text-white-50">
                             <div>
                                 <a href="index" class="d-inline-block auth-logo">
-                                    <img src="{{ URL::asset('build/images/logo-light.png') }}" alt=""
-                                        height="20">
+                                    <img src="{{ URL::asset('build/images/logo-wide-white.png') }}" alt=""
+                                        height="150">
                                 </a>
                             </div>
-                            <p class="mt-3 fs-15 fw-medium">Premium Admin & Dashboard Template</p>
+                            <p class="mt-3 fs-15 fw-medium">Let's bring the evangelization online.</p>
                         </div>
                     </div>
                 </div>
@@ -55,7 +55,10 @@
                                             feedback="Please enter your last name"></x-input_fields.name>
                                         <x-input_fields.email id="useremail" name="email"
                                             value="{{ old('email') }}"></x-input_fields.email>
-
+                                        <div class="mb-3">
+                                            <label for="username-field" class="form-label">Username</label>
+                                            <input type="text" class="form-control" name="username" id="username-field" placeholder="Enter Your username">
+                                        </div>
                                         <x-input_fields.contact-number id="usercontact" name="contact_number"
                                             formId="registerForm"></x-input_fields.contact-number>
                                         <x-input_fields.choices label="MFC Section" id="mfc_section" formId="registerForm" name="section">
@@ -77,27 +80,6 @@
 
                                         <div class="mt-3">
                                             <button class="btn btn-success w-100" type="submit">Sign Up</button>
-                                        </div>
-
-                                        <div class="mt-3 text-center">
-                                            <div class="signin-other-title">
-                                                <h5 class="fs-13 mb-4 title text-muted">Create account with</h5>
-                                            </div>
-
-                                            <div>
-                                                <button type="button"
-                                                    class="btn btn-primary btn-icon waves-effect waves-light"><i
-                                                        class="ri-facebook-fill fs-16"></i></button>
-                                                <button type="button"
-                                                    class="btn btn-danger btn-icon waves-effect waves-light"><i
-                                                        class="ri-google-fill fs-16"></i></button>
-                                                <button type="button"
-                                                    class="btn btn-dark btn-icon waves-effect waves-light"><i
-                                                        class="ri-github-fill fs-16"></i></button>
-                                                <button type="button"
-                                                    class="btn btn-info btn-icon waves-effect waves-light"><i
-                                                        class="ri-twitter-fill fs-16"></i></button>
-                                            </div>
                                         </div>
                                     </form>
 
@@ -126,10 +108,7 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="text-center">
-                            <script>
-                                document.write(new Date().getFullYear())
-                            </script> Velzon. Crafted with <i class="mdi mdi-heart text-danger"></i> by
-                            Themesbrand</p>
+                            <p class="mb-0 text-muted">&copy; <script>document.write(new Date().getFullYear())</script> MFC Portal. Crafted with <i class="mdi mdi-heart text-danger"></i> by <a href="https://godesq.com/" target="_blank">GodesQ Digital Marketing Services</a></p>
                         </div>
                     </div>
                 </div>
