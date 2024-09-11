@@ -165,7 +165,8 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("register-event-btn").classList.add('d-none');
         }
 
-        if(selectedEvent.start >= new Date()) {
+
+        if(new Date(selectedEvent.start) >= new Date()) {
             document.getElementById("register-event-btn").classList.remove('d-none');
             document.getElementById("register-event-btn").classList.add('d-block');
             document.getElementById("registration-ended-message").classList.add('d-none');
@@ -437,8 +438,6 @@ document.addEventListener("DOMContentLoaded", function () {
             let event_id = $(this).data('event-id');
             const event = defaultEvents.find(e => e.id == event_id);
             handleEventClicked(event);
-            console.log(event);
-
         } 
     }
 });
