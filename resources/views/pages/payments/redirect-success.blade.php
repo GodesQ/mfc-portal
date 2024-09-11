@@ -100,9 +100,9 @@
                                     <div class="col-lg-3 col-6">
                                         <p class="text-muted mb-2 text-uppercase fw-semibold">Received From</p>
                                         <h5 class="fs-14 mb-0">
-                                            <span id="received-from"> {{ $transaction->received_from_user->first_name . ' ' . $transaction->received_from_user->last_name }}</span>
+                                            <span id="received-from"> {{ ($transaction->received_from_user->first_name ?? 'No First Name Found') . ' ' . ($transaction->received_from_user->last_name ?? 'No Last Name Found') }}</span>
                                             <br>
-                                            <span class="text-muted fs-12">#{{ $transaction->received_from_user->mfc_id_number }}</span>
+                                            <span class="text-muted fs-12">#{{( $transaction->received_from_user->mfc_id_number ?? 'No MFC ID Number Found') }}</span>
                                         </h5>
                                     </div>
                                     <!--end col-->

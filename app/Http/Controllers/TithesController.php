@@ -99,6 +99,7 @@ class TithesController extends Controller
                 "transaction_code" => $transaction_code,
                 "reference_code" => $reference_code,
                 "convenience_fee" => $convenience_fee,
+                "received_from_id" => auth()->user()->id,
                 "sub_amount" => $request->amount,
                 "total_amount" => $total_amount,
                 "payment_mode" => "N/A",
