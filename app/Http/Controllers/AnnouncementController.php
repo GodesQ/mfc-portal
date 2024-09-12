@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Announcement;
+use App\Models\AnnouncementImage;
 use App\Models\Section;
 use App\Models\Service;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
 class AnnouncementController extends Controller
@@ -74,8 +77,9 @@ class AnnouncementController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+    {   
         // dd($request->all());
+
         $user = Auth::user();
         $id = $user->id;
         $data = $request->validate([
@@ -84,18 +88,34 @@ class AnnouncementController extends Controller
         ]);
 
         if ($request->sent_to_all === 'on') {
-            Announcement::create(array_merge($data, [
+            $announcement = Announcement::create(array_merge($data, [
                 'user_id' => $id,
             ]));
-
-            return redirect(route('announcements.index'))->with('success', 'Announcement created successfully');
+        } else {
+            $announcement = Announcement::create(array_merge($data, [
+                'user_id' => $id,
+                'service_id' => $request->service,
+                'section_id' => $request->section,
+            ]));
         }
 
-        Announcement::create(array_merge($data, [
-            'user_id' => $id,
-            'service_id' => $request->service,
-            'section_id' => $request->section,
-        ]));
+        foreach ($request->images as $key => $image) {
+            $file_array = json_decode(json: $image);
+            $file_name = time() . Str::random(5) . "_" . $file_array->name;
+            $base64String = explode(',', $file_array->data)[0];
+            $decodedFile = base64_decode($base64String);
+
+            // Define file path and store the file
+            $filePath = 'announcements/' . $announcement->id . '/' . $file_name;
+
+            // Store the file in storage (public disk, or change as needed)
+            Storage::disk('public')->put($filePath, $decodedFile);
+
+            AnnouncementImage::create([
+                'announcement_id' => $announcement->id,
+                'image_path' => $file_name,
+            ]);
+        }
 
         return redirect()->route('announcements.index')->with('success', 'Announcement created successfully');
     }

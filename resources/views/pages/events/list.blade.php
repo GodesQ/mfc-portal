@@ -152,9 +152,7 @@
                                 },
                                 success: function(response) {
                                     showSuccessMessage(response.message);
-                                    $('#events_datatable').DataTable().ajax
-                                        .reload(null,
-                                        false); // false to keep the current page
+                                    $('#events_datatable').DataTable().ajax.reload(null, false); // false to keep the current page
                                 },
                                 error: function(xhr, status, error) {
                                     showErrorMessage(xhr.statusText);

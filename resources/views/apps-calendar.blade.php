@@ -10,11 +10,11 @@
     <style>
         .upcoming-event-card {
             cursor: pointer;
-        } 
+        }
 
         /* .fc-h-event .fc-event-main {
-            color: #141414;
-        } */
+                color: #141414;
+            } */
 
         @media (min-width: 1024px) {
             .offcanvas-end {
@@ -39,7 +39,9 @@
                     <div class="card card-h-100">
                         <div class="card-body">
                             <button class="btn btn-primary w-100" id="btn-new-event" data-bs-toggle="modal"
-                                data-bs-target="#addEventModal" {{ auth()->user()->can('create-event') ? null : "disabled" }}><i class="mdi mdi-plus"></i> Create New
+                                data-bs-target="#addEventModal"
+                                {{ auth()->user()->can('create-event') ? null : 'disabled' }}><i class="mdi mdi-plus"></i>
+                                Create New
                                 Event</button>
                             {{-- <div class="mt-3">
                                 <h3>Legends</h3>
@@ -80,13 +82,15 @@
                             </div> --}}
                         </div>
                     </div>
-                    <div>
-                        <h5 class="mb-1">Upcoming Events</h5>
-                        <p class="text-muted">Don't miss scheduled events</p>
-                        <div class="pe-2 me-n1 mb-3" data-simplebar style="height: 400px">
-                            <div id="upcoming-event-list"></div>
+                    @unlessrole('member')
+                        <div>
+                            <h5 class="mb-1">Upcoming Events</h5>
+                            <p class="text-muted">Don't miss scheduled events</p>
+                            <div class="pe-2 me-n1 mb-3" data-simplebar style="height: 400px">
+                                <div id="upcoming-event-list"></div>
+                            </div>
                         </div>
-                    </div>
+                    @endunlessrole
                     <!--end card-->
                 </div> <!-- end col-->
 
@@ -114,7 +118,8 @@
                             <form class="needs-validation" name="event-form" id="form-event" novalidate>
                                 <div class="text-end">
                                     <button href="#" class="btn btn-sm btn-soft-primary" id="edit-event-btn"
-                                        data-id="edit-event" {{ auth()->user()->can('edit-event') ? null : "disabled" }} onclick="editEvent(this)" role="button">
+                                        data-id="edit-event" {{ auth()->user()->can('edit-event') ? null : 'disabled' }}
+                                        onclick="editEvent(this)" role="button">
                                         Edit
                                     </button>
                                 </div>
@@ -163,7 +168,8 @@
                                             <p class="d-block text-muted mb-0" id="event-description-tag"></p>
                                         </div>
                                     </div>
-                                    <button type="button" class="btn btn-primary" id="register-event-btn">Register Now</button>
+                                    <button type="button" class="btn btn-primary" id="register-event-btn">Register
+                                        Now</button>
                                     <p class="alert alert-warning" id="registration-ended-message">
                                         The event has already ended and registration is no longer available
                                     </p>
@@ -172,9 +178,8 @@
                                     <div class="col-12">
                                         <div class="mb-3">
                                             <label class="form-label">Event Name</label>
-                                            <input class="form-control d-none" placeholder="Enter event name"
-                                                type="text" name="title" id="event-title" required
-                                                value="" />
+                                            <input class="form-control d-none" placeholder="Enter event name" type="text"
+                                                name="title" id="event-title" required value="" />
                                             <div class="invalid-feedback">Please provide a valid event name</div>
                                         </div>
                                     </div>
@@ -504,13 +509,16 @@
     </script> --}}
 
     {{-- Google Location Places Search Javascript --}}
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initialize" async></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initialize"
+        async></script>
     <script>
         function initialize() {
-            const activeModal = document.querySelector('.modal.show');  // Detect the currently active modal
+            const activeModal = document.querySelector('.modal.show'); // Detect the currently active modal
             if (activeModal) {
                 const isAddEventModal = activeModal.id === 'addEventModal';
-                const eventLocationInput = document.getElementById(isAddEventModal ? 'event_location' : 'event-location-field');
+                const eventLocationInput = document.getElementById(isAddEventModal ? 'event_location' :
+                    'event-location-field');
                 const latitudeInput = document.getElementById(isAddEventModal ? 'latitude' : 'event-latitude-field');
                 const longitudeInput = document.getElementById(isAddEventModal ? 'longitude' : 'event-longitude-field');
 
@@ -536,7 +544,5 @@
 
         // Trigger initialization when modals are shown
         $('#addEventModal, #event-modal').on('shown.bs.modal', initialize);
-
     </script>
-    
 @endsection

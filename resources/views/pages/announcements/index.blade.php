@@ -2,6 +2,11 @@
 @section('title')
     @lang('translation.announcements')
 @endsection
+@section('css')
+    <link rel="stylesheet" href="{{ URL::asset('build/libs/filepond/filepond.min.css') }}" type="text/css" />
+    <link rel="stylesheet"
+        href="{{ URL::asset('build/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css') }}">
+@endsection
 @section('content')
     @component('components.breadcrumb')
         @slot('title')
@@ -59,7 +64,7 @@
                         id="close-modal"></button>
                 </div>
                 <form class="announcements_tablelist_form" autocomplete="off" action="{{ route('announcements.store') }}"
-                    method="POST">
+                    method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="modal-body">
                         <div class="row g-3">
@@ -77,6 +82,15 @@
                                     <textarea name="content" class="ckeditor-classic"></textarea>
                                 </div>
                             </div>
+
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="announcement-images" class="form-label">Images</label>
+                                    <input type="file" class="filepond filepond-input-multiple" multiple name="images[]"
+                                        data-allow-reorder="true" data-max-file-size="3MB" data-max-files="3">
+                                </div>
+                            </div>
+
                             <div class="col-lg-6 d-none" id="who_group">
                                 <label for="service" class="form-label">Who?</label>
                                 <select class="form-control" data-plugin="choices" name="service" id="service"
@@ -116,7 +130,7 @@
                         <div class="hstack gap-2 justify-content-end">
                             <button type="button" class="btn btn-light"
                                 data-bs-dismiss="modal">@lang('translation.close')</button>
-                            <button type="submit" class="btn btn-success" id="">@lang('translation.create_announcement')</button>
+                            <button type="submit" class="btn btn-success" id="create-announcement-btn">@lang('translation.create_announcement')</button>
                             {{-- <button type="button" class="btn btn-success" id="edit-btn">Update</button> --}}
                         </div>
                     </div>
@@ -126,6 +140,17 @@
     </div>
 @endsection
 @section('script')
+    <script src="{{ URL::asset('build/libs/filepond/filepond.min.js') }}"></script>
+    <script src="{{ URL::asset('build/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js') }}">
+    </script>
+    <script
+        src="{{ URL::asset('build/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js') }}">
+    </script>
+    <script
+        src="{{ URL::asset('build/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js') }}">
+    </script>
+    <script src="{{ URL::asset('build/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js') }}"></script>
+    <script src="{{ URL::asset('build/js/pages/form-file-upload.init.js') }}"></script>
     <script src="{{ URL::asset('build/js/app.js') }}"></script>
 
     <script>
@@ -167,7 +192,8 @@
                                 },
                                 success: function(response) {
                                     showSuccessMessage(response.message);
-                                    $('#announcement_datatables').DataTable().draw(false);
+                                    $('#announcement_datatables')
+                                        .DataTable().draw(false);
                                 },
                                 error: function(xhr, response, error) {
                                     showErrorMessage(xhr.statusText);

@@ -18,6 +18,7 @@ class UserSeeder extends Seeder
         $member_one = User::create([
             'first_name' => 'George', 
             'last_name' => 'Steve', 
+            'username' => 'george',
             'email' => 'georgesteve123@gmail.com', 
             'password' => Hash::make('12345678'), 
             'avatar' => '1643621861.jpg', 
@@ -38,6 +39,7 @@ class UserSeeder extends Seeder
         $chapter_servant = User::create([
             'first_name' => 'Mark', 
             'last_name' => 'Tone', 
+            'username' => 'mark',
             'email' => 'marktone1234@gmail.com', 
             'password' => Hash::make('12345678'), 
             'avatar' => 'avatar-3.jpg', 
@@ -58,6 +60,7 @@ class UserSeeder extends Seeder
         $unit_servant = User::create([
             'first_name' => 'James', 
             'last_name' => 'Yue', 
+            'username' => 'james',
             'email' => 'jamesyue443@gmail.com', 
             'password' => Hash::make('12345678'), 
             'avatar' => 'avatar-4.jpg', 
@@ -78,6 +81,7 @@ class UserSeeder extends Seeder
         $household_servant = User::create([
             'first_name' => 'Robert', 
             'last_name' => 'Mendez', 
+            'username' => 'robert',
             'email' => 'robertmendez13@gmail.com', 
             'password' => Hash::make('12345678'), 
             'avatar' => 'avatar-5.jpg', 
@@ -98,6 +102,7 @@ class UserSeeder extends Seeder
         $member = User::create([
             'first_name' => 'Charles', 
             'last_name' => 'Jamis', 
+            'username' => 'charles_jamis',
             'email' => 'charlesjamis@gmail.com', 
             'password' => Hash::make('12345678'), 
             'avatar' => 'avatar-6.jpg', 

@@ -113,6 +113,9 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             upcomingEvent(defaultEvents);
         },
+        eventContent: function( info ) {
+            return {html: info.event.title};
+        },
         eventClick: function (info) {
             handleEventClicked(info.event);
         },
@@ -365,6 +368,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // upcoming Event
     function upcomingEvent(a) {
+        if(!document.getElementById("upcoming-event-list")) return;
+
         a.sort(function (o1, o2) {
             return (new Date(o1.start)) - (new Date(o2.start));
         });

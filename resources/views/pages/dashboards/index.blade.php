@@ -2,6 +2,9 @@
 @section('title')
     Dashboard
 @endsection
+@section('css')
+    <link href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css" rel="stylesheet">
+@endsection
 @section('content')
     @component('components.breadcrumb')
         @slot('title')
@@ -11,6 +14,50 @@
             Home
         @endslot
     @endcomponent
+
+    <style>
+        .timeline-2 .timeline-year p {
+            border: 1px solid #405189;
+        }
+
+        .timeline-2:after {
+            background: #405189;
+        }
+
+        #col-left-dashboard {
+            border-radius: 5px;
+            max-height: 650px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        #col-left-dashboard::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(78, 78, 78, 0.3);
+            background-color: #f4f3f9;
+            border-radius: 10px;
+        }
+
+        #col-left-dashboard::-webkit-scrollbar {
+            width: 5px;
+            background-color: #f4f3f9;
+            border-radius: 10px;
+        }
+
+        #col-left-dashboard::-webkit-scrollbar-thumb {
+            background-color: #405189;
+            border-radius: 10px;
+            border: none;
+        }
+
+        .gprev.gbtn {
+            display: none !important;
+        }
+
+        .gnext.gbtn {
+            display: none !important;
+        }
+    </style>
+
     <div class="row mb-3 pb-1">
         <div class="col-12">
             <div class="d-flex align-items-lg-center flex-lg-row flex-column" style="justify-content: space-between;">
@@ -24,7 +71,7 @@
                     <div class="row g-3 mb-0 align-items-center">
                         <div class="col-auto">
                             <button type="button" class="btn btn-disabled border material-shadow-none" disabled><i
-                                    class="mdi mdi-hands-pray fs-15" ></i> Send Prayer Intention</button>
+                                    class="mdi mdi-hands-pray fs-15"></i> Send Prayer Intention</button>
                         </div>
                         <div class="col-auto">
                             <a href="{{ route('events.calendar') }}" class="btn btn-info material-shadow-none"><i
@@ -91,11 +138,6 @@
                                                 </button>
                                             </form>
                                         </div>
-                                        {{-- <div class="modal-footer">
-                                                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Close</button>
-                                                <button type="button" class="btn btn-primary ">Save Changes</button>
-                                            </div> --}}
-
                                     </div><!-- /.modal-content -->
                                 </div><!-- /.modal-dialog -->
                             </div><!-- /.modal -->
@@ -109,46 +151,102 @@
         <!--end col-->
     </div>
     <div class="row">
-        <div class="col-xl-7">
-            <div class="card">
-                <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Recent Event Registration</h4>
-                </div><!-- end card header -->
+        <div class="col-xl-7" id="col-left-dashboard">
+            @role('super_admin')
+                <div class="card">
+                    <div class="card-header align-items-center d-flex">
+                        <h4 class="card-title mb-0 flex-grow-1">Recent Event Registration</h4>
+                    </div><!-- end card header -->
 
-                <div class="card-body">
-                    <div class="table-responsive table-card">
-                        <table class="table table-borderless table-hover table-nowrap align-middle mb-0">
-                            <thead class="table-light">
-                                <tr class="text-muted">
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Event</th>
-                                    <th scope="col">Date Registered</th>
-                                    <th scope="col">Fee</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-                                @foreach ($recent_event_registrations as $registration)
-                                    <tr>
-                                        <td><img src="{{ URL::asset('images/' . $registration->user->avatar) }}"
-                                                alt="" class="avatar-xs rounded-circle me-2 material-shadow">
-                                            <a href="#javascript: void(0);"
-                                                class="text-body fw-medium">{{ $registration->user->first_name . ' ' . $registration->user->last_name }}</a>
-                                        <td>{{ $registration->event->title }}</td>
-                                        </td>
-                                        <!-- <td><span class="badge bg-success-subtle text-success p-2">Deal Won</span></td> -->
-                                        <td>{{ Carbon::parse($registration->created_at)->format('M d, Y') }}</td>
-                                        <td>
-                                            <div class="text-nowrap">P {{ number_format($registration->amount, 2) }}</div>
-                                        </td>
+                    <div class="card-body">
+                        <div class="table-responsive table-card">
+                            <table class="table table-borderless table-hover table-nowrap align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr class="text-muted">
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Event</th>
+                                        <th scope="col">Date Registered</th>
+                                        <th scope="col">Fee</th>
                                     </tr>
-                                @endforeach
+                                </thead>
 
-                            </tbody><!-- end tbody -->
-                        </table><!-- end table -->
-                    </div><!-- end table responsive -->
-                </div><!-- end card body -->
-            </div><!-- end card -->
+                                <tbody>
+                                    @foreach ($recent_event_registrations as $registration)
+                                        <tr>
+                                            <td><img src="{{ URL::asset('images/' . $registration->user->avatar) }}"
+                                                    alt="" class="avatar-xs rounded-circle me-2 material-shadow">
+                                                <a href="#javascript: void(0);"
+                                                    class="text-body fw-medium">{{ $registration->user->first_name . ' ' . $registration->user->last_name }}</a>
+                                            <td>{{ $registration->event->title }}</td>
+                                            </td>
+                                            <!-- <td><span class="badge bg-success-subtle text-success p-2">Deal Won</span></td> -->
+                                            <td>{{ Carbon::parse($registration->created_at)->format('M d, Y') }}</td>
+                                            <td>
+                                                <div class="text-nowrap">P {{ number_format($registration->amount, 2) }}</div>
+                                            </td>
+                                        </tr>
+                                    @endforeach
+
+                                </tbody><!-- end tbody -->
+                            </table><!-- end table -->
+                        </div><!-- end table responsive -->
+                    </div><!-- end card body -->
+                </div><!-- end card -->
+            @else
+                <div class="card">
+                    <div class="card-content">
+                        <div class="card-header">
+                            <h2 class="card-title">Recent Announcements</h2>
+                        </div>
+                        <div class="card-body">
+                            <div class="timeline-2">
+                                @foreach ($recent_announcements as $month => $announcements)
+                                    <div class="timeline-year">
+                                        <p>{{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('M Y') }}</p>
+                                    </div>
+                            
+                                    @foreach ($announcements as $announcement)
+                                        <div class="timeline-continue">
+                                            <div class="row timeline-right">
+                                                <div class="col-12">
+                                                    <p class="timeline-date">
+                                                        {{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}
+                                                    </p>
+                                                </div>
+                                                <div class="col-12">
+                                                    <div class="timeline-box">
+                                                        <div class="timeline-text">
+                                                            <div class="d-flex">
+                                                                <div class="flex-grow-1 ms-3">
+                                                                    <h5 class="mb-1">{{ $announcement->title }}</h5>
+                                                                    <p class="text-muted mb-0">{!! $announcement->content !!}</p>
+                                                                    <div class="row border border-dashed rounded gx-2 p-2">
+                                                                        @forelse ($announcement->images as $image)
+                                                                            <div class="col-3">
+                                                                                <a href="{{ URL::asset('uploads/announcements/' . $announcement->id . '/' . $image->image_path) }}" 
+                                                                                    data-glightbox="" data-gallery="lightbox">
+                                                                                    <img src="{{ URL::asset('uploads/announcements/' . $announcement->id . '/' . $image->image_path) }}" 
+                                                                                         alt="" class="img-fluid rounded">
+                                                                                </a>
+                                                                            </div>
+                                                                        @empty
+                                                                            <div class="col-12">No Images Found</div>
+                                                                        @endforelse
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endforeach
+                            </div>                            
+                        </div>
+                    </div>
+                </div>
+            @endrole
         </div><!-- end col -->
 
         <div class="col-xl-5">
@@ -157,8 +255,8 @@
                     <h4 class="card-title mb-0 flex-grow-1">Latest Tithe</h4>
                     <div class="flex-shrink-0">
                         <div class="dropdown card-header-dropdown">
-                            <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown" aria-haspopup="true"
-                                aria-expanded="false">
+                            <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown"
+                                aria-haspopup="true" aria-expanded="false">
                                 <span class="text-muted fs-18"><i class="mdi mdi-dots-vertical"></i></span>
                             </a>
                         </div>
@@ -242,49 +340,22 @@
                     </ul><!-- end -->
                 </div><!-- end card body -->
             </div><!-- end card -->
-            <div class="card">
-                <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Recent Announcements</h4>
-                </div><!-- end card header -->
-
-                <div class="card-body p-0">
-                    <div data-simplebar>
-                        <ul class="list-group list-group-flush border-dashed px-3">
-                            @forelse ($announcements as $announcement)
-                                <li class="list-group-item ps-0">
-                                    <div class="d-flex align-items-start">
-                                        <div class="flex-grow-1">
-                                            <label class="form-check-label mb-0 ps-2"
-                                                for="task_one">{{ $announcement->title }}</label>
-                                        </div>
-                                        <div class="flex-shrink-0 ms-2">
-                                            <p class="text-muted fs-12 mb-0">
-                                                {{ Carbon::parse($announcement->created_at)->format('M d, Y') }}</p>
-                                        </div>
-                                    </div>
-                                </li>
-                            @empty
-                                <li class="list-group-item ps-0">
-                                    <h6 class="text-center">No Announcement Found</h6>
-                                </li><!-- end -->
-                            @endforelse
-                        </ul><!-- end ul -->
-                    </div>
-                </div><!-- end card body -->
-            </div><!-- end card -->
         </div><!-- end col -->
     </div><!-- end row -->
 @endsection
 @section('script')
-    <!-- apexcharts -->
+    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
     <script src="{{ URL::asset('build/libs/apexcharts/apexcharts.min.js') }}"></script>
     <script src="{{ URL::asset('build/js/pages/dashboard-crm.init.js') }}"></script>
     <script src="{{ URL::asset('build/js/app.js') }}"></script>
+    <script>
+        const lightbox = GLightbox({
+            selector: 'a[data-glightbox]',
+            title: "",
+            touchNavigation: false,
+            loop: true,
+            draggable: false,
+        });
+    </script>
 
-    {{-- <script>
-        $('#tithe-form-btn').click(function(e) {
-            console.log(true);
-            $('#tithe-form').submit();
-        })
-    </script> --}}
 @endsection

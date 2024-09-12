@@ -67,7 +67,7 @@ class EventsController extends Controller
                                     break;
                         }
 
-                        $output .= "<div class='badge' style='background: $color'>$section->name</div>";
+                        $output .= "<div class='badge' style='background: $color '>$section->name</div>";
                     }
     
                     $output .= "</div>";
@@ -249,24 +249,31 @@ class EventsController extends Controller
                 switch($section->name) {
                     case 'kids':
                         $color = '#fa6b02' ;
+                        $image = '<img src="'. asset('build/images/kids-logo.png') .'" width="20" height="20" style="border-radius: 50%;" />';
                         break;
                     case 'youth':
                         $color = '#0066ab';
+                        $image = '<img src="'. asset('build/images/youth-logo.png') .'" width="20" height="20" style="border-radius: 50%;" />';
                         break;
                     case 'singles':
                         $color = '#1c8265';
+                        $image = '<img src="'. asset('build/images/singles-logo.png') .'" width="20" height="20" style="border-radius: 50%;" />';
                         break;
                     case 'servants':
                         $color = '#ffad09';
+                        $image = '<img src="'. asset('build/images/servant-logo.png') .'" width="20" height="20" style="border-radius: 50%;" />';
                             break;
                     case 'handmaids':
                         $color = '#ee2c2e';
+                        $image = '<img src="'. asset('build/images/handmaids-logo.png') .'" width="20" height="20" style="border-radius: 50%;" />';
                             break;
                     case 'couples':
                         $color = '#2a81d9';
+                        $image = '<img src="'. asset('build/images/couples-logo.png') .'" width="20" height="20" style="border-radius: 50%;" />';
                             break;       
                     default:
                         $color = '#7852a9';
+                        $image = '<img src="'. asset('build/images/MFC-Logo.jpg') .'" width="20" height="20" style="border-radius: 50%;" />';
                             break;
                 }
                 array_push($colors, $color);
@@ -280,8 +287,7 @@ class EventsController extends Controller
 
             if(count($colors) > 1) {
                 $background = "#7852a9";
-                // $background = "linear-gradient(90deg, ";
-                // $background .= implode(', ', $colorStops) . ")";
+                $image = '<img src="'. asset('build/images/MFC-Logo.jpg') .'" width="20" height="20" style="border-radius: 50%;" />';
             } else {
                 $background = $colors[0];
             }

@@ -63,7 +63,12 @@
                             id="directory">
                             <ul class="nav nav-sm flex-column">
                                 <li
-                                    class="nav-item {{ preg_match('/^dashboard\/directory\/kids/', Request::path()) ? 'active' : '' }}">
+                                    class="nav-item {{ preg_match('/^dashboard\/directory\/all/', Request::path()) ? 'active' : '' }}">
+                                    <a href="{{ route('users.index', ['section' => 'all']) }}"
+                                        class="nav-link {{ preg_match('/^dashboard\/directory\/all/', Request::path()) ? 'active' : '' }}">@lang('translation.all')</a>
+                                </li>
+                                <li
+                                    class="nav-item {{ preg_match('/^dashboard\/directory\/all/', Request::path()) ? 'active' : '' }}">
                                     <a href="{{ route('users.index', ['section' => 'kids']) }}"
                                         class="nav-link {{ preg_match('/^dashboard\/directory\/kids/', Request::path()) ? 'active' : '' }}">@lang('translation.kids')</a>
                                 </li>

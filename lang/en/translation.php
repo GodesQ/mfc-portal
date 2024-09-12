@@ -1,5 +1,6 @@
 <?php
 return [
+    "all" => "All",
     "menu"=>"Menu",
     "dashboards"=>"Dashboards",
     "analytics"=>"Analytics",

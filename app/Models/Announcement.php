@@ -19,4 +19,8 @@ class Announcement extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function images() {
+        return $this->hasMany(AnnouncementImage::class, 'announcement_id');
+    }
 }
