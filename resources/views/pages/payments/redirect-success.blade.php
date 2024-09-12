@@ -10,17 +10,7 @@
     <link rel="stylesheet" href="{{ URL::asset('build/css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ URL::asset('build/css/icons.min.css') }}">
     <link rel="stylesheet" href="{{ URL::asset('build/css/app.min.css') }}">
-
-    <style>
-        #header-details {
-            width: 35%;
-        }
-        @media print {
-            #header-details {
-                width: 45%;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="{{ URL::asset('build/css/custom.min.css') }}">
 </head>
 
 <body>
@@ -31,14 +21,14 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="card-header border-bottom-dashed border-2 pt-4 pb-2 px-4">
-                                <div class="d-flex mb-3 align-items-center justify-content-between">
-                                    <div class="header-logo">
+                                <div class="d-block text-center mb-3" id="ar-header-box">
+                                    <div class="header-logo d-flex justify-content-center">
                                         <img src="{{ URL::asset('build/images/mfc-logo-retina.png') }}"
                                             class="card-logo card-logo-dark" alt="logo dark" width="360">
                                         <img src="{{ URL::asset('build/images/mfc-logo-retina.png') }}"
                                             class="card-logo card-logo-light" alt="logo light" width="360">
                                     </div>
-                                    <div class="flex-shrink mt-sm-0 mt-3" id="header-details">
+                                    <div class="mt-sm-0 mt-3" id="header-details">
                                         <h6>
                                             <span class=" fw-normal text-wrap" style="line-height: 20px !important;">
                                             12 Starmall Complex, Shaw Blvd., Wack-Wack Greenhills, 1555 City of Mandaluyong NCR, Second District, Philippines
@@ -100,9 +90,9 @@
                                     <div class="col-lg-3 col-6">
                                         <p class="text-muted mb-2 text-uppercase fw-semibold">Received From</p>
                                         <h5 class="fs-14 mb-0">
-                                            <span id="received-from"> {{ $transaction->received_from_user->first_name . ' ' . $transaction->received_from_user->last_name }}</span>
+                                            <span id="received-from"> {{ ($transaction->received_from_user->first_name ?? "No First Name Found") . ' ' . ($transaction->received_from_user->last_name ?? "No Last Name Found") }}</span>
                                             <br>
-                                            <span class="text-muted fs-12">#{{ $transaction->received_from_user->mfc_id_number }}</span>
+                                            <span class="text-muted fs-12">#{{ ($transaction->received_from_user->mfc_id_number ?? "No MFC ID Number Found") }}</span>
                                         </h5>
                                     </div>
                                     <!--end col-->
