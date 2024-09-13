@@ -259,4 +259,6 @@ return [
     "funnel" => "Funnel",
     
     "event_registrations" => "Event Registrations",
+
+    "all"=> "All",
 ];

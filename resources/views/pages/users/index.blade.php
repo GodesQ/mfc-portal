@@ -39,7 +39,7 @@
                                 <th class="" data-sort="contact_number">Contact Number</th>
                                 <th class="" data-sort="area">Area</th>
                                 <th class="" data-sort="chapter">Chapter</th>
-                                <th class="" data-sort="gender">Gender</th>
+                                <th class="" data-sort="section">Section</th>
                                 <th class="" data-sort="status">Status</th>
                                 <th class="" data-sort="action">Actions</th>
                             </tr>
@@ -193,15 +193,10 @@
                         }
                     },
                     {
-                        data: "gender",
-                        name: "gender",
-                        render: function(data) {
-                            if (data == null) {
-                                return '<span class="text-capitalize">N/A</span>';
-                            }
-
-                            return '<span class="text-capitalize">' + data + '</span>';;
-                        }
+                        data: "section",
+                        name: "section",
+                        orderable: false,
+                        searchable: false,
                     },
                     {
                         data: "status",

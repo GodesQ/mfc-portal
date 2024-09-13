@@ -46,13 +46,16 @@ class UsersController extends Controller
                 $btn_color = 'btn-warning';
                 break;
             default:
-                $users = User::where('section_id', 6)->get();
+                $users = User::get();
                 $btn_color = 'btn-info';
                 break;
         }
 
         if ($request->ajax()) {
             return DataTables::of($users)
+                ->editColumn('section', function ($row) {
+                    return $row->section->name ?? 'N/A';
+                })
                 ->addColumn('actions', function ($user) {
                     $actions = "<div class='hstack gap-2'>
                         <button type='button' class='btn btn-soft-success btn-sm edit-btn' id='" . $user->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit'><i class='ri-pencil-fill align-bottom'></i></button>
