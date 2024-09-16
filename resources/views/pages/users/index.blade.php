@@ -37,8 +37,6 @@
                                 <th class="" data-sort="name">Name</th>
                                 <th class="" data-sort="email">Email</th>
                                 <th class="" data-sort="contact_number">Contact Number</th>
-                                <th class="" data-sort="area">Area</th>
-                                <th class="" data-sort="chapter">Chapter</th>
                                 <th class="" data-sort="section">Section</th>
                                 <th class="" data-sort="status">Status</th>
                                 <th class="" data-sort="action">Actions</th>
@@ -168,28 +166,6 @@
                             }
 
                             return '<span class="text-capitalize d-flex">0' + data + '</span>';;
-                        }
-                    },
-                    {
-                        data: "area",
-                        name: "area",
-                        render: function(data) {
-                            if (data == null) {
-                                return '<span class="text-capitalize">N/A</span>';
-                            }
-
-                            return '<span class="text-capitalize">' + data + '</span>';;
-                        }
-                    },
-                    {
-                        data: "chapter",
-                        name: "chapter",
-                        render: function(data) {
-                            if (data == null) {
-                                return '<span class="text-capitalize">N/A</span>';
-                            }
-
-                            return '<span class="text-capitalize">' + data + '</span>';;
                         }
                     },
                     {

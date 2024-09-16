@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class EventsController extends Controller
-{   
+{
     /**
      * Display a listing of the resource.
      */
@@ -26,7 +26,7 @@ class EventsController extends Controller
             $events = Event::get();
             return DataTables::of($events)
                 ->editColumn('start_date', function ($event) {
-                    return Carbon::parse($event->start_date)->format('F d, Y');    
+                    return Carbon::parse($event->start_date)->format('F d, Y');
                 })
                 ->addColumn('actions', function ($event) {
                     $actions = "<div class='hstack gap-2'>
@@ -43,9 +43,9 @@ class EventsController extends Controller
                     $output = "<div class='d-flex flex-wrap gap-1'>";
 
                     foreach ($sections as $section) {
-                        switch($section->name) {
+                        switch ($section->name) {
                             case 'kids':
-                                $color = '#fa6b02' ;
+                                $color = '#fa6b02';
                                 break;
                             case 'youth':
                                 $color = '#0066ab';
@@ -55,21 +55,21 @@ class EventsController extends Controller
                                 break;
                             case 'servants':
                                 $color = '#ffad09';
-                                    break;
+                                break;
                             case 'handmaids':
                                 $color = '#ee2c2e';
-                                    break;
+                                break;
                             case 'couples':
                                 $color = '#2a81d9';
-                                    break;       
+                                break;
                             default:
                                 $color = '#7852a9';
-                                    break;
+                                break;
                         }
 
                         $output .= "<div class='badge' style='background: $color '>$section->name</div>";
                     }
-    
+
                     $output .= "</div>";
                     // // Return 'N/A' if no section is found
                     // return $sections ? $sections->name : 'N/A';
@@ -94,12 +94,13 @@ class EventsController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(StoreRequest $request)
-    {   
+    {
 
         try {
             DB::beginTransaction();
 
-            if(!$request->ajax()) throw new Exception("Error processing data.", 400);
+            if (!$request->ajax())
+                throw new Exception("Error processing data.", 400);
             $data = $request->validated();
 
             $filename = "";
@@ -134,7 +135,7 @@ class EventsController extends Controller
 
             return response()->json(['message' => 'Event Created Successfully'], 200);
 
-        }catch (Exception $exception) {
+        } catch (Exception $exception) {
             DB::rollBack();
             $exception_code = $exception->getCode() === 0 ? 500 : $exception->getCode();
 
@@ -147,14 +148,14 @@ class EventsController extends Controller
      * Display the specified resource.
      */
     public function show(Request $request, string $identifier)
-    {   
-        if(is_numeric($request->identifier)) {
+    {
+        if (is_numeric($request->identifier)) {
             $event = Event::findOrFail($identifier);
         } else {
             $event = Event::where('title', $identifier)->firstOrFail();
         }
 
-        if($request->ajax() || $request->header('application/json')) {
+        if ($request->ajax() || $request->header('application/json')) {
             return response()->json([
                 'status' => 'success',
                 'event' => $event,
@@ -176,7 +177,7 @@ class EventsController extends Controller
      * Update the specified resource in storage.
      */
     public function update(UpdateRequest $request, string $id)
-    {   
+    {
         $data = $request->except('_token', '_method', 'eventid');
         $event = Event::findOrFail($id);
 
@@ -220,14 +221,16 @@ class EventsController extends Controller
         ]);
     }
 
-    public function calendar(Request $request) {
+    public function calendar(Request $request)
+    {
         return view('apps-calendar');
     }
 
-    public function all(Request $request) {
+    public function all(Request $request)
+    {
         $events = Event::query();
 
-        if($request->query('filter') && $request->query('filter') === "upcoming_events") {
+        if ($request->query('filter') && $request->query('filter') === "upcoming_events") {
             $today = Carbon::today()->toDateString();
             $events = $events->where("start_date", '>', $today);
         }
@@ -240,41 +243,42 @@ class EventsController extends Controller
         ], 200);
     }
 
-    public function fullCalendar(Request $request) {
-        $events = Event::where('status', 'Active')->get()->map(function($event) {
+    public function fullCalendar(Request $request)
+    {
+        $events = Event::where('status', 'Active')->get()->map(function ($event) {
             $sections = Section::whereIn('id', $event->section_ids)->get();
 
             $colors = [];
             foreach ($sections as $key => $section) {
-                switch($section->name) {
+                switch ($section->name) {
                     case 'kids':
-                        $color = '#fa6b02' ;
-                        $image = '<img src="'. asset('build/images/kids-logo.png') .'" width="20" height="20" style="border-radius: 50%;" />';
+                        $color = '#fa6b02';
+                        $image = '<img src="' . asset('build/images/kids-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
                         break;
                     case 'youth':
                         $color = '#0066ab';
-                        $image = '<img src="'. asset('build/images/youth-logo.png') .'" width="20" height="20" style="border-radius: 50%;" />';
+                        $image = '<img src="' . asset('build/images/youth-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
                         break;
                     case 'singles':
                         $color = '#1c8265';
-                        $image = '<img src="'. asset('build/images/singles-logo.png') .'" width="20" height="20" style="border-radius: 50%;" />';
+                        $image = '<img src="' . asset('build/images/singles-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
                         break;
                     case 'servants':
                         $color = '#ffad09';
-                        $image = '<img src="'. asset('build/images/servant-logo.png') .'" width="20" height="20" style="border-radius: 50%;" />';
-                            break;
+                        $image = '<img src="' . asset('build/images/servant-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                        break;
                     case 'handmaids':
                         $color = '#ee2c2e';
-                        $image = '<img src="'. asset('build/images/handmaids-logo.png') .'" width="20" height="20" style="border-radius: 50%;" />';
-                            break;
+                        $image = '<img src="' . asset('build/images/handmaids-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                        break;
                     case 'couples':
                         $color = '#2a81d9';
-                        $image = '<img src="'. asset('build/images/couples-logo.png') .'" width="20" height="20" style="border-radius: 50%;" />';
-                            break;       
+                        $image = '<img src="' . asset('build/images/couples-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                        break;
                     default:
                         $color = '#7852a9';
-                        $image = '<img src="'. asset('build/images/MFC-Logo.jpg') .'" width="20" height="20" style="border-radius: 50%;" />';
-                            break;
+                        $image = '<img src="' . asset('build/images/MFC-Logo.jpg') . '" width="20" height="20" style="border-radius: 50%;" />';
+                        break;
                 }
                 array_push($colors, $color);
             }
@@ -285,35 +289,35 @@ class EventsController extends Controller
                 $colorStops[] = "$color";
             }
 
-            if(count($colors) > 1) {
+            if (count($colors) > 1) {
                 $background = "#7852a9";
-                $image = '<img src="'. asset('build/images/MFC-Logo.jpg') .'" width="20" height="20" style="border-radius: 50%;" />';
+                $image = '<img src="' . asset('build/images/MFC-Logo.jpg') . '" width="20" height="20" style="border-radius: 50%;" />';
             } else {
                 $background = $colors[0];
             }
-            
+
             return [
                 'id' => $event->id,
                 'title' => $event->title,
                 'start' => $event->start_date,
-                'end' => Carbon::parse($event->end_date)->addDay(), 
+                'end' => Carbon::parse($event->end_date)->addDay(),
                 'extendedProps' => [
                     'time' => $event->time,
                     'location' => $event->location,
                     'latitude' => $event->latitude,
                     'longitude' => $event->longitude,
                     'description' => $event->description,
-                    'registration_fee' => $event->reg_fee, 
+                    'registration_fee' => $event->reg_fee,
                     'is_enable_event_registration' => $event->is_enable_event_registration,
                     'background' => $background,
                 ],
                 'allDay' => true
             ];
         });
-    
+
         return response()->json([
             'events' => $events
         ]);
     }
-    
+
 }

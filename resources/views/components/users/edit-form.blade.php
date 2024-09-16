@@ -95,6 +95,7 @@
             processData: false,
             success: function(response) {
                 toastr.success(response.message, "Success");
+                $('#users_datatables').DataTable().ajax.reload(null, false); // false to keep the current page
             }
         })
     })
