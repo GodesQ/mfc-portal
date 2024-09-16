@@ -35,23 +35,54 @@ if (document.querySelector("#profile-img-file-input")) {
         .querySelector("#profile-img-file-input")
         .addEventListener("change", function () {
             var preview = document.querySelector(".user-profile-image");
-            var file = document.querySelector(".profile-img-file-input")
-                .files[0];
+            var headerProfile = document.querySelector(".header-profile-user");
+            var file = document.querySelector("#profile-img-file-input")
+                .files[0]; // Removed extra variable declaration
             var reader = new FileReader();
+
+            // Preview the image
             reader.addEventListener(
                 "load",
                 function () {
                     preview.src = reader.result;
+                    headerProfile.src = reader.result;
                 },
                 false
             );
             if (file) {
                 reader.readAsDataURL(file);
             }
+
+            // Prepare FormData
+            var formData = new FormData();
+            formData.append("profile_image", file);
+            formData.append("_method", "PUT"); // For Laravel PUT request
+
+            let user_id = $("#user-id-field").val(); // Make sure to have a user ID field
+
+            // Ajax request to upload file
+            $.ajax({
+                url: `/dashboard/profile/upload-avatar/${user_id}`,
+                method: "POST", // Laravel accepts POST even for PUT requests with "_method"
+                data: formData,
+                contentType: false, // Important for file upload
+                processData: false, // Important for file upload
+                headers: {
+                    "X-CSRF-TOKEN": document
+                        .querySelector('meta[name="csrf-token"]')
+                        .getAttribute("content"),
+                },
+                success: function (response) {
+                    toastr.success(response.message);
+                },
+                error: function (error) {
+                    toastr.error("Failed to upload avatar");
+                },
+            });
         });
 }
 
-var count = document.querySelectorAll('.containerElement').length;
+var count = document.querySelectorAll(".containerElement").length;
 
 // var genericExamples = document.querySelectorAll("[data-trigger]");
 // for (i = 0; i < genericExamples.length; ++i) {
@@ -71,8 +102,7 @@ function new_link() {
 
     var containerElement = document.querySelectorAll(".containerElement");
 
-    var delLink =
-        `<div class="row service-container">
+    var delLink = `<div class="row service-container">
             <span class="menu-title mb-1">Service</span>
             <div class="col-3">
                 <div class="mb-3">
@@ -160,7 +190,7 @@ function choicesInit(count) {
 
     var service_areaSetup = {
         shouldSort: false,
-    }
+    };
 
     new Choices(service_category, choicesSetup);
     // new Choices(mfc_service_type, choicesSetup);
@@ -174,28 +204,57 @@ function deleteEl(eleId) {
     var parentEle = d.getElementById("newlink");
     parentEle.removeChild(ele);
 
-    let serviceContainers = document.querySelectorAll('.service-container');
+    let serviceContainers = document.querySelectorAll(".service-container");
 
-    if(serviceContainers.length === 0) {
+    if (serviceContainers.length === 0) {
         $("#update-service-btn").attr("disabled", true);
     } else {
         $("#update-service-btn").removeAttr("disabled");
     }
-
 }
 
-let mfcTypes = ["Servant Council", "National Coordinator", "Section Coordinator", "Provincial Coordinator",
-    "Area Servant", "Chapter Servant", "Unit Servant", "Household Servant", "Mission Volunteer", "Full Time"
+let mfcTypes = [
+    "Servant Council",
+    "National Coordinator",
+    "Section Coordinator",
+    "Provincial Coordinator",
+    "Area Servant",
+    "Chapter Servant",
+    "Unit Servant",
+    "Household Servant",
+    "Mission Volunteer",
+    "Full Time",
 ];
-let mfcSections = ["Kids", "Youth", "Singles", "Handmaids", "Servants", "Couples"];
+let mfcSections = [
+    "Kids",
+    "Youth",
+    "Singles",
+    "Handmaids",
+    "Servants",
+    "Couples",
+];
 
-let lcscTypes = ["LCSC Coordinator", "Pillar Head", "Area Coordinator", "Provincial Coordinator", "Full Time",
-    "Mission Volunteer"
+let lcscTypes = [
+    "LCSC Coordinator",
+    "Pillar Head",
+    "Area Coordinator",
+    "Provincial Coordinator",
+    "Full Time",
+    "Mission Volunteer",
 ];
-let lcscSections = ["LCSC", "Live Pure", "Live Life", "Live the Word", "Live Full", "Live the Faith"];
+let lcscSections = [
+    "LCSC",
+    "Live Pure",
+    "Live Life",
+    "Live the Word",
+    "Live Full",
+    "Live the Faith",
+];
 
 function chooseServiceCategory(count) {
-    const service_category = document.getElementById("service_category" + count);
+    const service_category = document.getElementById(
+        "service_category" + count
+    );
     const serviceTypeSelect = document.getElementById("service_type" + count);
     const sectionSelect = document.getElementById("section" + count);
 
@@ -211,31 +270,42 @@ function chooseServiceCategory(count) {
     }
 
     service_category.addEventListener("change", function (e) {
-        setChoicesForServices(typeChoiceInstance, sectionChoiceInstance, e.target.value);
+        setChoicesForServices(
+            typeChoiceInstance,
+            sectionChoiceInstance,
+            e.target.value
+        );
     });
 }
 
 // Declare variables to hold the Choices instances (moved outside the function to persist them)
 let typeChoiceInstance = null;
 let sectionChoiceInstance = null;
-$('.service-category-select').on("change", (e) => {
+$(".service-category-select").on("change", (e) => {
     let container = $(e.target).closest(".containerElement");
     let serviceTypeSelect = container.find(".service-type-select");
     let sectionSelect = container.find(".section-select");
 
-        if (!typeChoiceInstance) {
-            typeChoiceInstance = new Choices(serviceTypeSelect[0]);
-        }
+    if (!typeChoiceInstance) {
+        typeChoiceInstance = new Choices(serviceTypeSelect[0]);
+    }
 
-        if (!sectionChoiceInstance) {
-            sectionChoiceInstance = new Choices(sectionSelect[0]);
-        }
+    if (!sectionChoiceInstance) {
+        sectionChoiceInstance = new Choices(sectionSelect[0]);
+    }
 
-    setChoicesForServices(typeChoiceInstance, sectionChoiceInstance, e.target.value);
+    setChoicesForServices(
+        typeChoiceInstance,
+        sectionChoiceInstance,
+        e.target.value
+    );
 });
 
-function setChoicesForServices(typeChoiceInstance, sectionChoiceInstance, value) {
-
+function setChoicesForServices(
+    typeChoiceInstance,
+    sectionChoiceInstance,
+    value
+) {
     // Clear previous choices before setting new ones
     typeChoiceInstance.clearChoices();
     sectionChoiceInstance.clearChoices();
@@ -244,27 +314,49 @@ function setChoicesForServices(typeChoiceInstance, sectionChoiceInstance, value)
     if (value === "mfc") {
         // Add new options for MFC
         typeChoiceInstance.setChoices(
-            mfcTypes.map((type, index) => ({ value: type, label: type, id: index + 1 })),
-            'value', 'label', true
+            mfcTypes.map((type, index) => ({
+                value: type,
+                label: type,
+                id: index + 1,
+            })),
+            "value",
+            "label",
+            true
         );
 
         sectionChoiceInstance.setChoices(
-            mfcSections.map((section, index) => ({ value: section, label: section, id: index + 1 })),
-            'value', 'label', true
+            mfcSections.map((section, index) => ({
+                value: section,
+                label: section,
+                id: index + 1,
+            })),
+            "value",
+            "label",
+            true
         );
-
     } else if (value === "lcsc") {
         // Add new options for LCSC
         typeChoiceInstance.setChoices(
-            lcscTypes.map((type, index) => ({ value: type, label: type, id: index + 1 })),
-            'value', 'label', true
+            lcscTypes.map((type, index) => ({
+                value: type,
+                label: type,
+                id: index + 1,
+            })),
+            "value",
+            "label",
+            true
         );
 
         sectionChoiceInstance.setChoices(
-            lcscSections.map((section, index) => ({ value: section, label: section, id: index + 1 })),
-            'value', 'label', true
+            lcscSections.map((section, index) => ({
+                value: section,
+                label: section,
+                id: index + 1,
+            })),
+            "value",
+            "label",
+            true
         );
-
     } else {
         // Clear the choices if no valid category is selected
         typeChoiceInstance.clearChoices();

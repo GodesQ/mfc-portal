@@ -243,7 +243,7 @@
                     users.forEach(user => {
                         output += `<div class="d-flex justify-content-center align-items-center gap-4 border py-3">
                                     <div style="width: 20%;">
-                                        <img class="rounded-circle" src="{{ URL::asset('build/images/users/${user.avatar}') }}" style="width: 100%;">
+                                        <img class="rounded-circle" src="{{ URL::asset('uploads/avatars/${user.avatar}') }}" style="width: 100%;">
                                     </div>
                                     <div style="width: 70%;">
                                         <h5>${user.first_name} ${user.last_name}</h5>
@@ -307,7 +307,7 @@
                                             <div class="row gy-3">
                                                 <div class="col-sm-auto">
                                                     <div class="avatar-lg bg-light rounded p-1">
-                                                        <img src="{{ URL::asset('build/images/users/${user.avatar}') }}" alt="" class="img-fluid d-block">
+                                                        <img src="{{ URL::asset('uploads/avatars/${user.avatar}') }}" alt="" class="img-fluid d-block">
                                                     </div>
                                                 </div>
                                                 <div class="col-sm">

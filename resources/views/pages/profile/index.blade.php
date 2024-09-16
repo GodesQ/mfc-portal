@@ -26,7 +26,7 @@
                 <div class="card-body p-4">
                     <div class="text-center">
                         <div class="profile-user position-relative d-inline-block mx-auto  mb-4">
-                            <img src="@if (Auth::user()->avatar != '') {{ URL::asset('build/images/users/' . Auth::user()->avatar) }}@else{{ URL::asset('build/images/users/avatar-1.jpg') }} @endif"
+                            <img src="@if (Auth::user()->avatar != '') {{ URL::asset('uploads/avatars/' . Auth::user()->avatar) }} @else{{ URL::asset('build/images/users/avatar-1.jpg') }} @endif"
                                 class="  rounded-circle avatar-xl img-thumbnail user-profile-image"
                                 alt="user-profile-image">
                             <div class="avatar-xs p-0 rounded-circle profile-photo-edit">
@@ -93,6 +93,7 @@
                             <form action="{{ route('users.profile.update', $user->id) }}" method="POST">
                                 @csrf
                                 @method('PUT')
+                                <input type="hidden" id="user-id-field" value="{{ $user->id }}">
                                 <div class="row">
                                     <div class="col-lg-6">
                                         <div class="mb-3">

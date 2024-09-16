@@ -183,7 +183,6 @@ return [
     "Apex_Treemap_Chart" => "Apex 树状图",
     "Apex_Pie_Chart" => "顶点饼图",
     "Apex_Radialbar_Chart" => "顶点径向条形图",
-    "Apex_Line_Chart" => "顶点折线图",
     "Apex_Radar_Chart" => "Apex 雷达图",
     "Apex_Polar_area_Chart" => "Apex 极地区域图",
     "nft"=> "NFT",

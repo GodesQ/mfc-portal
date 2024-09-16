@@ -10,6 +10,7 @@ use App\Models\UserMissionaryService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 use Yajra\DataTables\DataTables;
 
@@ -232,6 +233,25 @@ class UsersController extends Controller
         return response()->json([
             'status' => 'success',
             'users' => $users,
+        ]);
+    }
+
+    public function uploadProfileImage(Request $request, $user_id) {
+        $user = User::findOrFail($user_id);
+        
+        $file = $request->file('profile_image');
+        $file_name =  $user->mfc_id_number .'.'. $file->getClientOriginalExtension();
+        $file_path = "avatars/";
+
+        Storage::disk('public')->putFileAs($file_path, $file, $file_name);
+
+        $user->update([
+            'avatar' => $file_name,
+        ]);
+
+        return response()->json([
+            "status" => TRUE,
+            "message" => "Avatar Updated Successfully",
         ]);
     }
 }

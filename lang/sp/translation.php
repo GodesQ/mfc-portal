@@ -183,7 +183,6 @@ return [
     "Apex_Treemap_Chart" => "Gráfico de mapa de árbol de Apex",
     "Apex_Pie_Chart" => "Gráfico circular de vértice",
     "Apex_Radialbar_Chart" => "Gráfico de barras radiales de Apex",
-    "Apex_Line_Chart" => "Gráfico de líneas de vértice",
     "Apex_Radar_Chart" => "Gráfico de radar de Apex",
     "Apex_Polar_area_Chart" => "Gráfico de área polar de Apex",
 

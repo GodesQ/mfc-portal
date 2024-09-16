@@ -57,6 +57,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/profile/update/{user}', [UsersController::class, 'updateProfile'])->name('users.profile.update');
         Route::put('/profile/services/{user}', [UsersController::class, 'updateProfileService'])->name('users.profile.services.put');
         Route::put('/profile/change-password/{user}', [UsersController::class, 'updatePassword'])->name('users.profile.change_password');
+        Route::put('profile/upload-avatar/{user}', [UsersController::class, 'uploadProfileImage'])->name('users.profile.upload_avatar');
 
         Route::get('/events/calendar', [EventsController::class, 'calendar'])->name('events.calendar');
         Route::get('events/all', [EventsController::class, 'all'])->name('events.all');

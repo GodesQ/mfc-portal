@@ -12,7 +12,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-hidden="true"></button>
             </div>
             <div class="modal-body">
-                <form class="user-form" id="edit-user-form">
+                <form class="user-form" id="edit-user-form" action="#">
                     @csrf
                     <input type="hidden" id="user-id-field-edit">
                     <div class="row">
@@ -24,7 +24,7 @@
                         </div>
                         <div class="col-lg-6">
                             <div class="mb-3">
-                                <label for="last-name-field-edit" class="form-label">last Name</label>
+                                <label for="last-name-field-edit" class="form-label">Last Name</label>
                                 <input type="text" class="form-control" name="last_name" id="last-name-field-edit">
                             </div>
                         </div>
@@ -78,7 +78,7 @@
 </div>
 
 <script>
-    $(".edit-user-form").addEventListener('submit', (e) => {
+    $("#edit-user-form").on('submit', (e) => {
         e.preventDefault();
         let formData = new FormData(this);
 
