@@ -32,7 +32,6 @@ class PaymayaController extends Controller
 
         return response(['message' => "OK"], 200);
     }
-
     public function checkout_failed(Request $request) {
         $reference_number = $request->requestReferenceNumber;
 

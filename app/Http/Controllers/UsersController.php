@@ -208,9 +208,15 @@ class UsersController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, $id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return response()->json([
+            'status' => TRUE,
+            'message' => 'User Deleted Successfully'
+        ]);
     }
 
     public function search(Request $request) {

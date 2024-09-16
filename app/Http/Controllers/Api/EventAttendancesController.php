@@ -21,6 +21,7 @@ class EventAttendancesController extends Controller
             $event_attendance = EventAttendance::where("event_id", $event_registration->event_id)
                                 ->where("user_id", $event_registration->user->id)
                                 ->exists();
+                                
             if($event_attendance) throw new Exception("The user has already been marked as present for this event. No further attendance record can be added.", 400);
 
             $attendance = EventAttendance::create([

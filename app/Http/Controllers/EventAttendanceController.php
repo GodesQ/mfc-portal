@@ -96,7 +96,9 @@ class EventAttendanceController extends Controller
                     'attendance_date' => Carbon::now()
                 ], []);
             } else {
-                EventAttendance::where('event_id', $request->event_id)->where('user_id', $request->user_id)->delete();
+                EventAttendance::where('event_id', $request->event_id)
+                    ->where('user_id', $request->user_id)
+                    ->delete();
             }
 
             return response()->json([

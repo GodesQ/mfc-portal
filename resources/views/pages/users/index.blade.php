@@ -89,14 +89,14 @@
                         message: '<strong class="text-danger">Removing this user</strong> will remove all of the information from our database.',
                         deleteFunction: function() {
                             $.ajax({
-                                url: '/kids/' + id,
+                                url: '/dashboard/directory/' + id + '/users',
                                 type: 'DELETE',
                                 data: {
-                                    _token: $('meta[name="csrf-token"]').attr(
-                                        'content')
+                                    _token: "{{ csrf_token() }}"
                                 },
                                 success: function(response) {
                                     showSuccessMessage(response.message);
+                                    $('#users_datatables').DataTable().ajax.reload(null, false); // false to keep the current page
                                 },
                                 error: function(xhr, response, error) {
                                     showErrorMessage(xhr.statusText);

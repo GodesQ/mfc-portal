@@ -48,8 +48,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/users/search', [UsersController::class, 'search'])->name('search');
         Route::get('/users/profile/{user_id}');
-        Route::resource('/users', UsersController::class)->except(['index']);
+        Route::resource('/users', UsersController::class)->except(['index', 'destroy']);
         
+        Route::delete('/directory/{user_id}/users', [UsersController::class,'destroy'])->name('users.destroy');
         Route::get('/directory/{section}', [UsersController::class, 'index'])->name('users.index');
 
         Route::get('/profile/{user}', [UsersController::class, 'profile'])->name('users.profile');

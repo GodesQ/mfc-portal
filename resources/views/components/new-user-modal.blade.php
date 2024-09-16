@@ -107,12 +107,12 @@
                             <div class="mb-3">
                                 <label for="section-field">Section <span class="text-danger">*</span></label>
                                 <select name="section_id" id="section-field" class="form-select" required>
-                                    <option value="1">Kids</option>
-                                    <option value="2">Youth</option>
-                                    <option value="3">Singles</option>
-                                    <option value="4">Handmaids</option>
-                                    <option value="5">Servants</option>
-                                    <option value="6">Couples</option>
+                                    <option {{ Request::is('dashboard/directory/kids') ? "selected" : null }} value="1">Kids</option>
+                                    <option {{ Request::is('dashboard/directory/youth') ? "selected" : null }} value="2">Youth</option>
+                                    <option {{ Request::is('dashboard/directory/singles') ? "selected" : null }} value="3">Singles</option>
+                                    <option {{ Request::is('dashboard/directory/handmaids') ? "selected" : null }} value="4">Handmaids</option>
+                                    <option {{ Request::is('dashboard/directory/servants') ? "selected" : null }} value="5">Servants</option>
+                                    <option {{ Request::is('dashboard/directory/couples') ? "selected" : null }} value="6">Couples</option>
                                 </select>
                             </div>
 
