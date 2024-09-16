@@ -144,7 +144,8 @@ class EventAttendanceController extends Controller
                         'user_id' => $request->user_id,
                     ], []);
                 } else {
-                    throw new Exception('User is not registered for this event.', 400);
+                    throw new Exception('The user is not currently registered for this event. Please ensure that the user has completed the registration process or contact support if you believe this is an error.', 
+                            400);
                 }
             } else {
                 // If registration is not enabled, allow adding attendance directly
@@ -163,7 +164,7 @@ class EventAttendanceController extends Controller
             
         } catch (Exception $exception) {
             DB::rollBack(); // Rollback in case of an error
-            $exception_code = (int) ($exception->getCode() === 0 ? 500 : $exception->getCode());
+            $exception_code = (int) ($exception->getCode() == 0 ? 500 : $exception->getCode());
     
             return response()->json([
                 'errors'=> [
