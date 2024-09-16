@@ -35,13 +35,13 @@ class EventAttendanceController extends Controller
                         return '<h6 style="line-height: 5px !important;" class="fw-semibold">' .$row->event->title  .'</h6>
                                 <small>' . Carbon::parse($row->event->start_date)->format('M d, Y') . " to " . Carbon::parse($row->event->end_date)->format('M d, Y') .'</small>';
                     })
-                    ->addColumn('actions', function ($row) {
-                        $actions = "<button type='button' class='btn btn-soft-danger btn-sm edit-btn' id='" . $row->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Delete'>
-                                            <i class='ri-delete-bin-5-fill align-bottom'></i>
-                                    </button>";
+                    // ->addColumn('actions', function ($row) {
+                    //     $actions = "<button type='button' class='btn btn-soft-danger btn-sm edit-btn' id='" . $row->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Delete'>
+                    //                         <i class='ri-delete-bin-5-fill align-bottom'></i>
+                    //                 </button>";
     
-                        return $actions;
-                    })
+                    //     return $actions;
+                    // })
                     ->rawColumns(['actions', "event", "user"])
                     ->make(true);
         }

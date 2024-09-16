@@ -43,7 +43,8 @@
                         <div class="col-lg-6">
                             <div class="mb-3">
                                 <label for="contact-number-field-edit" class="form-label">Contact Number</label>
-                                <input type="text" class="form-control" name="contact_number" id="contact-number-field-edit">
+                                <input type="text" class="form-control" name="contact_number"
+                                    id="contact-number-field-edit">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -80,7 +81,7 @@
 <script>
     $("#edit-user-form").on('submit', (e) => {
         e.preventDefault();
-        let formData = new FormData(this);
+        let formData = new FormData(e.target);
 
         formData.append('_method', 'PUT'); // Laravel needs this to treat it as a PUT request
         formData.append('_token', document.querySelector('input[name="_token"]').value);
@@ -90,8 +91,10 @@
             url: `/dashboard/users/${user_id}`,
             method: "POST",
             data: formData,
-            success: function (response) {
-                
+            contentType: false,
+            processData: false,
+            success: function(response) {
+                toastr.success(response.message, "Success");
             }
         })
     })

@@ -63,7 +63,6 @@
                                     <th scope="col">User</th>
                                     <th scope="col">Attendance Date</th>
                                     <th scope="col">Event</th>
-                                    <th scope="col">Action</th>
                                 </tr>
                             </thead>
                         </table>
@@ -177,12 +176,12 @@
                         data: "event",
                         name: "event",
                     },
-                    {
-                        data: "actions",
-                        name: "actions",
-                        orderable: false,
-                        searchable: false,
-                    },
+                    // {
+                    //     data: "actions",
+                    //     name: "actions",
+                    //     orderable: false,
+                    //     searchable: false,
+                    // },
                 ];
 
                 let table = $("#attendance_datatables").DataTable({

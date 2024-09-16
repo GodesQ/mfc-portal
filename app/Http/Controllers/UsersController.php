@@ -203,7 +203,16 @@ class UsersController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::findOrFail($id);
-        
+        $role = Role::where('id', $request->role_id)->first();
+
+        $user->roles()->detach();
+        $user->update($request->except('_method', '_token'));
+        $user->assignRole($role);
+
+        return response()->json([
+            'status' => TRUE,
+            'message' => 'User Updated Successfully'
+        ]);
     }
 
     /**
