@@ -120,8 +120,8 @@ class EventsController extends Controller
                 $end_date = $dates[1] ?? '';
             }
 
-            Event::create(array_merge($data, [
-                'section_ids' => json_encode(value: $request->section_ids),
+            Event::create(attributes: array_merge($data, [
+                'section_ids' => $request->section_ids,
                 'poster' => $filename,
                 'start_date' => $start_date,
                 'end_date' => $end_date,
