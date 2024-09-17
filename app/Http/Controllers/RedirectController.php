@@ -47,10 +47,16 @@ class RedirectController extends Controller
             }
 
 
-            if(config('app.env') === 'development') {
+            if(config('app.env') != 'production') {
                 $transaction->update([
                     'status' => 'paid', 
                 ]);
+
+                if($transaction->payment_type == PaymentType::TITHE) {
+                    Tithe::where('transaction_id', $transaction->id)->update([
+                        'status' => 'paid'
+                    ]);
+                }
             }
 
             return view('pages.payments.redirect-success', compact('transaction', 'items'));
