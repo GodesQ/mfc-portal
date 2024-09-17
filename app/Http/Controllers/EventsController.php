@@ -31,7 +31,6 @@ class EventsController extends Controller
                 ->addColumn('actions', function ($event) {
                     $actions = "<div class='hstack gap-2'>
                         <a href='" . route('events.registrations.index', ['event' => $event->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Registration List'><i class='ri-file-list-3-line align-bottom'></i></a>
-                        <a href='" . route('events.show', ['identifier' => $event->title]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Show'><i class='ri-eye-fill align-bottom'></i></a>
                         <button type='button' class='btn btn-soft-success btn-sm edit-btn' id='" . $event->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='View'><i class='ri-pencil-fill align-bottom'></i></button>
                         <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $event->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
                     </div>";
@@ -88,6 +87,7 @@ class EventsController extends Controller
      */
     public function create()
     {
+        
     }
 
     /**
@@ -244,8 +244,14 @@ class EventsController extends Controller
     }
 
     public function fullCalendar(Request $request)
-    {
-        $events = Event::where('status', 'Active')->get()->map(function ($event) {
+    {   
+        $user_section_id = auth()->user()->section->id;
+
+        $events = Event::where('status', 'Active')
+                ->when(auth()->user()->hasRole('super_admin') === false, function ($q) use ($user_section_id) {
+                    $q->whereJsonContains('section_ids', (string) $user_section_id);
+                })
+                ->get()->map(function ($event) {
             $sections = Section::whereIn('id', $event->section_ids)->get();
 
             $colors = [];

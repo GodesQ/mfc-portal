@@ -133,7 +133,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <a class="nav-link menu-link {{ preg_match('/^dashboard\/tithes/', Request::path()) ? 'active' : '' }}"
+                    <a class="nav-link menu-link {{ Request::is('dashboard/tithes') ? 'active' : '' }}"
                         href="{{ route('tithes.index') }}">
                         <i class="ri-bubble-chart-line"></i> <span>@lang('translation.tithes')</span>
                     </a>
@@ -141,7 +141,7 @@
 
                 @role('super_admin')
                     <li class="nav-item">
-                        <a class="nav-link menu-link" {{ preg_match('/^dashboard\/attendances/', Request::path()) ? 'active' : '' }}
+                        <a class="nav-link menu-link {{ Request::is('dashboard/attendances') ? 'active' : '' }}"
                                  href="{{ route('attendances.index') }}">
                             <i class="ri-folder-user-line"></i> <span>@lang('translation.attendance')</span>
                         </a>
@@ -150,7 +150,7 @@
 
                 @role('super_admin')
                     <li class="nav-item">
-                        <a class="nav-link menu-link" {{ preg_match('/^dashboard\/transactions/', Request::path()) ? 'active' : '' }}
+                        <a class="nav-link menu-link {{ Request::is('dashboard/transactions') ? 'active' : '' }}"
                             href="{{ route('transactions.index') }}">
                             <i class="ri-wallet-3-line"></i> <span>@lang('translation.transactions')</span>
                         </a>
