@@ -200,34 +200,16 @@ class AnnouncementController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // dd($request->all());
-
-        $data = [
-            'title' => $request->title,
-            'content' => $request->content,
+        $data = array_merge($request->except('_token'), [
             'service_id' => $request->service,
             'section_id' => $request->section,
-            'status' => $request->status,
-        ];
+        ]);
 
         if ($request->send_to_all == 'on' || ($request->section === null && $request->service === null)) {
-            $data = [
-                'title' => $request->title,
-                'content' => $request->content,
+            $data = array_merge($request->except('_token'), [
                 'service_id' => null,
                 'section_id' => null,
-                'status' => $request->status,
-            ];
-        }
-
-        if (!$request->send_to_all || ($request->section === null && $request->service === null)) {
-            $data = [
-                'title' => $request->title,
-                'content' => $request->content,
-                'service_id' => null,
-                'section_id' => null,
-                'status' => $request->status,
-            ];
+            ]);
         }
 
         $announcement = Announcement::find($id);

@@ -87,7 +87,7 @@ class EventsController extends Controller
      */
     public function create()
     {
-        
+
     }
 
     /**
@@ -244,82 +244,84 @@ class EventsController extends Controller
     }
 
     public function fullCalendar(Request $request)
-    {   
-        $user_section_id = auth()->user()->section->id;
+    {
+        $user_section_id = auth()->user()->section_id;
 
         $events = Event::where('status', 'Active')
-                ->when(auth()->user()->hasRole('super_admin') === false, function ($q) use ($user_section_id) {
-                    $q->whereJsonContains('section_ids', (string) $user_section_id);
-                })
-                ->get()->map(function ($event) {
-            $sections = Section::whereIn('id', $event->section_ids)->get();
+            ->when(auth()->user()->hasRole('super_admin') === false, function ($q) use ($user_section_id) {
+                $q->whereJsonContains('section_ids', (string) $user_section_id);
+            })
+            ->get()
+            ->map(function ($event) {
 
-            $colors = [];
-            foreach ($sections as $key => $section) {
-                switch ($section->name) {
-                    case 'kids':
-                        $color = '#fa6b02';
-                        $image = '<img src="' . asset('build/images/kids-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
-                    case 'youth':
-                        $color = '#0066ab';
-                        $image = '<img src="' . asset('build/images/youth-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
-                    case 'singles':
-                        $color = '#1c8265';
-                        $image = '<img src="' . asset('build/images/singles-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
-                    case 'servants':
-                        $color = '#ffad09';
-                        $image = '<img src="' . asset('build/images/servant-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
-                    case 'handmaids':
-                        $color = '#ee2c2e';
-                        $image = '<img src="' . asset('build/images/handmaids-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
-                    case 'couples':
-                        $color = '#2a81d9';
-                        $image = '<img src="' . asset('build/images/couples-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
-                    default:
-                        $color = '#7852a9';
-                        $image = '<img src="' . asset('build/images/MFC-Logo.jpg') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
+                $sections = Section::whereIn('id', $event->section_ids)->get();
+
+                $colors = [];
+                foreach ($sections as $key => $section) {
+                    switch ($section->name) {
+                        case 'kids':
+                            $color = '#fa6b02';
+                            $image = '<img src="' . asset('build/images/kids-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                        case 'youth':
+                            $color = '#0066ab';
+                            $image = '<img src="' . asset('build/images/youth-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                        case 'singles':
+                            $color = '#1c8265';
+                            $image = '<img src="' . asset('build/images/singles-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                        case 'servants':
+                            $color = '#ffad09';
+                            $image = '<img src="' . asset('build/images/servant-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                        case 'handmaids':
+                            $color = '#ee2c2e';
+                            $image = '<img src="' . asset('build/images/handmaids-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                        case 'couples':
+                            $color = '#2a81d9';
+                            $image = '<img src="' . asset('build/images/couples-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                        default:
+                            $color = '#7852a9';
+                            $image = '<img src="' . asset('build/images/MFC-Logo.jpg') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                    }
+                    array_push($colors, $color);
                 }
-                array_push($colors, $color);
-            }
 
-            $percentage = 100 / count($colors);
-            $colorStops = [];
-            foreach ($colors as $index => $color) {
-                $colorStops[] = "$color";
-            }
+                $percentage = 100 / count($colors);
+                $colorStops = [];
+                foreach ($colors as $index => $color) {
+                    $colorStops[] = "$color";
+                }
 
-            if (count($colors) > 1) {
-                $background = "#7852a9";
-                $image = '<img src="' . asset('build/images/MFC-Logo.jpg') . '" width="20" height="20" style="border-radius: 50%;" />';
-            } else {
-                $background = $colors[0];
-            }
+                if (count($colors) > 1) {
+                    $background = "#7852a9";
+                    $image = '<img src="' . asset('build/images/MFC-Logo.jpg') . '" width="20" height="20" style="border-radius: 50%;" />';
+                } else {
+                    $background = $colors[0];
+                }
 
-            return [
-                'id' => $event->id,
-                'title' => $event->title,
-                'start' => $event->start_date,
-                'end' => Carbon::parse($event->end_date)->addDay(),
-                'extendedProps' => [
-                    'time' => $event->time,
-                    'location' => $event->location,
-                    'latitude' => $event->latitude,
-                    'longitude' => $event->longitude,
-                    'description' => $event->description,
-                    'registration_fee' => $event->reg_fee,
-                    'is_enable_event_registration' => $event->is_enable_event_registration,
-                    'background' => $background,
-                ],
-                'allDay' => true
-            ];
-        });
+                return [
+                    'id' => $event->id,
+                    'title' => $event->title,
+                    'start' => $event->start_date,
+                    'end' => Carbon::parse($event->end_date)->addDay(),
+                    'extendedProps' => [
+                        'time' => $event->time,
+                        'location' => $event->location,
+                        'latitude' => $event->latitude,
+                        'longitude' => $event->longitude,
+                        'description' => $event->description,
+                        'registration_fee' => $event->reg_fee,
+                        'is_enable_event_registration' => $event->is_enable_event_registration,
+                        'background' => $background,
+                    ],
+                    'allDay' => true
+                ];
+            });
 
         return response()->json([
             'events' => $events
