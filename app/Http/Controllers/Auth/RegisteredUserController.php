@@ -32,7 +32,7 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'first_name' => $request->firstname,
             'last_name' => $request->lastname, 
-            'password' => Hash::make('mfc_portal123'),
+            'password' => Hash::make($request->password),
             'section_id' => $section->id,
             'contact_number' => $request->contact_number,
             'role_id' => 7,

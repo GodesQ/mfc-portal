@@ -59,6 +59,10 @@
                                             <label for="username-field" class="form-label">Username</label>
                                             <input type="text" class="form-control" name="username" id="username-field" placeholder="Enter Your username">
                                         </div>
+                                        <div class="mb-3">
+                                            <label for="password-field" class="form-label">Password</label>
+                                            <input type="password" class="form-control" name="password" id="password-field" placeholder="Enter Your password">
+                                        </div>
                                         <x-input_fields.contact-number id="usercontact" name="contact_number"
                                             formId="registerForm"></x-input_fields.contact-number>
                                         <x-input_fields.choices label="MFC Section" id="mfc_section" formId="registerForm" name="section">
