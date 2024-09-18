@@ -23,14 +23,24 @@
         .timeline-2:after {
             background: #405189;
         }
-
-        #col-left-dashboard {
-            border-radius: 5px;
-            max-height: 650px;
-            overflow-y: auto;
-            overflow-x: hidden;
+        
+        div#mfc-timeline .timeline-box {
+            margin: 10px 0px 10px 60px;
         }
-
+        
+        div#mfc-timeline p {
+            margin-bottom: 5px;
+            line-height: 20px;
+            font-size: 12px;
+            text-align: justify;
+        }
+        div#mfc-timeline h5 {
+            font-size: 15px;
+            margin-bottom: 10px!important;
+        }
+        .timeline-image.col-3 {
+            padding: 0;
+        }
         #col-left-dashboard::-webkit-scrollbar-track {
             -webkit-box-shadow: inset 0 0 6px rgba(78, 78, 78, 0.3);
             background-color: #f4f3f9;
@@ -193,153 +203,150 @@
                     </div><!-- end card body -->
                 </div><!-- end card -->
             @else
-                <div class="card">
-                    <div class="card-content">
-                        <div class="card-header">
-                            <h2 class="card-title">Recent Announcements</h2>
+            <!---- begin members dashboard ---->
+                <div id="mfc-timeline" class="timeline-2">
+                    @foreach ($recent_announcements as $month => $announcements)
+                        <div class="timeline-year">
+                            <p>{{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('M Y') }}</p>
                         </div>
-                        <div class="card-body">
-                            <div class="timeline-2">
-                                @foreach ($recent_announcements as $month => $announcements)
-                                    <div class="timeline-year">
-                                        <p>{{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('M Y') }}</p>
+                
+                        @foreach ($announcements as $announcement)
+                            <div class="timeline-continue">
+                                <div class="row timeline-right">
+                                    <div class="col-12">
+                                        <p class="timeline-date">
+                                            {{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}
+                                        </p>
                                     </div>
-                            
-                                    @foreach ($announcements as $announcement)
-                                        <div class="timeline-continue">
-                                            <div class="row timeline-right">
-                                                <div class="col-12">
-                                                    <p class="timeline-date">
-                                                        {{ \Carbon\Carbon::parse($announcement->created_at)->format('M d, Y') }}
-                                                    </p>
+                                    <div class="col-12">
+                                        <div class="timeline-box d-flex row">
+                                            <div class="timeline-image col-3">
+                                                <div>
+                                                            @forelse ($announcement->images as $image)
+                                                    <div>
+                                                        <a href="{{ URL::asset('uploads/announcements/' . $announcement->id . '/' . $image->image_path) }}" 
+                                                                data-glightbox="" data-gallery="lightbox">
+                                                        <img src="{{ URL::asset('uploads/announcements/' . $announcement->id . '/' . $image->image_path) }}" 
+                                                                     alt="" class="img-fluid rounded">
+                                                        </a>
+                                                    </div>
+                                                    @empty
+                                                    <div class="col-12">No Images Found</div>
+                                                    @endforelse
                                                 </div>
-                                                <div class="col-12">
-                                                    <div class="timeline-box">
-                                                        <div class="timeline-text">
-                                                            <div class="d-flex">
-                                                                <div class="flex-grow-1 ms-3">
-                                                                    <h5 class="mb-1">{{ $announcement->title }}</h5>
-                                                                    <p class="text-muted mb-0">{!! $announcement->content !!}</p>
-                                                                    <div class="row border border-dashed rounded gx-2 p-2">
-                                                                        @forelse ($announcement->images as $image)
-                                                                            <div class="col-3">
-                                                                                <a href="{{ URL::asset('uploads/announcements/' . $announcement->id . '/' . $image->image_path) }}" 
-                                                                                    data-glightbox="" data-gallery="lightbox">
-                                                                                    <img src="{{ URL::asset('uploads/announcements/' . $announcement->id . '/' . $image->image_path) }}" 
-                                                                                         alt="" class="img-fluid rounded">
-                                                                                </a>
-                                                                            </div>
-                                                                        @empty
-                                                                            <div class="col-12">No Images Found</div>
-                                                                        @endforelse
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
+                                            </div>
+                                            <div class="timeline-text col-9">
+                                                <div class="d-flex">
+                                                    <div class="flex-grow-1">
+                                                        <h5 class="mb-1">{{ $announcement->title }}</h5>
+                                                        <p class="text-muted mb-0">{!! $announcement->content !!}</p>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    @endforeach
-                                @endforeach
-                            </div>                            
-                        </div>
-                    </div>
-                </div>
+                                    </div>
+                                </div>
+                            </div>
+                        @endforeach
+                    @endforeach
+                </div> 
+                <!---- end members dashboard ---->
             @endrole
         </div><!-- end col -->
 
         <div class="col-xl-5">
-            <div class="card">
-                <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Latest Tithe</h4>
-                    <div class="flex-shrink-0">
-                        <div class="dropdown card-header-dropdown">
-                            <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                                <span class="text-muted fs-18"><i class="mdi mdi-dots-vertical"></i></span>
-                            </a>
+            <div class="mfc-side-card sticky-side-div">
+                <div class="card">
+                    <div class="card-header align-items-center d-flex">
+                        <h4 class="card-title mb-0 flex-grow-1">Latest Tithe</h4>
+                        <div class="flex-shrink-0">
+                            <div class="dropdown card-header-dropdown">
+                                <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    <span class="text-muted fs-18"><i class="mdi mdi-dots-vertical"></i></span>
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                </div><!-- end card header -->
-                <div class="card-body pt-0">
-                    <ul class="list-group list-group-flush border-dashed">
-                        @forelse ($latest_tithes as $tithe)
-                            <li class="list-group-item ps-0">
-                                <div class="row align-items-center g-3">
-                                    <div class="col">
-                                        <a href="#"
-                                            class="text-reset fs-14 mb-0">{{ Carbon::parse($tithe->created_at)->format('F d, Y') }}</a>
-                                    </div>
-                                    <div class="col-sm-auto">
-                                        <button type="button" class="btn btn-sm btn-outline-primary" disabled>
-                                            <i class="mdi mdi-note-edit-outline"></i> P
-                                            {{ number_format($tithe->amount, 2) }}
-                                        </button>
-                                    </div>
-                                </div>
-                                <!-- end row -->
-                            </li><!-- end -->
-                        @empty
-                            <li class="list-group-item ps-0">
-                                <h6 class="text-center">No Record Found</h6>
-                                <!-- end row -->
-                            </li><!-- end -->
-                        @endforelse
-                    </ul><!-- end -->
-                </div><!-- end card body -->
-            </div><!-- end card -->
-            <div class="card">
-                <div class="card-header align-items-center d-flex">
-                    <h4 class="card-title mb-0 flex-grow-1">Upcoming Events</h4>
-                    <div class="flex-shrink-0">
-                        <div class="dropdown card-header-dropdown">
-                            <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown"
-                                aria-haspopup="true" aria-expanded="false">
-                                <span class="text-muted fs-18"><i class="mdi mdi-dots-vertical"></i></span>
-                            </a>
-                        </div>
-                    </div>
-                </div><!-- end card header -->
-                <div class="card-body pt-0">
-                    <ul class="list-group list-group-flush border-dashed">
-                        @forelse ($upcoming_events as $event)
-                            <li class="list-group-item ps-0">
-                                <div class="row align-items-center g-3">
-                                    <div class="col-auto">
-                                        <div class="avatar-sm p-1 py-2 h-auto bg-light rounded-3 material-shadow">
-                                            <div class="text-center">
-                                                <h5 class="mb-0">{{ Carbon::parse($event->start_date)->format('d') }}
-                                                </h5>
-                                                <div class="text-muted">
-                                                    {{ Carbon::parse($event->start_date)->format('M') }}</div>
-                                            </div>
+                    </div><!-- end card header -->
+                    <div class="card-body pt-0">
+                        <ul class="list-group list-group-flush border-dashed">
+                            @forelse ($latest_tithes as $tithe)
+                                <li class="list-group-item ps-0">
+                                    <div class="row align-items-center g-3">
+                                        <div class="col">
+                                            <a href="#"
+                                                class="text-reset fs-14 mb-0">{{ Carbon::parse($tithe->created_at)->format('F d, Y') }}</a>
+                                        </div>
+                                        <div class="col-sm-auto">
+                                            <button type="button" class="btn btn-sm btn-outline-primary" disabled>
+                                                <i class="mdi mdi-note-edit-outline"></i> P
+                                                {{ number_format($tithe->amount, 2) }}
+                                            </button>
                                         </div>
                                     </div>
-                                    <div class="col">
-                                        <h5 class="text-muted mt-0 mb-1 fs-13">
-                                            {{ Carbon::parse($event->time)->format('H:i A') }}</h5>
-                                        <a href="#" class="text-reset fs-14 mb-0">{{ $event->title }}</a>
+                                    <!-- end row -->
+                                </li><!-- end -->
+                            @empty
+                                <li class="list-group-item ps-0">
+                                    <h6 class="text-center">No Record Found</h6>
+                                    <!-- end row -->
+                                </li><!-- end -->
+                            @endforelse
+                        </ul><!-- end -->
+                    </div><!-- end card body -->
+                </div><!-- end card -->
+                <div class="card">
+                    <div class="card-header align-items-center d-flex">
+                        <h4 class="card-title mb-0 flex-grow-1">Upcoming Events</h4>
+                        <div class="flex-shrink-0">
+                            <div class="dropdown card-header-dropdown">
+                                <a class="text-reset dropdown-btn" href="#" data-bs-toggle="dropdown"
+                                    aria-haspopup="true" aria-expanded="false">
+                                    <span class="text-muted fs-18"><i class="mdi mdi-dots-vertical"></i></span>
+                                </a>
+                            </div>
+                        </div>
+                    </div><!-- end card header -->
+                    <div class="card-body pt-0">
+                        <ul class="list-group list-group-flush border-dashed">
+                            @forelse ($upcoming_events as $event)
+                                <li class="list-group-item ps-0">
+                                    <div class="row align-items-center g-3">
+                                        <div class="col-auto">
+                                            <div class="avatar-sm p-1 py-2 h-auto bg-light rounded-3 material-shadow">
+                                                <div class="text-center">
+                                                    <h5 class="mb-0">{{ Carbon::parse($event->start_date)->format('d') }}
+                                                    </h5>
+                                                    <div class="text-muted">
+                                                        {{ Carbon::parse($event->start_date)->format('M') }}</div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col">
+                                            <h5 class="text-muted mt-0 mb-1 fs-13">
+                                                {{ Carbon::parse($event->time)->format('H:i A') }}</h5>
+                                            <a href="#" class="text-reset fs-14 mb-0">{{ $event->title }}</a>
+                                        </div>
+                                        <div class="col-sm-auto">
+                                            @if ($event->is_enable_event_registration)
+                                                <a href="{{ route('events.register', $event->id) }}"
+                                                    class="btn btn-sm btn-outline-success">
+                                                    <i class="mdi mdi-note-edit-outline"></i> Register
+                                                </a>
+                                            @endif
+                                        </div>
                                     </div>
-                                    <div class="col-sm-auto">
-                                        @if ($event->is_enable_event_registration)
-                                            <a href="{{ route('events.register', $event->id) }}"
-                                                class="btn btn-sm btn-outline-success">
-                                                <i class="mdi mdi-note-edit-outline"></i> Register
-                                            </a>
-                                        @endif
-                                    </div>
-                                </div>
-                                <!-- end row -->
-                            </li><!-- end -->
-                        @empty
-                            <li class="list-group-item ps-0">
-                                <h6 class="text-center">No Upcoming Events</h6>
-                            </li><!-- end -->
-                        @endforelse
-                    </ul><!-- end -->
-                </div><!-- end card body -->
-            </div><!-- end card -->
+                                    <!-- end row -->
+                                </li><!-- end -->
+                            @empty
+                                <li class="list-group-item ps-0">
+                                    <h6 class="text-center">No Upcoming Events</h6>
+                                </li><!-- end -->
+                            @endforelse
+                        </ul><!-- end -->
+                    </div><!-- end card body -->
+                </div><!-- end card -->
+            </div>
         </div><!-- end col -->
     </div><!-- end row -->
 @endsection
