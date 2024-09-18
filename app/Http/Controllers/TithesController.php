@@ -29,6 +29,13 @@ class TithesController extends Controller
 
         if($request->ajax()) {
             $tithes = Tithe::query();
+
+            if(auth()->user()->hasRole('admin') === false) {
+                $tithes->whereHas('user', function ($q) {
+                    $q->where('id', auth()->user()->id);
+                });
+            }
+
             return DataTables::of($tithes)
                 ->addColumn('user', function ($row) {
                     return ($row->user->first_name ?? ' ') . ' ' . ($row->user->last_name ?? ' ');

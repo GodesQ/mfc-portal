@@ -31,7 +31,6 @@ class EventsController extends Controller
                 ->addColumn('actions', function ($event) {
                     $actions = "<div class='hstack gap-2'>
                         <a href='" . route('events.registrations.index', ['event' => $event->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Registration List'><i class='ri-file-list-3-line align-bottom'></i></a>
-                        <a href='" . route('events.show', ['identifier' => $event->title]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Show'><i class='ri-eye-fill align-bottom'></i></a>
                         <button type='button' class='btn btn-soft-success btn-sm edit-btn' id='" . $event->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='View'><i class='ri-pencil-fill align-bottom'></i></button>
                         <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $event->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
                     </div>";
@@ -88,6 +87,7 @@ class EventsController extends Controller
      */
     public function create()
     {
+
     }
 
     /**
@@ -120,8 +120,8 @@ class EventsController extends Controller
                 $end_date = $dates[1] ?? '';
             }
 
-            Event::create(array_merge($data, [
-                'section_ids' => json_encode(value: $request->section_ids),
+            Event::create(attributes: array_merge($data, [
+                'section_ids' => $request->section_ids,
                 'poster' => $filename,
                 'start_date' => $start_date,
                 'end_date' => $end_date,
@@ -245,75 +245,83 @@ class EventsController extends Controller
 
     public function fullCalendar(Request $request)
     {
-        $events = Event::where('status', 'Active')->get()->map(function ($event) {
-            $sections = Section::whereIn('id', $event->section_ids)->get();
+        $user_section_id = auth()->user()->section_id;
 
-            $colors = [];
-            foreach ($sections as $key => $section) {
-                switch ($section->name) {
-                    case 'kids':
-                        $color = '#fa6b02';
-                        $image = '<img src="' . asset('build/images/kids-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
-                    case 'youth':
-                        $color = '#0066ab';
-                        $image = '<img src="' . asset('build/images/youth-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
-                    case 'singles':
-                        $color = '#1c8265';
-                        $image = '<img src="' . asset('build/images/singles-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
-                    case 'servants':
-                        $color = '#ffad09';
-                        $image = '<img src="' . asset('build/images/servant-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
-                    case 'handmaids':
-                        $color = '#ee2c2e';
-                        $image = '<img src="' . asset('build/images/handmaids-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
-                    case 'couples':
-                        $color = '#2a81d9';
-                        $image = '<img src="' . asset('build/images/couples-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
-                    default:
-                        $color = '#7852a9';
-                        $image = '<img src="' . asset('build/images/MFC-Logo.jpg') . '" width="20" height="20" style="border-radius: 50%;" />';
-                        break;
+        $events = Event::where('status', 'Active')
+            ->when(auth()->user()->hasRole('super_admin') === false, function ($q) use ($user_section_id) {
+                $q->whereJsonContains('section_ids', (string) $user_section_id);
+            })
+            ->get()
+            ->map(function ($event) {
+
+                $sections = Section::whereIn('id', $event->section_ids)->get();
+
+                $colors = [];
+                foreach ($sections as $key => $section) {
+                    switch ($section->name) {
+                        case 'kids':
+                            $color = '#fa6b02';
+                            $image = '<img src="' . asset('build/images/kids-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                        case 'youth':
+                            $color = '#0066ab';
+                            $image = '<img src="' . asset('build/images/youth-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                        case 'singles':
+                            $color = '#1c8265';
+                            $image = '<img src="' . asset('build/images/singles-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                        case 'servants':
+                            $color = '#ffad09';
+                            $image = '<img src="' . asset('build/images/servant-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                        case 'handmaids':
+                            $color = '#ee2c2e';
+                            $image = '<img src="' . asset('build/images/handmaids-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                        case 'couples':
+                            $color = '#2a81d9';
+                            $image = '<img src="' . asset('build/images/couples-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                        default:
+                            $color = '#7852a9';
+                            $image = '<img src="' . asset('build/images/MFC-Logo.jpg') . '" width="20" height="20" style="border-radius: 50%;" />';
+                            break;
+                    }
+                    array_push($colors, $color);
                 }
-                array_push($colors, $color);
-            }
 
-            $percentage = 100 / count($colors);
-            $colorStops = [];
-            foreach ($colors as $index => $color) {
-                $colorStops[] = "$color";
-            }
+                $percentage = 100 / count($colors);
+                $colorStops = [];
+                foreach ($colors as $index => $color) {
+                    $colorStops[] = "$color";
+                }
 
-            if (count($colors) > 1) {
-                $background = "#7852a9";
-                $image = '<img src="' . asset('build/images/MFC-Logo.jpg') . '" width="20" height="20" style="border-radius: 50%;" />';
-            } else {
-                $background = $colors[0];
-            }
+                if (count($colors) > 1) {
+                    $background = "#7852a9";
+                    $image = '<img src="' . asset('build/images/MFC-Logo.jpg') . '" width="20" height="20" style="border-radius: 50%;" />';
+                } else {
+                    $background = $colors[0];
+                }
 
-            return [
-                'id' => $event->id,
-                'title' => $event->title,
-                'start' => $event->start_date,
-                'end' => Carbon::parse($event->end_date)->addDay(),
-                'extendedProps' => [
-                    'time' => $event->time,
-                    'location' => $event->location,
-                    'latitude' => $event->latitude,
-                    'longitude' => $event->longitude,
-                    'description' => $event->description,
-                    'registration_fee' => $event->reg_fee,
-                    'is_enable_event_registration' => $event->is_enable_event_registration,
-                    'background' => $background,
-                ],
-                'allDay' => true
-            ];
-        });
+                return [
+                    'id' => $event->id,
+                    'title' => $event->title,
+                    'start' => $event->start_date,
+                    'end' => Carbon::parse($event->end_date)->addDay(),
+                    'extendedProps' => [
+                        'time' => $event->time,
+                        'location' => $event->location,
+                        'latitude' => $event->latitude,
+                        'longitude' => $event->longitude,
+                        'description' => $event->description,
+                        'registration_fee' => $event->reg_fee,
+                        'is_enable_event_registration' => $event->is_enable_event_registration,
+                        'background' => $background,
+                    ],
+                    'allDay' => true
+                ];
+            });
 
         return response()->json([
             'events' => $events
