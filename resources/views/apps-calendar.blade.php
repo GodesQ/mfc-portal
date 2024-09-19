@@ -117,11 +117,13 @@
                         <div class="modal-body p-4">
                             <form class="needs-validation" name="event-form" id="form-event" novalidate>
                                 <div class="text-end">
-                                    <button href="#" class="btn btn-sm btn-soft-primary" id="edit-event-btn"
-                                        data-id="edit-event" {{ auth()->user()->can('edit-event') ? null : 'disabled' }}
-                                        onclick="editEvent(this)" role="button">
-                                        Edit
-                                    </button>
+                                    @unlessrole('member')
+                                        <button href="#" class="btn btn-sm btn-soft-primary" id="edit-event-btn"
+                                            data-id="edit-event" {{ auth()->user()->can('edit-event') ? null : 'disabled' }}
+                                            onclick="editEvent(this)" role="button">
+                                            Edit
+                                        </button>
+                                    @endunlessrole
                                 </div>
                                 <div class="event-details">
                                     <div class="d-flex mb-2">

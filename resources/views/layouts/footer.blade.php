@@ -2,7 +2,7 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-6">
-                <span id="year"></span> © MFC Portal.
+                <span id="year"></span> © Missionary Portal.
                 <script>
                     document.getElementById("year").innerHTML = new Date().getFullYear();
                 </script>

@@ -9,7 +9,7 @@
             Tithes
         @endslot
         @slot('title')
-            {{ $endPoint }}
+            Give Tithe
         @endslot
     @endcomponent
 
@@ -54,6 +54,25 @@
                                             placeholder="" value="50" min="50">
                                         <i class="fst-normal">₱</i>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-12">
+                                <div class="mb-3">
+                                    <label for="amount" class="form-label">For the Month Of</label>
+                                    <select name="for_the_month_of" id="month-of-field" class="form-select">
+                                        <option {{ date('F') == "January" ? "selected" : null }} value="January">January</option>
+                                        <option {{ date('F') == "February" ? "selected" : null }} value="February">February</option>
+                                        <option {{ date('F') == "March" ? "selected" : null }} value="March">March</option>
+                                        <option {{ date('F') == "April" ? "selected" : null }} value="April">April</option>
+                                        <option {{ date('F') == "May" ? "selected" : null }} value="May">May</option>
+                                        <option {{ date('F') == "June" ? "selected" : null }} value="June">June</option>
+                                        <option {{ date('F') == "July" ? "selected" : null }} value="July">July</option>
+                                        <option {{ date('F') == "August" ? "selected" : null }} value="August">August</option>
+                                        <option {{ date('F') == "September" ? "selected" : null }} value="September">September</option>
+                                        <option {{ date('F') == "October" ? "selected" : null }} value="October">October</option>
+                                        <option {{ date('F') == "November" ? "selected" : null }} value="November">November</option>
+                                        <option {{ date('F') == "December" ? "selected" : null }} value="December">December</option>
+                                    </select>
                                 </div>
                             </div>
                         </div>

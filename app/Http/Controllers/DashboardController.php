@@ -33,6 +33,8 @@ class DashboardController extends Controller
             ->orderBy('start_date', 'asc')
             ->limit(5)
             ->get();
+        
+        // dd($upcoming_events[0]->sections());
 
         $latest_tithes = Tithe::where('status', 'paid')->latest()->limit(5)->get();
 

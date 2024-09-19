@@ -78,10 +78,6 @@ class EventRegistrationController extends Controller
         return view('pages.event-registrations.index', compact('event'));
     }
 
-    public function users_list(Request $request) {
-
-    }
-
     public function show(Request $request, $id) {
         $event_registration = EventRegistration::findOrFail($id);
 
@@ -204,6 +200,12 @@ class EventRegistrationController extends Controller
                     } else {
                         return "<div class='badge bg-warning'>{$row->transaction->status}</div>";
                     }
+                })
+                ->editColumn("registered_at", function ($row) {
+                    return Carbon::parse($row->registered_at)->format("F d, Y");
+                })
+                ->editColumn("registered_by", function ($row) {
+                    return $row->registered_by_user->first_name . " " . $row->registered_by_user->last_name;
                 })
                 ->addColumn('actions', function ($row) {
                     $actions = "<div class='hstack gap-2'>

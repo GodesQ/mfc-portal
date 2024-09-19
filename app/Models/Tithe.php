@@ -10,7 +10,7 @@ class Tithe extends Model
 {
     use HasFactory;
     protected $table = "tithes";
-    protected $fillable = ["mfc_user_id", "transaction_id", "payment_mode", "amount", "status"];
+    protected $fillable = ["mfc_user_id", "transaction_id", "payment_mode", "amount", "for_the_month_of", "status"];
 
     public function user() : BelongsTo {
         return $this->belongsTo(User::class, "mfc_user_id", "mfc_id_number");

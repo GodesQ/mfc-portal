@@ -41,6 +41,8 @@
                                 <th class="" data-sort="registration_code">Registration Code</th>
                                 <th class="" data-sort="event">Event</th>
                                 <th class="" data-sort="amount">Amount</th>
+                                <th data-sort="registered_at">Date Of Registration</th>
+                                <th data-sort="registered_by">Registered By</th>
                                 <th class="" data-sort="status">Status</th>
                                 <th class="" data-sort="action">Actions</th>
                             </tr>
@@ -187,6 +189,14 @@
                 {
                     data: "amount",
                     name: "amount",
+                },
+                {
+                    data: "registered_at",
+                    name: "registered_at",
+                },
+                {
+                    data: "registered_by",
+                    name: "registered_by",
                 },
                 {
                     data: "status",

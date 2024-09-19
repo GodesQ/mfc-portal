@@ -111,11 +111,13 @@
                     <div class="collapse menu-dropdown {{ preg_match('/^dashboard\/events/', Request::path()) ? 'show' : '' }}"
                         id="events">
                         <ul class="nav nav-sm flex-column">
-                            <li
-                                class="nav-item {{ preg_match('/^dashboard\/events/', Request::path()) ? 'active' : '' }}">
-                                <a href="{{ route('events.index') }}"
-                                    class="nav-link {{ 'dashboard/events' === Request::path() ? 'active' : '' }}">@lang('translation.list')</a>
-                            </li>
+                            @role('super_admin')
+                                <li
+                                    class="nav-item {{ preg_match('/^dashboard\/events/', Request::path()) ? 'active' : '' }}">
+                                    <a href="{{ route('events.index') }}"
+                                        class="nav-link {{ 'dashboard/events' === Request::path() ? 'active' : '' }}">@lang('translation.list')</a>
+                                </li>
+                            @endrole
                             <li
                                 class="nav-item {{ preg_match('/^dashboard\/events/', Request::path()) ? 'active' : '' }}">
                                 <a href="{{ route('events.calendar') }}"

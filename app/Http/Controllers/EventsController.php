@@ -19,7 +19,8 @@ class EventsController extends Controller
      */
     public function index(Request $request)
     {
-        //
+        abort_if(!auth()->user()->hasRole('super_admin'),403);
+
         $endPoint = 'list';
 
         if ($request->ajax()) {
@@ -232,7 +233,7 @@ class EventsController extends Controller
 
         if ($request->query('filter') && $request->query('filter') === "upcoming_events") {
             $today = Carbon::today()->toDateString();
-            $events = $events->where("start_date", '>', $today);
+            $events = $events->where("start_date", '>', $today)->orderBy('start_date');
         }
 
         $events = $events->get();

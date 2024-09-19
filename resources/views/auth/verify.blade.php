@@ -17,18 +17,18 @@
                                     <div class="p-lg-5 p-4 auth-one-bg h-100">
                                         <div class="bg-overlay"></div>
                                         <div class="position-relative h-100 d-flex flex-column">
-                                            <div class="mb-4">
+                                            <div class="h-100 d-flex justify-content-center align-items-center">
                                                 <a href="index" class="d-block">
-                                                    <img src="{{ URL::asset('build/images/logo-light.png') }}"
-                                                        alt="" height="18">
+                                                    <img src="{{ URL::asset('build/images/mfc-logo-retina-white.png') }}"
+                                                        alt="" height="40" >
                                                 </a>
                                             </div>
                                             <div class="mt-auto">
-                                                <div class="mb-3">
+                                                {{-- <div class="mb-3">
                                                     <i class="ri-double-quotes-l display-4 text-success"></i>
-                                                </div>
+                                                </div> --}}
 
-                                                <div id="qoutescarouselIndicators" class="carousel slide"
+                                                {{-- <div id="qoutescarouselIndicators" class="carousel slide"
                                                     data-bs-ride="carousel">
                                                     <div class="carousel-indicators">
                                                         <button type="button" data-bs-target="#qoutescarouselIndicators"
@@ -53,7 +53,7 @@
                                                                 customization. Thanks very much! "</p>
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                                 <!-- end carousel -->
                                             </div>
                                         </div>

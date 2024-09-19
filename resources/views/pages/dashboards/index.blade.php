@@ -23,24 +23,27 @@
         .timeline-2:after {
             background: #405189;
         }
-        
+
         div#mfc-timeline .timeline-box {
             margin: 10px 0px 10px 60px;
         }
-        
+
         div#mfc-timeline p {
             margin-bottom: 5px;
             line-height: 20px;
             font-size: 12px;
             text-align: justify;
         }
+
         div#mfc-timeline h5 {
             font-size: 15px;
-            margin-bottom: 10px!important;
+            margin-bottom: 10px !important;
         }
+
         .timeline-image.col-3 {
             padding: 0;
         }
+
         #col-left-dashboard::-webkit-scrollbar-track {
             -webkit-box-shadow: inset 0 0 6px rgba(78, 78, 78, 0.3);
             background-color: #f4f3f9;
@@ -72,7 +75,18 @@
         <div class="col-12">
             <div class="d-flex align-items-lg-center flex-lg-row flex-column" style="justify-content: space-between;">
                 <div class="col-lg-6">
-                    <h4 class="fs-16 mb-1">Good Morning, {{ auth()->user()->first_name }}!</h4>
+                    <?php
+                        $hour = date('H');
+                        
+                        if ($hour >= 5 && $hour < 12) {
+                            $greeting = 'Good Morning';
+                        } elseif ($hour >= 12 && $hour < 17) {
+                            $greeting = 'Good Afternoon';
+                        } elseif ($hour >= 17 || $hour < 5) {
+                            $greeting = 'Good Evening';
+                        }
+                    ?>
+                    <h4 class="fs-16 mb-1">{{ $greeting }}, {{ auth()->user()->first_name }}!</h4>
                     <p class="text-muted mb-0 fs-11">"I pray also that...you may know the hope to which he has called you,
                         the riches of his glorious inheritance in the saints, and his incomparably great power for us who
                         believe." - Ephesians 1:18-19</p>
@@ -141,6 +155,25 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="mb-3">
+                                                            <label for="amount" class="form-label">For the Month Of</label>
+                                                            <select name="for_the_month_of" id="month-of-field" class="form-select">
+                                                                <option {{ date('F') == "January" ? "selected" : null }} value="January">January</option>
+                                                                <option {{ date('F') == "February" ? "selected" : null }} value="February">February</option>
+                                                                <option {{ date('F') == "March" ? "selected" : null }} value="March">March</option>
+                                                                <option {{ date('F') == "April" ? "selected" : null }} value="April">April</option>
+                                                                <option {{ date('F') == "May" ? "selected" : null }} value="May">May</option>
+                                                                <option {{ date('F') == "June" ? "selected" : null }} value="June">June</option>
+                                                                <option {{ date('F') == "July" ? "selected" : null }} value="July">July</option>
+                                                                <option {{ date('F') == "August" ? "selected" : null }} value="August">August</option>
+                                                                <option {{ date('F') == "September" ? "selected" : null }} value="September">September</option>
+                                                                <option {{ date('F') == "October" ? "selected" : null }} value="October">October</option>
+                                                                <option {{ date('F') == "November" ? "selected" : null }} value="November">November</option>
+                                                                <option {{ date('F') == "December" ? "selected" : null }} value="December">December</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 <button type="submit" class="btn btn-primary" id="tithe-form-btn"
                                                     style="width: 100%">
@@ -203,13 +236,13 @@
                     </div><!-- end card body -->
                 </div><!-- end card -->
             @else
-            <!---- begin members dashboard ---->
+                <!---- begin members dashboard ---->
                 <div id="mfc-timeline" class="timeline-2">
                     @foreach ($recent_announcements as $month => $announcements)
                         <div class="timeline-year">
                             <p>{{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('M Y') }}</p>
                         </div>
-                
+
                         @foreach ($announcements as $announcement)
                             <div class="timeline-continue">
                                 <div class="row timeline-right">
@@ -222,16 +255,16 @@
                                         <div class="timeline-box d-flex row">
                                             <div class="timeline-image col-3">
                                                 <div>
-                                                            @forelse ($announcement->images as $image)
-                                                    <div>
-                                                        <a href="{{ URL::asset('uploads/announcements/' . $announcement->id . '/' . $image->image_path) }}" 
+                                                    @forelse ($announcement->images as $image)
+                                                        <div>
+                                                            <a href="{{ URL::asset('uploads/announcements/' . $announcement->id . '/' . $image->image_path) }}"
                                                                 data-glightbox="" data-gallery="lightbox">
-                                                        <img src="{{ URL::asset('uploads/announcements/' . $announcement->id . '/' . $image->image_path) }}" 
-                                                                     alt="" class="img-fluid rounded">
-                                                        </a>
-                                                    </div>
+                                                                <img src="{{ URL::asset('uploads/announcements/' . $announcement->id . '/' . $image->image_path) }}"
+                                                                    alt="" class="img-fluid rounded">
+                                                            </a>
+                                                        </div>
                                                     @empty
-                                                    <div class="col-12">No Images Found</div>
+                                                        <div class="col-12">No Images Found</div>
                                                     @endforelse
                                                 </div>
                                             </div>
@@ -249,7 +282,7 @@
                             </div>
                         @endforeach
                     @endforeach
-                </div> 
+                </div>
                 <!---- end members dashboard ---->
             @endrole
         </div><!-- end col -->
@@ -276,6 +309,10 @@
                                         <div class="col">
                                             <a href="#"
                                                 class="text-reset fs-14 mb-0">{{ Carbon::parse($tithe->created_at)->format('F d, Y') }}</a>
+                                        </div>
+                                        <div class="col">
+                                            <a href="#"
+                                                class="text-reset fs-14 mb-0">{{ $tithe->for_the_month_of }}</a>
                                         </div>
                                         <div class="col-sm-auto">
                                             <button type="button" class="btn btn-sm btn-outline-primary" disabled>
@@ -315,7 +352,8 @@
                                         <div class="col-auto">
                                             <div class="avatar-sm p-1 py-2 h-auto bg-light rounded-3 material-shadow">
                                                 <div class="text-center">
-                                                    <h5 class="mb-0">{{ Carbon::parse($event->start_date)->format('d') }}
+                                                    <h5 class="mb-0">
+                                                        {{ Carbon::parse($event->start_date)->format('d') }}
                                                     </h5>
                                                     <div class="text-muted">
                                                         {{ Carbon::parse($event->start_date)->format('M') }}</div>
@@ -364,5 +402,4 @@
             draggable: false,
         });
     </script>
-
 @endsection

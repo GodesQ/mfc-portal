@@ -15,6 +15,10 @@ class EventRegistration extends Model
         return $this->hasOne(User::class, "mfc_id_number", "mfc_id_number");
     }
 
+    public function registered_by_user() {
+        return $this->belongsTo(User::class,"registered_by");
+    }
+
     public function event() {
         return $this->belongsTo(Event::class, "event_id");
     }

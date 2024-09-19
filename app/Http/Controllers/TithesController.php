@@ -7,6 +7,7 @@ use App\Models\Transaction;
 use App\Models\User;
 use App\Models\UserTransactionDetail;
 use App\Services\PaymayaService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -46,6 +47,9 @@ class TithesController extends Controller
                 ->addColumn('section', function ($row) {
                     return $row->user->section->name ?? 'No Section Found';
                 })
+                ->editColumn('created_at', function ($row) {
+                    return Carbon::parse($row->created_at)->format('M d, Y');
+                })
                 ->editColumn('status', function ($row) {
                     if($row->status == 'paid') {
                         return "<div class='badge bg-success'>Paid</div>";
@@ -59,7 +63,6 @@ class TithesController extends Controller
                 ->addColumn('actions', function ($tithe) {
                     $actions = "<div class='hstack gap-2'>
                         <a href='" . route('tithes.show', ['tithe' => $tithe->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='View'><i class='ri-eye-fill align-bottom'></i></a>
-                        <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $tithe->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
                     </div>";
 
                     return $actions;
@@ -119,6 +122,7 @@ class TithesController extends Controller
                 "transaction_id" => $transaction->id,
                 "payment_mode" => "N/A",
                 "amount" => $request->amount,
+                "for_the_month_of" => $request->for_the_month_of,
                 "status" => "unpaid", 
             ]);
 
@@ -183,5 +187,13 @@ class TithesController extends Controller
             'status' => true,
             'message' => 'Tithe deleted successfully',
         ]);
+    }
+
+    public function userMonthlyTithes(Request $request) {
+        $tithes = Tithe::select("mfc_user_id", "amount", "for_the_month_of")
+            ->where("mfc_user_id", $request->mfc_id_number)
+            ->groupBy("for_the_month_of")
+            ->get();
+
     }
 }

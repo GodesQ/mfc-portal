@@ -58,9 +58,11 @@ document.addEventListener("DOMContentLoaded", function () {
         selectedEvent = null;
         modalTitle.innerText = 'Add Event';
         newEventData = info;
-        document.getElementById("edit-event-btn").setAttribute("data-id", "new-event");
-        document.getElementById('edit-event-btn').click();
-        document.getElementById("edit-event-btn").setAttribute("hidden", true);
+        if(document.getElementById("edit-event-btn")) {
+            document.getElementById("edit-event-btn").setAttribute("data-id", "new-event");
+            document.getElementById('edit-event-btn').click();
+            document.getElementById("edit-event-btn").setAttribute("hidden", true);
+        }
     }
 
     function getInitialView() {
@@ -143,10 +145,12 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     function handleEventClicked(event) {
-        document.getElementById("edit-event-btn").removeAttribute("hidden");
+        if(document.getElementById("edit-event-btn")) {
+            document.getElementById("edit-event-btn").removeAttribute("hidden");
+            document.getElementById("edit-event-btn").setAttribute("data-id", "edit-event");
+            document.getElementById("edit-event-btn").innerHTML = "Edit";
+        }
         document.getElementById('btn-save-event').setAttribute("hidden", true);
-        document.getElementById("edit-event-btn").setAttribute("data-id", "edit-event");
-        document.getElementById("edit-event-btn").innerHTML = "Edit";
         eventClicked();
         flatPickrInit();
         flatpicekrValueClear();
@@ -424,7 +428,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             u_event = "<div class='card mb-3 upcoming-event-card' data-event-id='"+ element.id +"'>\
                             <div class='card-body'>\
-                                <div class='d-flex mb-3'>\
+                                <div class='d-flex justify-content-between mb-3'>\
+                                    <div class='flex-shrink-0 fs-12'>"+ element.start_date +"</div>\
                                     <div class='flex-shrink-0'><small class='badge bg-primary-subtle text-primary ms-auto'>" + tConvert(element.time) + "</small></div>\
                                 </div>\
                                 <h6 class='card-title fs-16'> " + title + "</h6>\

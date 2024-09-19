@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignId('transaction_id')->nullable()->constrained('transactions')->cascadeOnDelete();
             $table->string('payment_mode');
             $table->string('amount');
+            $table->string('for_the_month_of');
             $table->string('status');
             $table->timestamps();
         });
