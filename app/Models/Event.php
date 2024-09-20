@@ -21,6 +21,7 @@ class Event extends Model
         'longitude',
         'reg_fee',
         'description',
+        'area',
         'options',
         'poster',
         'is_open_for_non_community',
@@ -44,7 +45,11 @@ class Event extends Model
     // }
 
     public function sections() {
-        $sections = Section::where('id', $this->section_ids)->get()->toArray();
+        $sections = Section::select('name')
+                    ->where('id', $this->section_ids)
+                    ->get()->map(function ($section) {
+                        return $section->name;
+                    })->toArray();
         return $sections;
     }
 }

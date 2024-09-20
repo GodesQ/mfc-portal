@@ -36,3 +36,13 @@ if(!function_exists("generateReferenceCode")) {
     }
 }
 
+if(!function_exists("getMFCArea")) {
+    function getMFCArea() {
+        return [
+            "ncr_north", "ncr_south", "ncr_east", "ncr_central", "south_luzon", 
+            "north_and_central_luzon", "visayas", "mindanao", "international", "baguio",
+            "palawan", "batangas", "laguna", "pampanga", "tarlac"
+        ];
+    }
+}
+

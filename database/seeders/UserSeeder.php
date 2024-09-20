@@ -19,10 +19,11 @@ class UserSeeder extends Seeder
             'first_name' => 'George', 
             'last_name' => 'Steve', 
             'username' => 'membergeorge',
-            'email' => 'member@gmail.com', 
+            'email' => 'member@mfcportal.com', 
             'password' => Hash::make('Test123!'), 
             'avatar' => 'avatar-2.jpg', 
             'section_id' => 3,
+            'area' => 'ncr_north',
             'created_at' => now(), 
             'email_verified_at' => now()
         ]);

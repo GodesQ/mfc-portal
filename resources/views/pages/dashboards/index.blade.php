@@ -367,10 +367,14 @@
                                         </div>
                                         <div class="col-sm-auto">
                                             @if ($event->is_enable_event_registration)
-                                                <a href="{{ route('events.register', $event->id) }}"
-                                                    class="btn btn-sm btn-outline-success">
-                                                    <i class="mdi mdi-note-edit-outline"></i> Register
-                                                </a>
+                                                @if(in_array(auth()->user()->section_id, $event->section_ids))
+                                                    <a href="{{ route('events.register', $event->id) }}"
+                                                        class="btn btn-sm btn-outline-success">
+                                                        <i class="mdi mdi-note-edit-outline"></i> Register
+                                                    </a>
+                                                @else
+                                                    <div class="badge bg-warning-subtle text-warning fw-semibold py-2 px-3">Exclusive for {{ implode(", ", $event->sections()) }} only</div>
+                                                @endif
                                             @endif
                                         </div>
                                     </div>

@@ -27,6 +27,7 @@ return new class extends Migration
             $table->string('longitude')->nullable();
             $table->decimal('reg_fee')->nullable();
             $table->longText('description')->nullable();
+            $table->string('area')->nullable();
             $table->string('category')->nullable();
             $table->boolean('is_open_for_non_community')->default(false);
             $table->boolean('is_enable_event_registration')->default(false);

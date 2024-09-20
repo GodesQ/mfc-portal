@@ -379,6 +379,7 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         document.getElementById("upcoming-event-list").innerHTML = null;
         Array.from(a).forEach(function (element) {
+            console.log(element);
             var title = element.title;
             if (element.end) {
                 endUpdatedDay = new Date(element.end);
@@ -426,14 +427,47 @@ document.addEventListener("DOMContentLoaded", function () {
             }
             var e_time_e = (e_time_e) ? " to " + e_time_e : "";
 
+            switch (element.type) {
+                case "1":
+                    $type = "Worldwide";
+                    break;
+                case "2":
+                    $type = "National";
+                    break;
+                case "3":
+                    $type = "Regional";
+                    break;
+                case "4":
+                    $type = "NCR";
+                    break;
+                case "5":
+                    $type = "Area";
+                    break;
+                case "6":
+                    $type = "Chapter";
+                    break;
+                case "7":
+                    $type = "Unit";
+                    break;
+                case "8":
+                    $type = "Household";
+                    break;
+            
+                default:
+                    $type = "";
+                    break;
+            }
+
             u_event = "<div class='card mb-3 upcoming-event-card' data-event-id='"+ element.id +"'>\
                             <div class='card-body'>\
                                 <div class='d-flex justify-content-between mb-3'>\
-                                    <div class='flex-shrink-0 fs-12'>"+ element.start_date +"</div>\
+                                    <div class='flex-shrink-0 fs-12'>"+ str_dt(element.start_date) +"</div>\
+                                    <div class='badge bg-info-subtle text-info' style='font-size: 10px;'>"+ $type +"</div>\
                                     <div class='flex-shrink-0'><small class='badge bg-primary-subtle text-primary ms-auto'>" + tConvert(element.time) + "</small></div>\
                                 </div>\
                                 <h6 class='card-title fs-16'> " + title + "</h6>\
-                                <p class='text-muted text-truncate-two-lines mb-0'> " + element.location + "</p>\
+                                <div class='text-primary fw-semibold'>"+ (element.area != null ? element.area.replace("_", " ").toUpperCase() : " ") +"</div>\
+                                <p class='text-muted text-truncate-two-lines mt-1'> " + element.location + "</p>\
                             </div>\
                         </div>";
             document.getElementById("upcoming-event-list").innerHTML += u_event;
@@ -569,7 +603,7 @@ function tConvert(time) {
 }
 
 var str_dt = function formatDate(date) {
-    var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    var monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"];
     var d = new Date(date),
         month = '' + monthNames[(d.getMonth())],
         day = '' + d.getDate(),
@@ -578,5 +612,5 @@ var str_dt = function formatDate(date) {
         month = '0' + month;
     if (day.length < 2)
         day = '0' + day;
-    return [day + " " + month, year].join(',');
+    return [day + " " + month + " " + year].join(',');
 };

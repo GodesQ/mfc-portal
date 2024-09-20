@@ -19,7 +19,7 @@ class EventsController extends Controller
      */
     public function index(Request $request)
     {
-        abort_if(!auth()->user()->hasRole('super_admin'),403);
+        abort_if(!auth()->user()->hasRole('super_admin'), 403);
 
         $endPoint = 'list';
 
@@ -124,6 +124,7 @@ class EventsController extends Controller
             Event::create(attributes: array_merge($data, [
                 'section_ids' => $request->section_ids,
                 'poster' => $filename,
+                'area' => $request->type == 5 ? auth()->user()->area : null,
                 'start_date' => $start_date,
                 'end_date' => $end_date,
                 'is_open_for_non_community' => $request->has('is_open_for_non_community'),
@@ -230,10 +231,21 @@ class EventsController extends Controller
     public function all(Request $request)
     {
         $events = Event::query();
+        $user = auth()->user();
+        $user_section_id = $user->section_id;
+        $user_area = $user->area;
 
         if ($request->query('filter') && $request->query('filter') === "upcoming_events") {
             $today = Carbon::today()->toDateString();
-            $events = $events->where("start_date", '>', $today)->orderBy('start_date');
+            $events = $events->where("start_date", '>', $today)
+                    ->when(!$user->hasRole('super_admin'), function ($q) use ($user_section_id, $user_area) {
+                        $q->where(function ($subquery) use ($user_section_id, $user_area) {
+                            $subquery->whereJsonContains('section_ids', (string) $user_section_id)
+                                ->orWhereIn('type', [1, 2, 3, 4]) // worldwide, national, regional, ncr
+                                ->orWhere('area', $user_area); // Same area events
+                        });
+                    })
+                    ->orderBy('start_date');
         }
 
         $events = $events->get();
@@ -246,11 +258,17 @@ class EventsController extends Controller
 
     public function fullCalendar(Request $request)
     {
-        $user_section_id = auth()->user()->section_id;
+        $user = auth()->user();
+        $user_section_id = $user->section_id;
+        $user_area = $user->area;
 
         $events = Event::where('status', 'Active')
-            ->when(auth()->user()->hasRole('super_admin') === false, function ($q) use ($user_section_id) {
-                $q->whereJsonContains('section_ids', (string) $user_section_id);
+            ->when(!$user->hasRole('super_admin'), function ($q) use ($user_section_id, $user_area) {
+                $q->where(function ($subquery) use ($user_section_id, $user_area) {
+                    $subquery->whereJsonContains('section_ids', (string) $user_section_id)
+                        ->orWhereIn('type', [1, 2, 3, 4]) // worldwide, national, regional, ncr
+                        ->orWhere('area', $user_area); // Same area events
+                });
             })
             ->get()
             ->map(function ($event) {

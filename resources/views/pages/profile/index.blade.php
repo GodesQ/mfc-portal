@@ -184,10 +184,10 @@
                                                     value="ncr_east">NCR - East</option>
                                                 <option {{ $user->area == 'ncr_cental' ? 'selected' : null }}
                                                     value="ncr_cental">NCR - Central</option>
-                                                <option {{ $user->area == 'handmaids' ? 'selected' : null }}
-                                                    value="handmaids">South Luzon</option>
-                                                <option {{ $user->area == 'servants' ? 'selected' : null }}
-                                                    value="servants">North & Central Luzon</option>
+                                                <option {{ $user->area == 'south_luzon' ? 'selected' : null }}
+                                                    value="south_luzon">South Luzon</option>
+                                                <option {{ $user->area == 'north_and_central_luzon' ? 'selected' : null }}
+                                                    value="north_and_central_luzon">North & Central Luzon</option>
                                                 <option {{ $user->area == 'visayas' ? 'selected' : null }}
                                                     value="visayas">Visayas</option>
                                                 <option {{ $user->area == 'mindanao' ? 'selected' : null }}
