@@ -91,7 +91,6 @@ document.addEventListener("DOMContentLoaded", function () {
         eventDidMount: function (info) {
             if (info.event.extendedProps.background) {
                 $background = info.event.extendedProps.background;
-                console.log($background);
                 info.el.style.setProperty('color', 'black', 'important');
                 info.el.style.setProperty('background', $background, 'important');
             }
@@ -289,6 +288,85 @@ document.addEventListener("DOMContentLoaded", function () {
         // document.getElementById('btn-delete-event').removeAttribute('hidden');
     }
 
+    function memberEvents(data) {
+        let eventsForYouList = document.getElementById("events-for-you-list");
+        let otherEventsList = document.getElementById("other-events-list");
+
+        if(data.events_for_you.length > 0) {
+            let output = "";
+            data.events_for_you.forEach(event => {
+                output += `<div class='card mb-3 upcoming-event-card' data-event-id='${event.title}'>
+                            <div class='card-body'>
+                                <div class='d-flex justify-content-between mb-3'>
+                                    <div class='flex-shrink-0 fs-12'>${str_dt(event.start_date)}</div>
+                                    <div class='badge bg-info-subtle text-info' style='font-size: 10px;'>${getEventType(event.type)}</div>
+                                    <div class='flex-shrink-0'>
+                                        <small class='badge bg-primary-subtle text-primary ms-auto'>${tConvert(event.time)}</small>
+                                    </div>
+                                </div>
+                                <h6 class='card-title fs-16'>${event.title}</h6>
+                                <div class='text-primary fw-semibold'>${(event.area != null ? event.area.replace("_", " ").toUpperCase() : " ")}</div>
+                                <p class='text-muted text-truncate-two-lines mt-1'>${event.location}</p>
+                            </div>
+                        </div>`;
+            });
+
+            eventsForYouList.innerHTML = output;
+        }
+
+        if(data.other_events.length > 0) {
+            let output = "";
+            data.other_events.forEach(event => {
+                output += `<div class='card mb-3 upcoming-event-card' data-event-id='${event.title}'>
+                            <div class='card-body'>
+                                <div class='d-flex justify-content-between mb-3'>
+                                    <div class='flex-shrink-0 fs-12'>${str_dt(event.start_date)}</div>
+                                    <div class='badge bg-info-subtle text-info' style='font-size: 10px;'>${getEventType(event.type)}</div>
+                                    <div class='flex-shrink-0'>
+                                        <small class='badge bg-primary-subtle text-primary ms-auto'>${tConvert(event.time)}</small>
+                                    </div>
+                                </div>
+                                <h6 class='card-title fs-16'>${event.title}</h6>
+                                <div class='text-primary fw-semibold'>${(event.area != null ? event.area.replace("_", " ").toUpperCase() : " ")}</div>
+                                <p class='text-muted text-truncate-two-lines mt-1'>${event.location}</p>
+                            </div>
+                        </div>`;
+            });
+            otherEventsList.innerHTML = output;
+        }
+    }
+
+    function getEventType(event_type) {
+        let result;
+        switch (event_type) {
+            case "1":
+                result = "Worldwide";
+                break;
+            case "2":
+                result = "National";
+                break;
+            case "3":
+                result = "Regional";
+                break;
+            case "4":
+                result = "NCR";
+                break;
+            case "5":
+                result = "Area";
+                break;
+            case "6":
+                result = "Chapter";
+                break;
+            case "7":
+                result = "Unit";
+                break;
+            case "8":
+                result = "Household";
+                break;
+        }
+        return result;
+    }
+
     const fetchAllEvents = async () => {
         const response = await fetch(`/dashboard/events/full-calendar`);
         const data = await response.json();
@@ -303,11 +381,18 @@ document.addEventListener("DOMContentLoaded", function () {
         upcomingEvent(data.events);
     }
 
+    const fetchMemberEvents = async () => {
+        const response = await fetch('/dashboard/events/all?filter=member_events');
+        const data = await response.json();
+        memberEvents(data);
+    }
+
     fetchAllEvents();
-    fetchUpcomingEvents();
+    // fetchUpcomingEvents();
+    fetchMemberEvents();
     // calendar.render();
 
-    upcomingEvent(defaultEvents);
+    // upcomingEvent(defaultEvents);
 
     formEvent.addEventListener('submit', function (e) {
         e.preventDefault();
@@ -379,7 +464,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
         document.getElementById("upcoming-event-list").innerHTML = null;
         Array.from(a).forEach(function (element) {
-            console.log(element);
             var title = element.title;
             if (element.end) {
                 endUpdatedDay = new Date(element.end);

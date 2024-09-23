@@ -229,7 +229,7 @@ class EventsController extends Controller
     }
 
     public function all(Request $request)
-    {
+    {   
         $events = Event::query();
         $user = auth()->user();
         $user_section_id = $user->section_id;
@@ -246,6 +246,25 @@ class EventsController extends Controller
                         });
                     })
                     ->orderBy('start_date');
+        } else if($request->query('filter') && $request->query('filter') === "member_events") {
+            $today = Carbon::today()->format('Y-m-d');
+            
+            $events_for_you = Event::where('start_date', '>', $today)
+                                ->whereJsonContains('section_ids', (string) $user_section_id)
+                                // ->orWhereIn('type', [1, 2, 3, 4])
+                                ->orderBy("start_date", "asc")
+                                ->get();
+
+            $other_events = Event::where('start_date', '>', $today)
+                                ->where('area', $user_area)
+                                ->orWhereIn('type', [1, 2, 3, 4])
+                                ->get();
+            
+            return response()->json([
+                'status' => 'success',
+                'events_for_you' => $events_for_you,
+                'other_events' => $other_events
+            ]);
         }
 
         $events = $events->get();

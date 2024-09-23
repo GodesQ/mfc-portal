@@ -13,8 +13,8 @@
         }
 
         /* .fc-h-event .fc-event-main {
-                color: #141414;
-            } */
+                                color: #141414;
+                            } */
 
         @media (min-width: 1024px) {
             .offcanvas-end {
@@ -82,20 +82,44 @@
                             </div> --}}
                         </div>
                     </div>
-                    {{-- @unlessrole('member') --}}
-                        <div>
-                            <h5 class="mb-1">Upcoming Events</h5>
-                            <p class="text-muted">Don't miss scheduled events</p>
-                            <div class="pe-2 me-n1 mb-3" data-simplebar style="height: 400px">
-                                <div id="upcoming-event-list"></div>
+                    <div class="mb-2">
+                        <ul class="nav nav-pills nav-custom nav-custom-light mb-3" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#nav-light-home" role="tab">
+                                    Events For You
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#nav-light-profile" role="tab">
+                                    Other Events
+                                </a>
+                            </li>
+                        </ul>
+                        <div class="tab-content text-muted">
+                            <div class="tab-pane active" id="nav-light-home" role="tabpanel">
+                                <div id="events-for-you-list">
+
+                                </div>
+                            </div>
+                            <div class="tab-pane" id="nav-light-profile" role="tabpanel">
+                                <div id="other-events-list">
+
+                                </div>
                             </div>
                         </div>
-                    {{-- @endunlessrole --}}
+                    </div>
+                    {{-- <div>
+                        <h5 class="mb-1">Upcoming Events</h5>
+                        <p class="text-muted">Don't miss scheduled events</p>
+                        <div class="pe-2 me-n1 mb-3" data-simplebar style="height: 400px">
+                            <div id="upcoming-event-list"></div>
+                        </div>
+                    </div> --}}
                     <!--end card-->
                 </div> <!-- end col-->
 
                 <div class="col-xl-8">
-                    <div class="card card-h-100">
+                    <div class="card card-h-100 sticky-side-div">
                         <div class="card-body">
                             <div id="calendar"></div>
                         </div>
@@ -151,7 +175,8 @@
                                             <i class="ri-map-pin-line text-muted fs-16"></i>
                                         </div>
                                         <div class="flex-grow-1">
-                                            <h6 class="d-block fw-semibold mb-0"> <span id="event-location-tag"></span></h6>
+                                            <h6 class="d-block fw-semibold mb-0"> <span id="event-location-tag"></span>
+                                            </h6>
                                         </div>
                                     </div>
                                     <div class="d-flex align-items-center mb-2">
@@ -180,8 +205,9 @@
                                     <div class="col-12">
                                         <div class="mb-3">
                                             <label class="form-label">Event Name</label>
-                                            <input class="form-control d-none" placeholder="Enter event name" type="text"
-                                                name="title" id="event-title" required value="" />
+                                            <input class="form-control d-none" placeholder="Enter event name"
+                                                type="text" name="title" id="event-title" required
+                                                value="" />
                                             <div class="invalid-feedback">Please provide a valid event name</div>
                                         </div>
                                     </div>

@@ -130,8 +130,8 @@
                                         <th class="" data-sort="name">Name</th>
                                         <th class="" data-sort="amount">Amount</th>
                                         <th class="" data-sort="section">Section</th>
-                                        <th data-sort="month">Month</th>
-                                        <th data-sort="date_tithe">Date Tithe</th>
+                                        <th class="" data-sort="month">Month</th>
+                                        <th class="" data-sort="date_tithe">Date Tithe</th>
                                         <th class="" data-sort="status">Status</th>
                                         <th class="" data-sort="action">Actions</th>
                                     </tr>
@@ -149,8 +149,7 @@
                             </h3>
                         </div>
                         <div class="card-body">
-                            <div id="column_chart" data-colors='["--vz-danger", "--vz-primary", "--vz-success"]'
-                                class="apex-charts" dir="ltr"></div>
+                            <div id="column_chart" class="apex-charts" dir="ltr"></div>
                         </div>
                     </div>
                 </div>
@@ -300,7 +299,9 @@
                     colors: ['transparent']
                 },
                 xaxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov',
+                        'Dec'
+                    ],
                 },
                 yaxis: {
                     title: {
