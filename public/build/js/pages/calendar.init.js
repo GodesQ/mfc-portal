@@ -112,7 +112,6 @@ document.addEventListener("DOMContentLoaded", function () {
                 defaultEvents[indexOfSelectedEvent].description = (info.event._def.extendedProps.description) ? info.event._def.extendedProps.description : '';
                 defaultEvents[indexOfSelectedEvent].location = (info.event._def.extendedProps.location) ? info.event._def.extendedProps.location : '';
             }
-            upcomingEvent(defaultEvents);
         },
         eventContent: function( info ) {
             return {html: info.event.title};
@@ -384,19 +383,23 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const fetchUpcomingEvents = async () => {
-        const response = await fetch(`/dashboard/events/all?filter=upcoming_events`);
-        const data = await response.json();
-        upcomingEvent(data.events);
+        if(document.querySelector('#upcoming-event-list')) {
+            const response = await fetch(`/dashboard/events/all?filter=upcoming_events`);
+            const data = await response.json();
+            upcomingEvent(data.events);
+        }
     }
 
     const fetchMemberEvents = async () => {
-        const response = await fetch('/dashboard/events/all?filter=member_events');
-        const data = await response.json();
-        memberEvents(data);
+        if(document.querySelector('#member-events-tab')) {
+            const response = await fetch('/dashboard/events/all?filter=member_events');
+            const data = await response.json();
+            memberEvents(data);
+        }
     }
 
     fetchAllEvents();
-    // fetchUpcomingEvents();
+    fetchUpcomingEvents();
     fetchMemberEvents();
     // calendar.render();
 

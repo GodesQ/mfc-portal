@@ -83,39 +83,43 @@
                             </div> --}}
                         </div>
                     </div>
-                    <div class="mb-2">
-                        <ul class="nav nav-pills nav-custom nav-custom-light mb-3" role="tablist">
-                            <li class="nav-item">
-                                <a class="nav-link active" data-bs-toggle="tab" href="#nav-light-home" role="tab">
-                                    Events For You
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" data-bs-toggle="tab" href="#nav-light-profile" role="tab">
-                                    Other Events
-                                </a>
-                            </li>
-                        </ul>
-                        <div class="tab-content text-muted">
-                            <div class="tab-pane active" id="nav-light-home" role="tabpanel">
-                                <div id="events-for-you-list">
+                    @if(auth()->user()->hasRole('member'))
+                        <div class="mb-2" id="member-events-tab">
+                            <ul class="nav nav-pills nav-custom nav-custom-light mb-3" role="tablist">
+                                <li class="nav-item">
+                                    <a class="nav-link active" data-bs-toggle="tab" href="#nav-light-home" role="tab">
+                                        Events For You
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" data-bs-toggle="tab" href="#nav-light-profile" role="tab">
+                                        Other Events
+                                    </a>
+                                </li>
+                            </ul>
+                            <div class="tab-content text-muted">
+                                <div class="tab-pane active" id="nav-light-home" role="tabpanel">
+                                    <div id="events-for-you-list">
 
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="tab-pane" id="nav-light-profile" role="tabpanel">
-                                <div id="other-events-list">
+                                <div class="tab-pane" id="nav-light-profile" role="tabpanel">
+                                    <div id="other-events-list">
 
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    {{-- <div>
-                        <h5 class="mb-1">Upcoming Events</h5>
-                        <p class="text-muted">Don't miss scheduled events</p>
-                        <div class="pe-2 me-n1 mb-3" data-simplebar style="height: 400px">
-                            <div id="upcoming-event-list"></div>
+                    @endif
+                    @if(auth()->user()->hasRole('super_admin'))
+                        <div>
+                            <h5 class="mb-1">Upcoming Events</h5>
+                            <p class="text-muted">Don't miss scheduled events.</p>
+                            <div class="pe-2 me-n1 mb-3">
+                                <div id="upcoming-event-list"></div>
+                            </div>
                         </div>
-                    </div> --}}
+                    @endif
                     <!--end card-->
                 </div> <!-- end col-->
 
