@@ -76,15 +76,15 @@
             <div class="d-flex align-items-lg-center flex-lg-row flex-column" style="justify-content: space-between;">
                 <div class="col-lg-6">
                     <?php
-                        $hour = date('H');
-                        
-                        if ($hour >= 5 && $hour < 12) {
-                            $greeting = 'Good Morning';
-                        } elseif ($hour >= 12 && $hour < 17) {
-                            $greeting = 'Good Afternoon';
-                        } elseif ($hour >= 17 || $hour < 5) {
-                            $greeting = 'Good Evening';
-                        }
+                    $hour = date('H');
+                    
+                    if ($hour >= 5 && $hour < 12) {
+                        $greeting = 'Good Morning';
+                    } elseif ($hour >= 12 && $hour < 17) {
+                        $greeting = 'Good Afternoon';
+                    } elseif ($hour >= 17 || $hour < 5) {
+                        $greeting = 'Good Evening';
+                    }
                     ?>
                     <h4 class="fs-16 mb-1">{{ $greeting }}, {{ auth()->user()->first_name }}!</h4>
                     <p class="text-muted mb-0 fs-11">"I pray also that...you may know the hope to which he has called you,
@@ -105,7 +105,7 @@
                         <div class="col-auto">
                             <button type="button" class="btn btn-success material-shadow-none" data-bs-toggle="modal"
                                 data-bs-target="#tithe-form">
-                                <i class="mdi mdi-hand-coin fs-15"></i> Give Tithes
+                                <i class="mdi mdi-hand-coin fs-15"></i> Give Tithe
                             </button>
                             <div id="tithe-form" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel"
                                 aria-hidden="true" style="display: none;">
@@ -144,8 +144,7 @@
                                                     </div>
                                                     <div class="col-lg-12">
                                                         <div class="mb-3">
-                                                            <label for="amount" class="form-label">Registration
-                                                                Fee</label>
+                                                            <label for="amount" class="form-label">Tithe Amount</label>
                                                             <div class="form-icon">
                                                                 <input type="text" oninput="validateDigit(this)"
                                                                     id="amount" class="form-control form-control-icon"
@@ -157,20 +156,34 @@
                                                     </div>
                                                     <div class="col-lg-12">
                                                         <div class="mb-3">
-                                                            <label for="amount" class="form-label">For the Month Of</label>
-                                                            <select name="for_the_month_of" id="month-of-field" class="form-select">
-                                                                <option {{ date('F') == "January" ? "selected" : null }} value="January">January</option>
-                                                                <option {{ date('F') == "February" ? "selected" : null }} value="February">February</option>
-                                                                <option {{ date('F') == "March" ? "selected" : null }} value="March">March</option>
-                                                                <option {{ date('F') == "April" ? "selected" : null }} value="April">April</option>
-                                                                <option {{ date('F') == "May" ? "selected" : null }} value="May">May</option>
-                                                                <option {{ date('F') == "June" ? "selected" : null }} value="June">June</option>
-                                                                <option {{ date('F') == "July" ? "selected" : null }} value="July">July</option>
-                                                                <option {{ date('F') == "August" ? "selected" : null }} value="August">August</option>
-                                                                <option {{ date('F') == "September" ? "selected" : null }} value="September">September</option>
-                                                                <option {{ date('F') == "October" ? "selected" : null }} value="October">October</option>
-                                                                <option {{ date('F') == "November" ? "selected" : null }} value="November">November</option>
-                                                                <option {{ date('F') == "December" ? "selected" : null }} value="December">December</option>
+                                                            <label for="amount" class="form-label">For the Month
+                                                                Of</label>
+                                                            <select name="for_the_month_of" id="month-of-field"
+                                                                class="form-select">
+                                                                <option {{ date('F') == 'January' ? 'selected' : null }}
+                                                                    value="January">January</option>
+                                                                <option {{ date('F') == 'February' ? 'selected' : null }}
+                                                                    value="February">February</option>
+                                                                <option {{ date('F') == 'March' ? 'selected' : null }}
+                                                                    value="March">March</option>
+                                                                <option {{ date('F') == 'April' ? 'selected' : null }}
+                                                                    value="April">April</option>
+                                                                <option {{ date('F') == 'May' ? 'selected' : null }}
+                                                                    value="May">May</option>
+                                                                <option {{ date('F') == 'June' ? 'selected' : null }}
+                                                                    value="June">June</option>
+                                                                <option {{ date('F') == 'July' ? 'selected' : null }}
+                                                                    value="July">July</option>
+                                                                <option {{ date('F') == 'August' ? 'selected' : null }}
+                                                                    value="August">August</option>
+                                                                <option {{ date('F') == 'September' ? 'selected' : null }}
+                                                                    value="September">September</option>
+                                                                <option {{ date('F') == 'October' ? 'selected' : null }}
+                                                                    value="October">October</option>
+                                                                <option {{ date('F') == 'November' ? 'selected' : null }}
+                                                                    value="November">November</option>
+                                                                <option {{ date('F') == 'December' ? 'selected' : null }}
+                                                                    value="December">December</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -216,7 +229,7 @@
                                 <tbody>
                                     @foreach ($recent_event_registrations as $registration)
                                         <tr>
-                                            <td><img src="{{ URL::asset('images/' . $registration->user->avatar) }}"
+                                            <td><img src="{{ URL::asset('uploads/avatars/' . $registration->user->avatar) }}"
                                                     alt="" class="avatar-xs rounded-circle me-2 material-shadow">
                                                 <a href="#javascript: void(0);"
                                                     class="text-body fw-medium">{{ $registration->user->first_name . ' ' . $registration->user->last_name }}</a>
@@ -303,10 +316,25 @@
                     </div><!-- end card header -->
                     <div class="card-body pt-0">
                         <ul class="list-group list-group-flush border-dashed">
+                            <li class="list-group-item ps-0">
+                                <div class="row align-items-center g-3">
+                                    <div class="col-5">
+                                        <a href="#" class="text-reset fs-12 mb-0"><strong>Tithe Date</strong></a>
+                                    </div>
+                                    <div class="col-4">
+                                        <a href="#" class="text-reset fs-12 mb-0"><strong>For the month
+                                                of</strong></a>
+                                    </div>
+                                    <div class=" col-3 d-flex justify-content-end">
+                                        <strong class="fs-12">Tithe Amount</strong>
+                                    </div>
+                                </div>
+                                <!-- end row -->
+                            </li><!-- end -->
                             @forelse ($latest_tithes as $tithe)
                                 <li class="list-group-item ps-0">
                                     <div class="row align-items-center g-3">
-                                        <div class="col-4">
+                                        <div class="col-5">
                                             <a href="#"
                                                 class="text-reset fs-14 mb-0">{{ Carbon::parse($tithe->created_at)->format('F d, Y') }}</a>
                                         </div>
@@ -314,7 +342,7 @@
                                             <a href="#"
                                                 class="text-reset fs-14 mb-0">{{ $tithe->for_the_month_of }}</a>
                                         </div>
-                                        <div class=" col-4 d-flex justify-content-end">
+                                        <div class=" col-3 d-flex justify-content-end">
                                             <button type="button" class="btn btn-sm btn-outline-primary" disabled>
                                                 <i class="mdi mdi-note-edit-outline"></i> P
                                                 {{ number_format($tithe->amount, 2) }}
@@ -349,7 +377,7 @@
                             @forelse ($upcoming_events as $event)
                                 <li class="list-group-item ps-0">
                                     <div class="row align-items-center g-3">
-                                        <div class="col-auto">
+                                        <div class="col-2">
                                             <div class="avatar-sm p-1 py-2 h-auto bg-light rounded-3 material-shadow">
                                                 <div class="text-center">
                                                     <h5 class="mb-0">
@@ -360,20 +388,22 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col">
+                                        <div class="col-6">
                                             <h5 class="text-muted mt-0 mb-1 fs-13">
                                                 {{ Carbon::parse($event->time)->format('H:i A') }}</h5>
                                             <a href="#" class="text-reset fs-14 mb-0">{{ $event->title }}</a>
                                         </div>
-                                        <div class="col-sm-auto">
+                                        <div class="col-4" style="text-align: right;">
                                             @if ($event->is_enable_event_registration)
-                                                @if(in_array(auth()->user()->section_id, $event->section_ids))
+                                                @if (in_array(auth()->user()->section_id, $event->section_ids))
                                                     <a href="{{ route('events.register', $event->id) }}"
                                                         class="btn btn-sm btn-outline-success">
                                                         <i class="mdi mdi-note-edit-outline"></i> Register
                                                     </a>
                                                 @else
-                                                    <div class="badge bg-warning-subtle text-warning fw-semibold py-2 px-3">Exclusive for {{ implode(", ", $event->sections()) }} only</div>
+                                                    <div class="badge bg-warning-subtle text-warning fw-semibold py-2 px-3"
+                                                        style="text-wrap: wrap;">Exclusive for
+                                                        {{ implode(', ', $event->sections()) }} only</div>
                                                 @endif
                                             @endif
                                         </div>

@@ -61,8 +61,7 @@
                                                     </div>
                                                     <div class="col-lg-12">
                                                         <div class="mb-3">
-                                                            <label for="amount" class="form-label">Registration
-                                                                Fee</label>
+                                                            <label for="amount" class="form-label">Tithe Amount</label>
                                                             <div class="form-icon">
                                                                 <input type="text" oninput="validateDigit(this)"
                                                                     id="amount" class="form-control form-control-icon"
@@ -120,7 +119,21 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xl-7">
+                <div class="col-xl-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                My Monthly Tithe Record
+                            </h3>
+                        </div>
+                        <div class="card-body">
+                            <div id="column_chart" class="apex-charts" dir="ltr"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12">
                     <div class="card" id="ticketsList">
                         <div class="card-body">
                             <table id="tithes_datatable" class="table nowrap align-middle table-striped" style="width:100%">
@@ -139,18 +152,6 @@
                             </table>
                         </div>
                         <!--end card-body-->
-                    </div>
-                </div>
-                <div class="col-xl-5">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3 class="card-title">
-                                My Monthly Tithe Record
-                            </h3>
-                        </div>
-                        <div class="card-body">
-                            <div id="column_chart" class="apex-charts" dir="ltr"></div>
-                        </div>
                     </div>
                 </div>
             </div>

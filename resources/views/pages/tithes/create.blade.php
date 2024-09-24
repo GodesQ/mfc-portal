@@ -47,7 +47,7 @@
                             </div>
                             <div class="col-lg-12">
                                 <div class="mb-3">
-                                    <label for="amount" class="form-label">Registration Fee</label>
+                                    <label for="amount" class="form-label">Tithe Amount</label>
                                     <div class="form-icon">
                                         <input type="text" oninput="validateDigit(this)" id="amount"
                                             class="form-control form-control-icon" name="amount"

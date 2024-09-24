@@ -46,12 +46,13 @@ class RedirectController extends Controller
                 });
             }
 
-
+            // Update the status of transaction when the environment was not in a production setup
             if(config('app.env') != 'production') {
                 $transaction->update([
                     'status' => 'paid', 
                 ]);
 
+                // Also, here in payment tithes, update the status to paid if it's not in production
                 if($transaction->payment_type == PaymentType::TITHE) {
                     Tithe::where('transaction_id', $transaction->id)->update([
                         'status' => 'paid'
