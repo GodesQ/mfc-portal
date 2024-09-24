@@ -23,16 +23,6 @@ class PermissionsController extends Controller
            ->editColumn('created_at', function ($permission) {
                 return Carbon::parse($permission->created_at)->format('F d, Y');
            })
-            ->addColumn('actions', function ($permission) {
-                $actions = "<div class='hstack gap-2'>
-                    <a href='" . route('permissions.show', ['permission' => $permission->id]) . "' target='_blank' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='View'><i class='ri-eye-fill align-bottom'></i></a>
-                    <a href='" . route('permissions.edit', ['permission' => $permission->id]) . "' class='btn btn-soft-success btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit'><i class='ri-pencil-fill align-bottom'></i></a>
-                    <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $permission->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
-                </div>";
-
-                return $actions;
-            })
-            ->rawColumns(['actions'])
             ->make();
         }
 
