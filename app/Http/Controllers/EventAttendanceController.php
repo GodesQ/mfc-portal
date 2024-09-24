@@ -128,6 +128,9 @@ class EventAttendanceController extends Controller
             // Check if the user exists
             $user = User::find($request->user_id);
             if(!$user) throw new Exception('No User Found.',404);
+
+            if($event->start_date < Carbon::now()->format('Y-m-d')) 
+                throw new Exception('The event was already ended. You cannot add a user for this event.', 400);
     
             $attendance = null;
     
@@ -142,6 +145,7 @@ class EventAttendanceController extends Controller
                     $attendance = EventAttendance::updateOrCreate([
                         'event_id' => $request->event_id,
                         'user_id' => $request->user_id,
+                        'attendance_date' => Carbon::now(),
                     ], []);
                 } else {
                     throw new Exception('The user is not currently registered for this event. Please ensure that the user has completed the registration process or contact support if you believe this is an error.', 
@@ -152,6 +156,7 @@ class EventAttendanceController extends Controller
                 $attendance = EventAttendance::updateOrCreate([
                     'event_id' => $request->event_id,
                     'user_id' => $request->user_id,
+                    'attendance_date' => Carbon::now(),
                 ], []);
             }
     
@@ -164,11 +169,12 @@ class EventAttendanceController extends Controller
             
         } catch (Exception $exception) {
             DB::rollBack(); // Rollback in case of an error
-            $exception_code = (int) ($exception->getCode() == 0 ? 500 : $exception->getCode());
-    
+            $error_exception_code = (int) $exception->getCode();
+            $exception_code = $error_exception_code == 0 || is_nan($error_exception_code) ? 500 : $exception->getCode();
+
             return response()->json([
                 'errors'=> [
-                    'message' => $exception->getMessage(),
+                    'message' => $error_exception_code == 0 || is_nan($error_exception_code) ? "Server Error. We will try to fixed this issue as early as possible." : $exception->getMessage(),
                     'error' => $exception,
                 ],
             ], $exception_code);
