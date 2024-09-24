@@ -18,12 +18,6 @@ class RolesController extends Controller
         if($request->ajax()) {
             $roles = Role::query();
             return DataTables::of($roles)
-                ->addColumn('actions', function ($role) {
-                    $actions = "<div class='hstack gap-2'></div>";
-
-                    return $actions;
-                })
-                ->rawColumns(['actions'])
                 ->make();
         }
 

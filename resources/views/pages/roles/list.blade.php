@@ -37,7 +37,6 @@
                                 <th class="" data-sort="id">ID</th>
                                 <th class="" data-sort="role_name">Role Name</th>
                                 <th class="" data-sort="created_at">Created Date</th>
-                                <th class="" data-sort="actions">Actions</th>
                             </tr>
                         </thead>
                     </table>
@@ -108,10 +107,6 @@
                     {
                         data: 'created_at',
                         name: 'created_at',
-                    },
-                    {
-                        data: 'actions',
-                        name: 'actions',
                     },
                 ];
 
