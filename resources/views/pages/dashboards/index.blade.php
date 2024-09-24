@@ -306,15 +306,15 @@
                             @forelse ($latest_tithes as $tithe)
                                 <li class="list-group-item ps-0">
                                     <div class="row align-items-center g-3">
-                                        <div class="col">
+                                        <div class="col-4">
                                             <a href="#"
                                                 class="text-reset fs-14 mb-0">{{ Carbon::parse($tithe->created_at)->format('F d, Y') }}</a>
                                         </div>
-                                        <div class="col">
+                                        <div class="col-4">
                                             <a href="#"
                                                 class="text-reset fs-14 mb-0">{{ $tithe->for_the_month_of }}</a>
                                         </div>
-                                        <div class="col-sm-auto">
+                                        <div class=" col-4 d-flex justify-content-end">
                                             <button type="button" class="btn btn-sm btn-outline-primary" disabled>
                                                 <i class="mdi mdi-note-edit-outline"></i> P
                                                 {{ number_format($tithe->amount, 2) }}

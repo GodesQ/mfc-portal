@@ -251,13 +251,13 @@ class EventsController extends Controller
             
             $events_for_you = Event::where('start_date', '>', $today)
                                 ->whereJsonContains('section_ids', (string) $user_section_id)
-                                // ->orWhereIn('type', [1, 2, 3, 4])
                                 ->orderBy("start_date", "asc")
                                 ->get();
 
             $other_events = Event::where('start_date', '>', $today)
-                                ->where('area', $user_area)
-                                ->orWhereIn('type', [1, 2, 3, 4])
+                                ->whereIn('type', [1, 2, 3, 4])
+                                ->orWhere('area', $user_area)
+                                ->orderBy("start_date", "asc")
                                 ->get();
             
             return response()->json([
@@ -356,6 +356,7 @@ class EventsController extends Controller
                         'registration_fee' => $event->reg_fee,
                         'is_enable_event_registration' => $event->is_enable_event_registration,
                         'background' => $background,
+                        'section_ids' => $event->section_ids,
                     ],
                     'allDay' => true
                 ];

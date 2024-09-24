@@ -34,9 +34,11 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
         
-        // dd($upcoming_events[0]->sections());
-
-        $latest_tithes = Tithe::where('status', 'paid')->latest()->limit(5)->get();
+        $latest_tithes = Tithe::where('status', 'paid')
+                            ->where('mfc_user_id', $user->mfc_id_number)
+                            ->latest()
+                            ->limit(5)
+                            ->get();
 
         return view('pages.dashboards.index', compact('recent_event_registrations', 'upcoming_events', 'latest_tithes', 'recent_announcements'));
     }

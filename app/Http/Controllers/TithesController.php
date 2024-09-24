@@ -190,10 +190,16 @@ class TithesController extends Controller
     }
 
     public function userMonthlyTithes(Request $request) {
-        $tithes = Tithe::select("mfc_user_id", "amount", "for_the_month_of")
-            ->where("mfc_user_id", $request->mfc_id_number)
+        $user_mfc_id_number = auth()->user()->mfc_id_number;
+
+        $tithes = Tithe::select("for_the_month_of", DB::raw("SUM(amount) as total"), DB::raw("MAX(mfc_user_id) as mfc_user_id"), DB::raw("MAX(amount) as amount"), DB::raw("MAX(status) as status"))
+            ->where("mfc_user_id", $user_mfc_id_number)
+            ->where("status", "paid")
             ->groupBy("for_the_month_of")
             ->get();
-
-    }
-}
+        
+        return response()->json([
+            'status' => 'success',
+            'tithes' => $tithes,
+        ]);
+    }}

@@ -274,56 +274,57 @@
                 });
             }
 
-            var options = {
-                series: [{
-                    name: 'Net Profit',
-                    data: [10, 44, 55, 57, 56, 61, 58, 63, 60, 66, 40, 21]
-                }],
-                chart: {
-                    type: 'bar',
-                    height: 350
-                },
-                plotOptions: {
-                    bar: {
-                        horizontal: false,
-                        columnWidth: '55%',
-                        endingShape: 'rounded'
+            const fetchTithesData = async () => {
+                const response = await fetch('/dashboard/tithes/chart/user-monthly');
+                const data = await response.json();
+                let total_per_month = [];
+                let months = [];
+                if (data.tithes.length > 0) {
+                    total_per_month = data.tithes.map(tithe => {
+                        return tithe.total;
+                    });
+                    months = data.tithes.map(tithe => {
+                        return tithe.for_the_month_of;
+                    })
+                }
+
+                var options = {
+                    series: [{
+                        name: 'Total Tithe',
+                        data: total_per_month
+                    }],
+                    chart: {
+                        type: 'bar',
+                        height: 350
                     },
-                },
-                dataLabels: {
-                    enabled: false
-                },
-                stroke: {
-                    show: true,
-                    width: 2,
-                    colors: ['transparent']
-                },
-                xaxis: {
-                    categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov',
-                        'Dec'
-                    ],
-                },
-                yaxis: {
-                    title: {
-                        text: '$ (thousands)'
-                    }
-                },
-                fill: {
-                    opacity: 1
-                },
-                tooltip: {
-                    y: {
-                        formatter: function(val) {
-                            return "$ " + val + " thousands"
+                    plotOptions: {
+                        bar: {
+                            horizontal: false,
+                            columnWidth: '55%',
+                            endingShape: 'rounded'
+                        },
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    xaxis: {
+                        categories: months,
+                    },
+                    tooltip: {
+                        y: {
+                            formatter: function(val) {
+                                return "₱ " + val
+                            }
                         }
                     }
-                }
-            };
+                };
 
-            var chart = new ApexCharts(document.querySelector("#column_chart"), options);
-            chart.render();
+                var chart = new ApexCharts(document.querySelector("#column_chart"), options);
+                chart.render();
+            }
 
             initializeTables();
+            fetchTithesData();
         })
     </script>
 @endsection

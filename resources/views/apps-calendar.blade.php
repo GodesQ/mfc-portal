@@ -33,6 +33,7 @@
         @endslot
     @endcomponent
     <div class="row">
+        <input type="hidden" name="" id="user-section-id" value="{{ auth()->user()->section_id }}">
         <div class="col-12">
             <div class="row">
                 <div class="col-xl-4">
@@ -197,8 +198,8 @@
                                     </div>
                                     <button type="button" class="btn btn-primary" id="register-event-btn">Register
                                         Now</button>
-                                    <p class="alert alert-warning" id="registration-ended-message">
-                                        The event has already ended and registration is no longer available
+                                    <p class="alert alert-warning" id="registration-failed-message">
+                                        This event is not available for registration.
                                     </p>
                                 </div>
                                 <div class="row event-form">

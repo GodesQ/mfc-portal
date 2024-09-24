@@ -46,7 +46,7 @@ class Event extends Model
 
     public function sections() {
         $sections = Section::select('name')
-                    ->where('id', $this->section_ids)
+                    ->whereIn('id', $this->section_ids)
                     ->get()->map(function ($section) {
                         return $section->name;
                     })->toArray();

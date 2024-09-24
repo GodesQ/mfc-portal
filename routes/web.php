@@ -71,6 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/users/{user_id}/events/registrations', [EventRegistrationController::class, 'userRegistrations'])->name('users.events.registrations');
         
         Route::resource('/tithes', TithesController::class);
+        Route::get('tithes/chart/user-monthly', [TithesController::class, 'userMonthlyTithes'])->name('tithes.chart.user-monthly');
 
         Route::get('attendances', [EventAttendanceController::class, 'index'])->name('attendances.index');
         Route::post('attendances/users', [EventAttendanceController::class, 'storeUser'])->name('attendances.users.store');

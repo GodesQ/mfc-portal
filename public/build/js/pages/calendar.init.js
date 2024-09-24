@@ -162,31 +162,23 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("event-location-tag").innerHTML = selectedEvent.extendedProps.location === undefined ? "No Location" : selectedEvent.extendedProps.location;
         document.getElementById("event-description-tag").innerHTML = selectedEvent.extendedProps.description === undefined ? "No Description" : selectedEvent.extendedProps.description;
         document.getElementById("event-registrationfee-tag").innerHTML = selectedEvent.extendedProps.registration_fee === undefined ? "No Registration Fee" : selectedEvent.extendedProps.registration_fee;
-        
-        if (selectedEvent.extendedProps.is_enable_event_registration) {
+
+        let user_section_id = document.querySelector('#user-section-id').value;
+        let event_section_ids = selectedEvent.extendedProps.section_ids;
+
+        if(selectedEvent.extendedProps.is_enable_event_registration && new Date(selectedEvent.start) >= new Date() && event_section_ids.includes(user_section_id)) {
             document.getElementById("register-event-btn").classList.remove('d-none');
             document.getElementById("register-event-btn").classList.add('d-block');
+            document.getElementById("registration-failed-message").classList.add('d-none');
+            document.getElementById("registration-failed-message").classList.remove('d-block');
         } else {
             document.getElementById("register-event-btn").classList.remove('d-block');
             document.getElementById("register-event-btn").classList.add('d-none');
+            document.getElementById("registration-failed-message").classList.add('d-block');
+            document.getElementById("registration-failed-message").classList.remove('d-none');
         }
-
-
-        if(new Date(selectedEvent.start) >= new Date()) {
-            document.getElementById("register-event-btn").classList.remove('d-none');
-            document.getElementById("register-event-btn").classList.add('d-block');
-            document.getElementById("registration-ended-message").classList.add('d-none');
-            document.getElementById("registration-ended-message").classList.remove('d-block');
-        } else {
-            document.getElementById("register-event-btn").classList.remove('d-block');
-            document.getElementById("register-event-btn").classList.add('d-none');
-            document.getElementById("registration-ended-message").classList.add('d-block');
-            document.getElementById("registration-ended-message").classList.remove('d-none');
-        }
-        
 
         document.getElementById("register-event-btn").setAttribute('data-event-id', selectedEvent.id);
-        
 
         // document.getElementById("attendances-btn").setAttribute('data-event-id', selectedEvent.id);
         // document.getElementById("attendance-report-btn").setAttribute('data-event-id', selectedEvent.id);
@@ -295,7 +287,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if(data.events_for_you.length > 0) {
             let output = "";
             data.events_for_you.forEach(event => {
-                output += `<div class='card mb-3 upcoming-event-card' data-event-id='${event.title}'>
+                output += `<div class='card mb-3 upcoming-event-card' data-event-id='${event.id}'>
                             <div class='card-body'>
                                 <div class='d-flex justify-content-between mb-3'>
                                     <div class='flex-shrink-0 fs-12'>${str_dt(event.start_date)}</div>
@@ -312,12 +304,17 @@ document.addEventListener("DOMContentLoaded", function () {
             });
 
             eventsForYouList.innerHTML = output;
+
+            let upComingEventCards = document.querySelectorAll('.upcoming-event-card');
+            upComingEventCards.forEach(card => {
+                card.addEventListener('click', handleUpcomingEventClicked);
+            })
         }
 
         if(data.other_events.length > 0) {
             let output = "";
             data.other_events.forEach(event => {
-                output += `<div class='card mb-3 upcoming-event-card' data-event-id='${event.title}'>
+                output += `<div class='card mb-3 upcoming-event-card' data-event-id='${event.id}'>
                             <div class='card-body'>
                                 <div class='d-flex justify-content-between mb-3'>
                                     <div class='flex-shrink-0 fs-12'>${str_dt(event.start_date)}</div>
@@ -333,7 +330,18 @@ document.addEventListener("DOMContentLoaded", function () {
                         </div>`;
             });
             otherEventsList.innerHTML = output;
+
+            let upComingEventCards = document.querySelectorAll('.upcoming-event-card');
+            upComingEventCards.forEach(card => {
+                card.addEventListener('click', handleUpcomingEventClicked);
+            })
         }
+
+        function handleUpcomingEventClicked(e) {
+            let event_id = $(this).data('event-id');
+            const event = defaultEvents.find(e => e.id == event_id);
+            handleEventClicked(event);
+        } 
     }
 
     function getEventType(event_type) {
