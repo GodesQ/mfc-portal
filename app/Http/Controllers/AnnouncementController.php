@@ -77,8 +77,6 @@ class AnnouncementController extends Controller
      */
     public function store(Request $request)
     {   
-        // dd($request->all());
-
         $user = Auth::user();
         $id = $user->id;
         $data = $request->validate([

@@ -19,11 +19,7 @@ class RolesController extends Controller
             $roles = Role::query();
             return DataTables::of($roles)
                 ->addColumn('actions', function ($role) {
-                    $actions = "<div class='hstack gap-2'>
-                        <a href='" . route('roles.show', ['role' => $role->id]) . "' target='_blank' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='View'><i class='ri-eye-fill align-bottom'></i></a>
-                        <a href='" . route('roles.edit', ['role' => $role->id]) . "' class='btn btn-soft-success btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit'><i class='ri-pencil-fill align-bottom'></i></a>
-                        <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $role->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
-                    </div>";
+                    $actions = "<div class='hstack gap-2'></div>";
 
                     return $actions;
                 })
