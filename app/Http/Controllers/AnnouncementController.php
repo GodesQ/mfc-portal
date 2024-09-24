@@ -30,7 +30,6 @@ class AnnouncementController extends Controller
             return DataTables::of($data)
                 ->addColumn('actions', function ($data) {
                     $actions = "<div class='hstack gap-2'>
-                        <a href='" . route('announcements.show', ['announcement' => $data->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='View'><i class='ri-eye-fill align-bottom'></i></a>
                         <a href='" . route('announcements.edit', ['announcement' => $data->id]) . "' class='btn btn-soft-success btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit'><i class='ri-pencil-fill align-bottom'></i></a>
                         <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $data->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
                     </div>";
