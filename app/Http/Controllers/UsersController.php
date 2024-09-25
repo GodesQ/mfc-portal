@@ -46,6 +46,10 @@ class UsersController extends Controller
                 $users = User::where('section_id', 5)->get();
                 $btn_color = 'btn-warning';
                 break;
+            case 'couples':
+                $users = User::where('section_id', 6)->get();
+                $btn_color = 'btn-info';
+                break;
             default:
                 $users = User::get();
                 $btn_color = 'btn-info';
@@ -80,17 +84,18 @@ class UsersController extends Controller
     }
 
     public function profile(string $id)
-    {   
+    {
         $sections = Section::get();
         $user = User::findOrFail($id);
 
         $user->load('missionary_services');
-        
+
 
         return view('pages.profile.index', compact('user', 'sections'));
     }
 
-    public function updateProfile(Request $request, string $id) {
+    public function updateProfile(Request $request, string $id)
+    {
         $user_data = $request->except('_token', '_method', 'god_given_skills');
         $user = User::where('id', $id)->with('user_details')->firstOrFail();
 
@@ -98,22 +103,23 @@ class UsersController extends Controller
 
         $skills = [];
 
-        if($request->has('god_given_skills') && is_array($request->god_given_skills)) {
+        if ($request->has('god_given_skills') && is_array($request->god_given_skills)) {
             foreach ($request->god_given_skills as $key => $skill) {
                 array_push($skills, $skill);
             }
         }
 
-        if($user->user_details) {
+        if ($user->user_details) {
             $user->user_details->update(array_merge($user_data, ['god_given_skill' => $skills]));
         } else {
             UserDetail::create(array_merge($user_data, ['user_id' => $user->id, 'god_given_skill' => $skills]));
         }
-        
+
         return back()->withSuccess("Profile Updated Successfully");
     }
 
-    public function updateProfileService(Request $request, $id) {
+    public function updateProfileService(Request $request, $id)
+    {
         $user = User::findOrFail($id);
 
         foreach ($request->service_category as $key => $category) {
@@ -129,17 +135,19 @@ class UsersController extends Controller
         return back()->withSuccess("User service updated successfully.");
     }
 
-    public function updatePassword(Request $request, $id) {
+    public function updatePassword(Request $request, $id)
+    {
         $user = User::findOrFail($id);
 
-        if(!Hash::check($request->old_password, $user->password)) return back()->with('fail', "The user password is not match in the old password.");
+        if (!Hash::check($request->old_password, $user->password))
+            return back()->with('fail', "The user password is not match in the old password.");
 
         $user->update([
             'password' => Hash::make($request->new_password)
         ]);
 
         return back()->withSuccess('Change Password Successfully');
-    } 
+    }
 
     /**
      * Show the form for creating a new resource.
@@ -153,7 +161,7 @@ class UsersController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {   
+    {
         $data = $request->except('_token', 'password');
 
         $user = User::create(array_merge($data, [
@@ -176,10 +184,10 @@ class UsersController extends Controller
      * Display the specified resource.
      */
     public function show(Request $request, string $id)
-    {   
+    {
         $user = User::findOrFail($id);
 
-        if($request->ajax()) {
+        if ($request->ajax()) {
             return response()->json([
                 "status" => TRUE,
                 "user" => $user,
@@ -229,11 +237,12 @@ class UsersController extends Controller
         ]);
     }
 
-    public function search(Request $request) {
+    public function search(Request $request)
+    {
         $users = User::query();
         $mfc_id_number = $request->query('mfc_user_id');
 
-        if($mfc_id_number) {
+        if ($mfc_id_number) {
             $users = $users->where('mfc_id_number', $mfc_id_number)->get();
         } else {
             $users = [];
@@ -245,11 +254,12 @@ class UsersController extends Controller
         ]);
     }
 
-    public function uploadProfileImage(Request $request, $user_id) {
+    public function uploadProfileImage(Request $request, $user_id)
+    {
         $user = User::findOrFail($user_id);
-        
+
         $file = $request->file('profile_image');
-        $file_name =  $user->mfc_id_number .'.'. $file->getClientOriginalExtension();
+        $file_name = $user->mfc_id_number . '.' . $file->getClientOriginalExtension();
         $file_path = "avatars/";
 
         Storage::disk('public')->putFileAs($file_path, $file, $file_name);
