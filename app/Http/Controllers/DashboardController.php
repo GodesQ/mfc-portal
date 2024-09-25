@@ -8,7 +8,6 @@ use App\Models\EventRegistration;
 use App\Models\Tithe;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
@@ -34,12 +33,12 @@ class DashboardController extends Controller
             ->orderBy('start_date', 'asc')
             ->limit(5)
             ->get();
-        
+
         $latest_tithes = Tithe::where('status', 'paid')
-                            ->where('mfc_user_id', $user->mfc_id_number)
-                            ->latest()
-                            ->limit(5)
-                            ->get();
+            ->where('mfc_user_id', $user->mfc_id_number)
+            ->latest()
+            ->limit(5)
+            ->get();
 
         return view('pages.dashboards.index', compact('recent_event_registrations', 'upcoming_events', 'latest_tithes', 'recent_announcements'));
     }

@@ -6,6 +6,7 @@ use App\Http\Requests\Event\StoreRequest;
 use App\Http\Requests\Event\UpdateRequest;
 use App\Models\Event;
 use App\Models\Section;
+use App\Services\ExceptionHandlerService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,6 +15,12 @@ use Yajra\DataTables\DataTables;
 
 class EventsController extends Controller
 {
+    private $exceptionHandler;
+
+    public function __construct(ExceptionHandlerService $exceptionHandler)
+    {
+        $this->exceptionHandler = $exceptionHandler;
+    }
     /**
      * Display a listing of the resource.
      */
@@ -96,16 +103,16 @@ class EventsController extends Controller
      */
     public function store(StoreRequest $request)
     {
-
         try {
             DB::beginTransaction();
 
             if (!$request->ajax())
                 throw new Exception("Error processing data.", 400);
+
             $data = $request->validated();
 
-            $filename = "";
-            $file = "";
+            $filename = null;
+            $file = null;
 
             if ($request->hasFile('poster')) {
                 $file = $request->file('poster');
@@ -131,7 +138,7 @@ class EventsController extends Controller
                 'is_enable_event_registration' => $request->has('is_enable_event_registration'),
             ]));
 
-            $file->move(public_path('uploads'), $filename); // Store the poster file in the uploads directory
+            $file->move(public_path('uploads/events'), $filename); // Store the poster file in the uploads directory
 
             DB::commit();
 
@@ -139,11 +146,7 @@ class EventsController extends Controller
 
         } catch (Exception $exception) {
             DB::rollBack();
-            $exception_code = $exception->getCode() === 0 ? 500 : $exception->getCode();
-
-            return response()->json([
-                "message" => $exception->getMessage(),
-            ], $exception_code);
+            return $this->exceptionHandler->__handler($request, $exception);
         }
     }
     /**
@@ -229,7 +232,7 @@ class EventsController extends Controller
     }
 
     public function all(Request $request)
-    {   
+    {
         $events = Event::query();
         $user = auth()->user();
         $user_section_id = $user->section_id;
@@ -238,28 +241,28 @@ class EventsController extends Controller
         if ($request->query('filter') && $request->query('filter') === "upcoming_events") {
             $today = Carbon::today()->toDateString();
             $events = $events->where("start_date", '>', $today)
-                    ->when(!$user->hasRole('super_admin'), function ($q) use ($user_section_id, $user_area) {
-                        $q->where(function ($subquery) use ($user_section_id, $user_area) {
-                            $subquery->whereJsonContains('section_ids', (string) $user_section_id)
-                                ->orWhereIn('type', [1, 2, 3, 4]) // worldwide, national, regional, ncr
-                                ->orWhere('area', $user_area); // Same area events
-                        });
-                    })
-                    ->orderBy('start_date');
-        } else if($request->query('filter') && $request->query('filter') === "member_events") {
+                ->when(!$user->hasRole('super_admin'), function ($q) use ($user_section_id, $user_area) {
+                    $q->where(function ($subquery) use ($user_section_id, $user_area) {
+                        $subquery->whereJsonContains('section_ids', (string) $user_section_id)
+                            ->orWhereIn('type', [1, 2, 3, 4]) // worldwide, national, regional, ncr
+                            ->orWhere('area', $user_area); // Same area events
+                    });
+                })
+                ->orderBy('start_date');
+        } else if ($request->query('filter') && $request->query('filter') === "member_events") {
             $today = Carbon::today()->format('Y-m-d');
-            
+
             $events_for_you = Event::where('start_date', '>', $today)
-                                ->whereJsonContains('section_ids', (string) $user_section_id)
-                                ->orderBy("start_date", "asc")
-                                ->get();
+                ->whereJsonContains('section_ids', (string) $user_section_id)
+                ->orderBy("start_date", "asc")
+                ->get();
 
             $other_events = Event::where('start_date', '>', $today)
-                                ->whereIn('type', [1, 2, 3, 4])
-                                ->orWhere('area', $user_area)
-                                ->orderBy("start_date", "asc")
-                                ->get();
-            
+                ->whereIn('type', [1, 2, 3, 4])
+                ->orWhere('area', $user_area)
+                ->orderBy("start_date", "asc")
+                ->get();
+
             return response()->json([
                 'status' => 'success',
                 'events_for_you' => $events_for_you,
@@ -299,31 +302,24 @@ class EventsController extends Controller
                     switch ($section->name) {
                         case 'kids':
                             $color = '#fa6b02';
-                            $image = '<img src="' . asset('build/images/kids-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
                             break;
                         case 'youth':
                             $color = '#0066ab';
-                            $image = '<img src="' . asset('build/images/youth-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
                             break;
                         case 'singles':
                             $color = '#1c8265';
-                            $image = '<img src="' . asset('build/images/singles-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
                             break;
                         case 'servants':
                             $color = '#ffad09';
-                            $image = '<img src="' . asset('build/images/servant-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
                             break;
                         case 'handmaids':
                             $color = '#ee2c2e';
-                            $image = '<img src="' . asset('build/images/handmaids-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
                             break;
                         case 'couples':
                             $color = '#2a81d9';
-                            $image = '<img src="' . asset('build/images/couples-logo.png') . '" width="20" height="20" style="border-radius: 50%;" />';
                             break;
                         default:
                             $color = '#7852a9';
-                            $image = '<img src="' . asset('build/images/MFC-Logo.jpg') . '" width="20" height="20" style="border-radius: 50%;" />';
                             break;
                     }
                     array_push($colors, $color);
@@ -337,7 +333,6 @@ class EventsController extends Controller
 
                 if (count($colors) > 1) {
                     $background = "#7852a9";
-                    $image = '<img src="' . asset('build/images/MFC-Logo.jpg') . '" width="20" height="20" style="border-radius: 50%;" />';
                 } else {
                     $background = $colors[0];
                 }
