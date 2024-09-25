@@ -20,7 +20,8 @@ class DashboardController extends Controller
         $user = auth()->user();
         $recent_event_registrations = EventRegistration::latest()->with('event', 'user')->get();
 
-        $recent_announcements = Announcement::select('id', 'title', 'content', 'created_at')
+        $recent_announcements = Announcement::select('id', 'title', 'content', 'status', 'created_at')
+            ->where('status', 'shown')
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->with('images')
