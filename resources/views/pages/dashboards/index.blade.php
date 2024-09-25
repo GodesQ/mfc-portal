@@ -87,9 +87,8 @@
                     }
                     ?>
                     <h4 class="fs-16 mb-1">{{ $greeting }}, {{ auth()->user()->first_name }}!</h4>
-                    <p class="text-muted mb-0 fs-11">"I pray also that...you may know the hope to which he has called you,
-                        the riches of his glorious inheritance in the saints, and his incomparably great power for us who
-                        believe." - Ephesians 1:18-19</p>
+                    <p class="text-muted mb-0 fs-11">"He chose us in him before the creation of the world to be holy and
+                        blameless in his sight." - Ephesians 1:4</p>
                 </div>
                 <div class="mt-3 mt-lg-0">
                     <div class="row g-3 mb-0 align-items-center">
