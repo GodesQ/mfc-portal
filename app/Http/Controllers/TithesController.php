@@ -15,9 +15,10 @@ use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class TithesController extends Controller
-{   
+{
     private $paymayaService;
-    public function __construct(PaymayaService $paymayaService) {
+    public function __construct(PaymayaService $paymayaService)
+    {
         $this->paymayaService = $paymayaService;
     }
 
@@ -25,13 +26,13 @@ class TithesController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {   
+    {
         $endPoint = 'list';
 
-        if($request->ajax()) {
+        if ($request->ajax()) {
             $tithes = Tithe::query();
 
-            if(auth()->user()->hasRole('admin') === false) {
+            if (auth()->user()->hasRole('admin') === false) {
                 $tithes->whereHas('user', function ($q) {
                     $q->where('id', auth()->user()->id);
                 });
@@ -42,7 +43,7 @@ class TithesController extends Controller
                     return ($row->user->first_name ?? ' ') . ' ' . ($row->user->last_name ?? ' ');
                 })
                 ->editColumn('amount', function ($row) {
-                    return number_format($row->amount,2);
+                    return number_format($row->amount, 2);
                 })
                 ->addColumn('section', function ($row) {
                     return $row->user->section->name ?? 'No Section Found';
@@ -51,13 +52,13 @@ class TithesController extends Controller
                     return Carbon::parse($row->created_at)->format('M d, Y');
                 })
                 ->editColumn('status', function ($row) {
-                    if($row->status == 'paid') {
+                    if ($row->status == 'paid') {
                         return "<div class='badge bg-success'>Paid</div>";
-                    } 
+                    }
 
-                    if($row->status == 'unpaid') {
+                    if ($row->status == 'unpaid') {
                         return "<div class='badge bg-warning'>Unpaid</div>";
-                    } 
+                    }
 
                 })
                 ->addColumn('actions', function ($tithe) {
@@ -78,25 +79,26 @@ class TithesController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {   
+    {
         $endPoint = 'create';
         return view('pages.tithes.create', compact('endPoint'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created resource in database.
      */
     public function store(Request $request)
-    {   
+    {
         try {
             DB::beginTransaction();
 
             $user = User::where('mfc_id_number', $request->mfc_user_id)->first();
-            if(!$user) throw new Exception("User not found based on your mfc user id.", 404);
+            if (! $user)
+                throw new Exception("User not found based on your mfc user id.", 404);
 
             $convenience_fee = 50.00;
 
-            if($request->amount >= 50) {
+            if ($request->amount >= 50) {
                 $convenience_fee = 0.00;
             }
 
@@ -104,7 +106,7 @@ class TithesController extends Controller
 
             $transaction_code = generateTransactionCode();
             $reference_code = generateReferenceCode();
-    
+
             $transaction = Transaction::create([
                 "transaction_code" => $transaction_code,
                 "reference_code" => $reference_code,
@@ -112,7 +114,7 @@ class TithesController extends Controller
                 "received_from_id" => auth()->user()->id,
                 "sub_amount" => $request->amount,
                 "total_amount" => $total_amount,
-                "payment_mode" => "N/A",
+                "payment_mode" => $request->is_payment_required ? "N/A" : "cash",
                 "payment_type" => "tithe",
                 "status" => "pending",
             ]);
@@ -123,25 +125,31 @@ class TithesController extends Controller
                 "payment_mode" => "N/A",
                 "amount" => $request->amount,
                 "for_the_month_of" => $request->for_the_month_of,
-                "status" => "unpaid", 
+                "status" => $request->is_payment_required ? "unpaid" : "paid",
             ]);
 
-            $paymaya_user_details = [
-                'firstname' => $user->first_name,
-                'lastname' => $user->last_name,
-            ];
 
-            $payment_request_model = $this->paymayaService->createRequestModel($transaction, $paymaya_user_details);
-            $payment_response = $this->paymayaService->pay($payment_request_model);
+            if ($request->is_payment_required == 1) {
+                $paymaya_user_details = [
+                    'firstname' => $user->first_name,
+                    'lastname' => $user->last_name,
+                ];
 
-            $transaction->update([
-                'checkout_id' => $payment_response['checkoutId'],
-                'payment_link' => $payment_response['redirectUrl'],
-            ]);
-            
-            DB::commit();
+                $payment_request_model = $this->paymayaService->createRequestModel($transaction, $paymaya_user_details);
+                $payment_response = $this->paymayaService->pay($payment_request_model);
 
-            return redirect($payment_response['redirectUrl']);
+                $transaction->update([
+                    'checkout_id' => $payment_response['checkoutId'],
+                    'payment_link' => $payment_response['redirectUrl'],
+                ]);
+
+                DB::commit();
+
+                return redirect($payment_response['redirectUrl']);
+            } else {
+                DB::commit();
+                return redirect()->route('tithes.index');
+            }
 
         } catch (Exception $exception) {
             DB::rollBack();
@@ -153,7 +161,7 @@ class TithesController extends Controller
      * Display the specified resource.
      */
     public function show(string $id)
-    {   
+    {
         $endPoint = "Details";
         $tithe = Tithe::findOrFail($id);
         return view('pages.tithes.show', compact('tithe', 'endPoint'));
@@ -179,7 +187,7 @@ class TithesController extends Controller
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
-    { 
+    {
         $tithe = Tithe::find($id);
         $tithe->delete();
 
@@ -189,7 +197,8 @@ class TithesController extends Controller
         ]);
     }
 
-    public function userMonthlyTithes(Request $request) {
+    public function userMonthlyTithes(Request $request)
+    {
         $user_mfc_id_number = auth()->user()->mfc_id_number;
 
         $tithes = Tithe::select("for_the_month_of", DB::raw("SUM(amount) as total"), DB::raw("MAX(mfc_user_id) as mfc_user_id"), DB::raw("MAX(amount) as amount"), DB::raw("MAX(status) as status"))
@@ -197,9 +206,10 @@ class TithesController extends Controller
             ->where("status", "paid")
             ->groupBy("for_the_month_of")
             ->get();
-        
+
         return response()->json([
             'status' => 'success',
             'tithes' => $tithes,
         ]);
-    }}
+    }
+}

@@ -20,11 +20,16 @@
                     <div class="flex-shrink-0">
                         <div class="d-flex flex-wrap gap-2">
                             <a href="#" class="btn btn-primary add-btn text-capitalize" data-bs-toggle="modal"
-                                data-bs-target="#tithe-form">
+                                data-bs-target="#add-tithe-form" onclick="handleOpenTitheForm('0')">
+                                <i class="mdi mdi-plus fs-15"></i> Add Tithe</a>
+                            <a href="#" class="btn btn-primary add-btn text-capitalize" data-bs-toggle="modal"
+                                data-bs-target="#add-tithe-form" onclick="handleOpenTitheForm('1')">
                                 <i class="mdi mdi-hand-coin fs-15"></i> Give Tithe</a>
+
+
                             <button class="btn btn-soft-danger" id="remove-actions"><i
                                     class="ri-delete-bin-2-line"></i></button>
-                            <div id="tithe-form" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel"
+                            {{-- <div id="tithe-form" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel"
                                 aria-hidden="true" style="display: none;">
                                 <div class="modal-dialog">
                                     <div class="modal-content">
@@ -113,7 +118,99 @@
                                         </div>
                                     </div><!-- /.modal-content -->
                                 </div><!-- /.modal-dialog -->
-                            </div><!-- /.modal -->
+                            </div><!-- /.modal --> --}}
+                            <div id="add-tithe-form" class="modal fade" tabindex="-1" aria-labelledby="myModalLabel"
+                                aria-hidden="true" style="display: none;">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="myModalLabel">Add Tithe</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form action="{{ route('tithes.store') }}" id="tithe-form" method="post">
+                                                @csrf
+                                                <input type="hidden" id="is-payment-required" name="is_payment_required"
+                                                    value="1">
+                                                <div class="row">
+                                                    <div class="col-lg-12">
+                                                        @component('components.input_fields.basic')
+                                                            @slot('id')
+                                                                mfc_user_id
+                                                            @endslot
+                                                            @slot('name')
+                                                                mfc_user_id
+                                                            @endslot
+                                                            @slot('label')
+                                                                MFC User ID
+                                                            @endslot
+                                                            @slot('placeholder')
+                                                                MFC User ID
+                                                            @endslot
+                                                            @slot('feedback')
+                                                                Invalid input. Minimum of 3 characters!
+                                                            @endslot
+                                                            @slot('value')
+                                                                {{ auth()->user()->mfc_id_number }}
+                                                            @endslot
+                                                        @endcomponent
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="mb-3">
+                                                            <label for="amount" class="form-label">Tithe Amount</label>
+                                                            <div class="form-icon">
+                                                                <input type="text" oninput="validateDigit(this)"
+                                                                    id="amount" class="form-control form-control-icon"
+                                                                    name="amount" placeholder="" value="50"
+                                                                    min="50">
+                                                                <i class="fst-normal">₱</i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <div class="mb-3">
+                                                            <label for="amount" class="form-label">For the Month
+                                                                Of</label>
+                                                            <select name="for_the_month_of" id="month-of-field"
+                                                                class="form-select">
+                                                                <option {{ date('F') == 'January' ? 'selected' : null }}
+                                                                    value="January">January</option>
+                                                                <option {{ date('F') == 'February' ? 'selected' : null }}
+                                                                    value="February">February</option>
+                                                                <option {{ date('F') == 'March' ? 'selected' : null }}
+                                                                    value="March">March</option>
+                                                                <option {{ date('F') == 'April' ? 'selected' : null }}
+                                                                    value="April">April</option>
+                                                                <option {{ date('F') == 'May' ? 'selected' : null }}
+                                                                    value="May">May</option>
+                                                                <option {{ date('F') == 'June' ? 'selected' : null }}
+                                                                    value="June">June</option>
+                                                                <option {{ date('F') == 'July' ? 'selected' : null }}
+                                                                    value="July">July</option>
+                                                                <option {{ date('F') == 'August' ? 'selected' : null }}
+                                                                    value="August">August</option>
+                                                                <option {{ date('F') == 'September' ? 'selected' : null }}
+                                                                    value="September">September</option>
+                                                                <option {{ date('F') == 'October' ? 'selected' : null }}
+                                                                    value="October">October</option>
+                                                                <option {{ date('F') == 'November' ? 'selected' : null }}
+                                                                    value="November">November</option>
+                                                                <option {{ date('F') == 'December' ? 'selected' : null }}
+                                                                    value="December">December</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button type="submit" class="btn btn-primary" id="tithe-form-btn"
+                                                    style="width: 100%">
+                                                    Submit
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal-dialog -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -327,6 +424,12 @@
             initializeTables();
             fetchTithesData();
         })
+    </script>
+
+    <script>
+        function handleOpenTitheForm(value) {
+            $('#is-payment-required').val(value);
+        }
     </script>
 @endsection
 @endsection

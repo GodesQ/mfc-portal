@@ -11,7 +11,7 @@ class BibleVerseSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
+    public function run() : void
     {
         DB::table('bible_verses')->insert([
             ['verse' => 'And our hope for you is firm, because we know that just as you share in our sufferings, so also you share in our comfort.', 'verse_number' => '2 Corinthians 1:7'],
@@ -62,6 +62,14 @@ class BibleVerseSeeder extends Seeder
             ['verse' => '"Never will I leave you; never will I forsake you."', 'verse_number' => 'Hebrews 13:5'],
             ['verse' => 'The Lord is my helper; I will not be afraid. What can man do to me?', 'verse_number' => 'Hebrews 13:6'],
             ['verse' => 'God...will not forget your work and the love you have shown him as you have helped his people and continue to help them.', 'verse_number' => 'Hebrews 6:10'],
+            ['verse' => 'He is able to save completely those who come to God through him, because he always lives to intercede for them.', 'verse_number' => 'Hebrews 7:25'],
+            ['verse' => 'Christ was sacrificed once to take away the sins of many people; and he will appear a second time, not to bear sin, but to bring salvation to those who are waiting for him.', 'verse_number' => 'Hebrews 9:28'],
+            ['verse' => 'I will ransom them from the power of the grave; I will redeem them from death.', 'verse_number' => 'Hosea 13:14'],
+            ['verse' => 'Let us acknowledge the LORD; let us press on to acknowledge him. As surely as the sun rises, he will appear; he will come to us like the winter rains, like the spring rains that water the earth', 'verse_number' => 'Hosea 6:3'],
+            ['verse' => 'We will not all sleep, but we will all be changed...the dead will be raised imperishable, and we will be changed.', 'verse_number' => '1 Corinthians 15:51-52'],
+            ['verse' => "The man who plants and the man who waters have one purpose, and each will be rewarded according to his own labor. For we are God's fellow workers.", 'verse_number' => '1 Corinthians 3:8-9'],
+            ['verse' => "I do not even judge myself...It is the Lord who judges me. Therefore judge nothing before the appointed time; wait till the Lord comes. He will bring to light what is hidden in darkness and will expose the motives of men's hearts. At that time each will receive his praise from God.", 'verse_number' => '1 Corinthians 4:3-5'],
+            ['verse' => " God is faithful; he will not let you be tempted beyond what you can bear. But when you are tempted, he will also provide a way out so that you can stand up under it.", 'verse_number' => '1 Corinthians 10:13'],
         ]);
     }
 }

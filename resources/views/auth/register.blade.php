@@ -41,31 +41,56 @@
                             <div class="card-body p-4">
                                 <div class="text-center mt-2">
                                     <h5 class="text-primary">Create New Account</h5>
-                                    <p class="text-muted">Get your free velzon account now</p>
                                 </div>
                                 <div class="p-2 mt-4">
                                     <form class="needs-validation" novalidate method="POST" id="registerForm"
                                         action="{{ route('register') }}" enctype="multipart/form-data">
                                         @csrf
+                                        {{-- First Name Field --}}
                                         <x-input_fields.name id="userFirstName" label="First Name" name="firstname"
                                             value="{{ old('firstname') }}"
                                             feedback="Please enter your first name"></x-input_fields.name>
+
+                                        {{-- Last Name Field --}}
                                         <x-input_fields.name id="userLastName" label="Last Name" name="lastname"
                                             value="{{ old('lastname') }}"
                                             feedback="Please enter your last name"></x-input_fields.name>
+
+                                        {{-- Email Field --}}
                                         <x-input_fields.email id="useremail" name="email"
                                             value="{{ old('email') }}"></x-input_fields.email>
+
+                                        {{-- Username Field --}}
                                         <div class="mb-3">
                                             <label for="username-field" class="form-label">Username</label>
-                                            <input type="text" class="form-control" name="username" id="username-field" placeholder="Enter Your username">
+                                            <input type="text" class="form-control" name="username" id="username-field"
+                                                placeholder="Enter Your username" value="{{ old('username') }}">
+                                            <span class="text-danger danger">
+                                                @error('username')
+                                                    {{ $message }}
+                                                @enderror
+                                            </span>
                                         </div>
+
+                                        {{-- Username Field --}}
                                         <div class="mb-3">
                                             <label for="password-field" class="form-label">Password</label>
-                                            <input type="password" class="form-control" name="password" id="password-field" placeholder="Enter Your password">
+                                            <input type="password" class="form-control" name="password" id="password-field"
+                                                placeholder="Enter Your password">
+                                            <span class="text-danger danger">
+                                                @error('password')
+                                                    {{ $message }}
+                                                @enderror
+                                            </span>
                                         </div>
+
+
                                         <x-input_fields.contact-number id="usercontact" name="contact_number"
-                                            formId="registerForm"></x-input_fields.contact-number>
-                                        <x-input_fields.choices label="MFC Section" id="mfc_section" formId="registerForm" name="section">
+                                            formId="registerForm"
+                                            value="{{ old('contact_number') }}"></x-input_fields.contact-number>
+
+                                        <x-input_fields.choices label="MFC Section" id="mfc_section" formId="registerForm"
+                                            name="section">
                                             <option value="kids" class="text-capitalize">kids</option>
                                             <option value="youth" class="text-capitalize">youth</option>
                                             <option value="singles" class="text-capitalize">singles</option>
@@ -73,11 +98,16 @@
                                             <option value="servants" class="text-capitalize">servants</option>
                                             <option value="couples" class="text-capitalize">couples</option>
                                         </x-input_fields.choices>
+                                        <span class="text-danger danger">
+                                            @error('section')
+                                                {{ $message }}
+                                            @enderror
+                                        </span>
 
                                         <div class="mb-3">
                                             <p class="mb-0 fs-12 text-muted fst-italic d-flex gap-1">By registering you
                                                 agree to the
-                                                Velzon <a href="#"
+                                                MFC Portal <a href="#"
                                                     class="text-primary text-decoration-underline fst-normal fw-medium">Terms
                                                     of Use</a></p>
                                         </div>
@@ -112,7 +142,12 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="text-center">
-                            <p class="mb-0 text-muted">&copy; <script>document.write(new Date().getFullYear())</script> MFC Portal. Crafted with <i class="mdi mdi-heart text-danger"></i> by <a href="https://godesq.com/" target="_blank">GodesQ Digital Marketing Services</a></p>
+                            <p class="mb-0 text-muted">&copy;
+                                <script>
+                                    document.write(new Date().getFullYear())
+                                </script> MFC Portal. Crafted with <i class="mdi mdi-heart text-danger"></i>
+                                by <a href="https://godesq.com/" target="_blank">GodesQ Digital Marketing Services</a>
+                            </p>
                         </div>
                     </div>
                 </div>

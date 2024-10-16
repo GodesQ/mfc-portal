@@ -26,7 +26,7 @@ class EventsController extends Controller
      */
     public function index(Request $request)
     {
-        abort_if(!auth()->user()->hasRole('super_admin'), 403);
+        abort_if(! auth()->user()->hasRole('super_admin'), 403);
 
         $endPoint = 'list';
 
@@ -106,7 +106,7 @@ class EventsController extends Controller
         try {
             DB::beginTransaction();
 
-            if (!$request->ajax())
+            if (! $request->ajax())
                 throw new Exception("Error processing data.", 400);
 
             $data = $request->validated();
@@ -128,7 +128,7 @@ class EventsController extends Controller
                 $end_date = $dates[1] ?? '';
             }
 
-            Event::create(attributes: array_merge($data, [
+            Event::create(array_merge($data, [
                 'section_ids' => $request->section_ids,
                 'poster' => $filename,
                 'area' => $request->type == 5 ? auth()->user()->area : null,
@@ -241,11 +241,10 @@ class EventsController extends Controller
         if ($request->query('filter') && $request->query('filter') === "upcoming_events") {
             $today = Carbon::today()->toDateString();
             $events = $events->where("start_date", '>', $today)
-                ->when(!$user->hasRole('super_admin'), function ($q) use ($user_section_id, $user_area) {
+                ->when(! $user->hasRole('super_admin'), function ($q) use ($user_section_id, $user_area) {
                     $q->where(function ($subquery) use ($user_section_id, $user_area) {
                         $subquery->whereJsonContains('section_ids', (string) $user_section_id)
-                            ->orWhereIn('type', [1, 2, 3, 4]) // worldwide, national, regional, ncr
-                            ->orWhere('area', $user_area); // Same area events
+                            ->orWhereIn('type', [1, 2, 3, 4]); // worldwide, national, regional, ncr; // Same area events
                     });
                 })
                 ->orderBy('start_date');
@@ -285,13 +284,15 @@ class EventsController extends Controller
         $user_area = $user->area;
 
         $events = Event::where('status', 'Active')
-            ->when(!$user->hasRole('super_admin'), function ($q) use ($user_section_id, $user_area) {
+            ->when(! $user->hasRole('super_admin'), function ($q) use ($user_section_id, $user_area) {
                 $q->where(function ($subquery) use ($user_section_id, $user_area) {
                     $subquery->whereJsonContains('section_ids', (string) $user_section_id)
-                        ->orWhereIn('type', [1, 2, 3, 4]) // worldwide, national, regional, ncr
-                        ->orWhere('area', $user_area); // Same area events
+                        ->orWhereIn('type', [1, 2, 3, 4])
+                        ->where('area', $user_area)
+                        ->whereNotNull('area'); // worldwide, national, regional, ncr
                 });
             })
+
             ->get()
             ->map(function ($event) {
 

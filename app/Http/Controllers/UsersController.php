@@ -90,7 +90,6 @@ class UsersController extends Controller
 
         $user->load('missionary_services');
 
-
         return view('pages.profile.index', compact('user', 'sections'));
     }
 

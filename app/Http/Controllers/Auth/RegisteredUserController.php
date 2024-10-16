@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\MemberRegisterRequest;
 use App\Models\Section;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
@@ -23,15 +24,15 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function store(Request $request): RedirectResponse
-    {   
+    public function store(MemberRegisterRequest $request) : RedirectResponse
+    {
         $section = Section::where('name', $request->section)->first();
 
         $user = User::create([
             'username' => $request->username,
             'email' => $request->email,
             'first_name' => $request->firstname,
-            'last_name' => $request->lastname, 
+            'last_name' => $request->lastname,
             'password' => Hash::make($request->password),
             'section_id' => $section->id,
             'contact_number' => $request->contact_number,
