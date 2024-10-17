@@ -96,7 +96,8 @@
                                 </div>
                                 <div class="ar-number col-12 text-sm-center">
                                     <h4 style="font-size: 16px;"><span class="fw-bold">No.</span>
-                                        <span>{{ sprintf('%02d', $transaction->id) }}</span></h4>
+                                        <span>{{ sprintf('%02d', $transaction->id) }}</span>
+                                    </h4>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -213,8 +214,8 @@
                                         Dashboard</a>
                                     <a href="javascript:window.print()" class="btn btn-success"><i
                                             class="ri-printer-line align-bottom me-1"></i> Print</a>
-                                    <a href="javascript:void(0);" class="btn btn-primary"><i
-                                            class="ri-download-2-line align-bottom me-1"></i> Download</a>
+                                    {{-- <a href="javascript:void(0);" class="btn btn-primary"><i
+                                            class="ri-download-2-line align-bottom me-1"></i> Download</a> --}}
                                 </div>
                             </div>
                             <!--end card-body-->

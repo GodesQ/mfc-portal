@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,24 +11,21 @@ class UserSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
-    {   
+    public function run() : void
+    {
         /******** AREA SERVANT USER ********/
         $member_one = User::create([
-            'first_name' => 'George', 
-            'last_name' => 'Steve', 
+            'mfc_id_number' => generateNewMFCId(),
+            'first_name' => 'George',
+            'last_name' => 'Steve',
             'username' => 'membergeorge',
-            'email' => 'member@mfcportal.com', 
-            'password' => Hash::make('Test123!'), 
-            'avatar' => 'avatar-2.jpg', 
+            'email' => 'member@mfcportal.com',
+            'password' => Hash::make('Test123!'),
+            'avatar' => 'avatar-2.jpg',
             'section_id' => 3,
             'area' => 'ncr_north',
-            'created_at' => now(), 
+            'created_at' => now(),
             'email_verified_at' => now()
-        ]);
-
-        $member_one->update([
-            'mfc_id_number' => generateNextMfcId(),
         ]);
 
         $member_one->assignRole('member');
@@ -38,19 +34,16 @@ class UserSeeder extends Seeder
 
         /******** CHAPTER SERVANT USER ********/
         $chapter_servant = User::create([
-            'first_name' => 'Mark', 
-            'last_name' => 'Tone', 
+            'mfc_id_number' => generateNewMFCId(),
+            'first_name' => 'Mark',
+            'last_name' => 'Tone',
             'username' => 'mark',
-            'email' => 'marktone1234@gmail.com', 
-            'password' => Hash::make('Test123!'), 
-            'avatar' => 'avatar-3.jpg', 
+            'email' => 'marktone1234@gmail.com',
+            'password' => Hash::make('Test123!'),
+            'avatar' => 'avatar-3.jpg',
             'section_id' => 3,
-            'created_at' => now(), 
+            'created_at' => now(),
             'email_verified_at' => now()
-        ]);
-
-        $chapter_servant->update([
-            'mfc_id_number' => generateNextMfcId(),
         ]);
 
         $chapter_servant->assignRole('chapter_servant');
@@ -59,19 +52,16 @@ class UserSeeder extends Seeder
 
         /******** UNIT SERVANT USER ********/
         $unit_servant = User::create([
-            'first_name' => 'James', 
-            'last_name' => 'Yue', 
+            'mfc_id_number' => generateNewMFCId(),
+            'first_name' => 'James',
+            'last_name' => 'Yue',
             'username' => 'james',
-            'email' => 'jamesyue443@gmail.com', 
-            'password' => Hash::make('Test123!'), 
-            'avatar' => 'avatar-4.jpg', 
+            'email' => 'jamesyue443@gmail.com',
+            'password' => Hash::make('Test123!'),
+            'avatar' => 'avatar-4.jpg',
             'section_id' => 5,
-            'created_at' => now(), 
+            'created_at' => now(),
             'email_verified_at' => now()
-        ]);
-
-        $unit_servant->update([
-            'mfc_id_number' => generateNextMfcId(),
         ]);
 
         $unit_servant->assignRole('unit_servant');
@@ -80,19 +70,16 @@ class UserSeeder extends Seeder
 
         /******** HOUSEHOLD SERVANT USER ********/
         $household_servant = User::create([
-            'first_name' => 'Robert', 
-            'last_name' => 'Mendez', 
+            'mfc_id_number' => generateNewMFCId(),
+            'first_name' => 'Robert',
+            'last_name' => 'Mendez',
             'username' => 'robert',
-            'email' => 'robertmendez13@gmail.com', 
-            'password' => Hash::make('Test123!'), 
-            'avatar' => 'avatar-5.jpg', 
+            'email' => 'robertmendez13@gmail.com',
+            'password' => Hash::make('Test123!'),
+            'avatar' => 'avatar-5.jpg',
             'section_id' => 3,
-            'created_at' => now(), 
+            'created_at' => now(),
             'email_verified_at' => now()
-        ]);
-
-        $household_servant->update([
-            'mfc_id_number' => generateNextMfcId(),
         ]);
 
         $household_servant->assignRole('household_servant');
@@ -101,19 +88,16 @@ class UserSeeder extends Seeder
 
         /******** MEMBER USER ********/
         $member = User::create([
-            'first_name' => 'Charles', 
-            'last_name' => 'Jamis', 
+            'mfc_id_number' => generateNewMFCId(),
+            'first_name' => 'Charles',
+            'last_name' => 'Jamis',
             'username' => 'charles_jamis',
-            'email' => 'charlesjamis@gmail.com', 
-            'password' => Hash::make('Test123!'), 
-            'avatar' => 'avatar-6.jpg', 
+            'email' => 'charlesjamis@gmail.com',
+            'password' => Hash::make('Test123!'),
+            'avatar' => 'avatar-6.jpg',
             'section_id' => 3,
-            'created_at' => now(), 
+            'created_at' => now(),
             'email_verified_at' => now()
-        ]);
-
-        $member->update([
-            'mfc_id_number' => generateNextMfcId(),
         ]);
 
         $member->assignRole('member');

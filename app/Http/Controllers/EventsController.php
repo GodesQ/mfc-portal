@@ -240,14 +240,7 @@ class EventsController extends Controller
 
         if ($request->query('filter') && $request->query('filter') === "upcoming_events") {
             $today = Carbon::today()->toDateString();
-            $events = $events->where("start_date", '>', $today)
-                ->when(! $user->hasRole('super_admin'), function ($q) use ($user_section_id, $user_area) {
-                    $q->where(function ($subquery) use ($user_section_id, $user_area) {
-                        $subquery->whereJsonContains('section_ids', (string) $user_section_id)
-                            ->orWhereIn('type', [1, 2, 3, 4]); // worldwide, national, regional, ncr; // Same area events
-                    });
-                })
-                ->orderBy('start_date');
+            $events = $events->where("start_date", '>', $today)->orderBy("start_date", "asc");
         } else if ($request->query('filter') && $request->query('filter') === "member_events") {
             $today = Carbon::today()->format('Y-m-d');
 
@@ -257,10 +250,11 @@ class EventsController extends Controller
                 ->get();
 
             $other_events = Event::where('start_date', '>', $today)
-                ->whereIn('type', [1, 2, 3, 4])
-                ->orWhere('area', $user_area)
-                ->orderBy("start_date", "asc")
-                ->get();
+                ->where(function ($query) use ($user_area) {
+                    $query->whereIn('type', [1, 2, 3, 4])
+                        ->orWhere('area', $user_area)
+                        ->orderBy("start_date", "asc");
+                })->get();
 
             return response()->json([
                 'status' => 'success',

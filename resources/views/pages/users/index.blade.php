@@ -34,6 +34,7 @@
                         <thead>
                             <tr>
                                 <th class="" data-sort="id">ID</th>
+                                <th>MFC ID</th>
                                 <th class="" data-sort="name">Name</th>
                                 <th class="" data-sort="email">Email</th>
                                 <th class="" data-sort="contact_number">Contact Number</th>
@@ -64,10 +65,10 @@
 
     <!-- Edit Modal -->
     @component('components.users.edit-form', [
-        'sections' => $sections, 
-        'roles' => $roles
-    ])@endcomponent
-
+        'sections' => $sections,
+        'roles' => $roles,
+    ])
+    @endcomponent
 @endsection
 @section('script')
     <script>
@@ -94,7 +95,10 @@
                                 },
                                 success: function(response) {
                                     showSuccessMessage(response.message);
-                                    $('#users_datatables').DataTable().ajax.reload(null, false); // false to keep the current page
+                                    $('#users_datatables').DataTable().ajax
+                                        .reload(null,
+                                            false
+                                            ); // false to keep the current page
                                 },
                                 error: function(xhr, response, error) {
                                     showErrorMessage(xhr.statusText);
@@ -105,7 +109,7 @@
                 });
 
                 // Click Edit Btn
-                $('.edit-btn').click(function (e) {
+                $('.edit-btn').click(function(e) {
                     var id = $(this).attr('id');
                     editUserModal.show();
 
@@ -134,6 +138,10 @@
                 let columns = [{
                         data: "id",
                         name: "id",
+                    },
+                    {
+                        data: "mfc_id_number",
+                        name: "mfc_id_number",
                     },
                     {
                         data: "name",

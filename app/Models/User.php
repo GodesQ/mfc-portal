@@ -90,26 +90,29 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function generateNextMfcId()
     {
-       $mfc_number = generateRandomSevenNumber();
+        $mfc_number = generateNewMFCId();
 
-       $user = User::select('mfc_id_number')->where('mfc_id_number', $mfc_number)->exists();
+        $user = User::select('mfc_id_number')->where('mfc_id_number', $mfc_number)->exists();
 
-       while($user) {
-            $mfc_number = generateRandomSevenNumber();
-       }
+        while ($user) {
+            $mfc_number = generateNewMFCId();
+        }
 
-       return $mfc_number;
+        return $mfc_number;
     }
 
-    public function section() : BelongsTo {
+    public function section() : BelongsTo
+    {
         return $this->belongsTo(Section::class, 'section_id');
     }
 
-    public function user_details() : HasOne {
+    public function user_details() : HasOne
+    {
         return $this->hasOne(UserDetail::class, 'user_id');
     }
 
-    public function missionary_services() : HasMany {
+    public function missionary_services() : HasMany
+    {
         return $this->hasMany(UserMissionaryService::class, 'user_id');
     }
 }

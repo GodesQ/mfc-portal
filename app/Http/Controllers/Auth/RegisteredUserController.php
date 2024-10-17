@@ -29,6 +29,7 @@ class RegisteredUserController extends Controller
         $section = Section::where('name', $request->section)->first();
 
         $user = User::create([
+            'mfc_id_number' => generateNewMFCId(),
             'username' => $request->username,
             'email' => $request->email,
             'first_name' => $request->firstname,
@@ -37,10 +38,6 @@ class RegisteredUserController extends Controller
             'section_id' => $section->id,
             'contact_number' => $request->contact_number,
             'role_id' => 7,
-        ]);
-
-        $user->update([
-            'mfc_id_number' => $user->generateNextMfcId(),
         ]);
 
         $user->assignRole('member');

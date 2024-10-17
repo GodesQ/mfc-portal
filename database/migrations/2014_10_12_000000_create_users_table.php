@@ -35,8 +35,8 @@ class CreateUsersTable extends Migration
 
         });
 
-        $user = User::create(['first_name' => 'Anna', 'last_name' => 'Adame', 'email' => 'admin@mfcportal.com', 'password' => Hash::make('Test123!'), 'avatar' => 'avatar-1.jpg', 'created_at' => now(), 'email_verified_at' => now()],);
-        $mfc_id_number = $user->generateNextMfcId();
+        $user = User::create(['first_name' => 'Anna', 'last_name' => 'Adame', 'email' => 'admin@mfcportal.com', 'password' => Hash::make('Test123!'), 'avatar' => 'avatar-1.jpg', 'created_at' => now(), 'email_verified_at' => now()], );
+        $mfc_id_number = generateNewMFCId();
 
         $user->update([
             'mfc_id_number' => $mfc_id_number,
