@@ -8,13 +8,13 @@
             <img src="{{ URL::asset('build/images/profile-bg.jpg') }}" class="profile-wid-img" alt="">
             <div class="overlay-content">
                 <div class="text-end p-3">
-                    <div class="p-0 ms-auto rounded-circle profile-photo-edit">
+                    {{-- <div class="p-0 ms-auto rounded-circle profile-photo-edit">
                         <input id="profile-foreground-img-file-input" type="file"
                             class="profile-foreground-img-file-input">
                         <label for="profile-foreground-img-file-input" class="profile-photo-edit btn btn-light">
                             <i class="ri-image-edit-line align-bottom me-1"></i> Change Cover
                         </label>
-                    </div>
+                    </div> --}}
                 </div>
             </div>
         </div>
@@ -65,7 +65,8 @@
         <div class="col-xxl-9">
             <div class="card mt-xxl-n5">
                 <div class="card-header">
-                    <ul class="nav nav-tabs-custom rounded card-header-tabs d-flex justify-content-between border-bottom-0" role="tablist">
+                    <ul class="nav nav-tabs-custom rounded card-header-tabs d-flex justify-content-between border-bottom-0"
+                        role="tablist">
                         <div class="d-flex">
                             <li class="nav-item">
                                 <a class="nav-link active" data-bs-toggle="tab" href="#personalDetails" role="tab">
@@ -122,8 +123,9 @@
                                         <div class="mb-3">
                                             <label for="phonenumberInput" class="form-label">Phone
                                                 Number</label>
-                                            <input name="contact_number" type="text" class="form-control" id="phonenumberInput"
-                                                placeholder="Enter your phone number" value="{{ $user->contact_number }}">
+                                            <input name="contact_number" type="text" class="form-control"
+                                                id="phonenumberInput" placeholder="Enter your phone number"
+                                                value="{{ $user->contact_number }}">
                                         </div>
                                     </div>
                                     <!--end col-->
@@ -138,8 +140,9 @@
                                     <div class="col-lg-4">
                                         <div class="mb-3">
                                             <label for="birthday-field" class="form-label">Birthday</label>
-                                            <input type="text" class="form-control" id="birthday-field" name="birthday"
-                                                value="{{ optional($user->user_details)->birthday }}" placeholder="Select date" />
+                                            <input type="text" class="form-control" id="birthday-field"
+                                                name="birthday" value="{{ optional($user->user_details)->birthday }}"
+                                                placeholder="Select date" />
                                         </div>
                                     </div>
                                     <!--end col-->
@@ -214,33 +217,34 @@
                                     <!--end col-->
                                     <div class="col-lg-12">
                                         <div class="mb-3">
-                                            <label for="god-given-skill-select" class="form-label">God-given Skills</label>
+                                            <label for="god-given-skill-select" class="form-label">God-given
+                                                Skills</label>
                                             <select class="form-select" name="god_given_skills[]"
                                                 id="god-given-skill-select" multiple="multiple">
                                                 <option value="">Select a Skill</option>
                                                 <optgroup label="Spiritual and Pastoral Skills">
                                                     <option
-                                                        {{ in_array("Prayer Leading", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Prayer Leading', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Prayer Leading">
                                                         Prayer Leading
                                                     </option>
                                                     <option
-                                                        {{ in_array("Bible Study Facilitation", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Bible Study Facilitation', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Bible Study Facilitation">
                                                         Bible Study Facilitation
                                                     </option>
                                                     <option
-                                                        {{ in_array("Spiritual Counseling", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Spiritual Counseling', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Spiritual Counseling">
                                                         Spiritual Counseling
                                                     </option>
                                                     <option
-                                                        {{ in_array("Worship Leading", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Worship Leading', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Worship Leading">
                                                         Worship Leading
                                                     </option>
                                                     <option
-                                                        {{ in_array("Catechism Teaching", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Catechism Teaching', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Catechism Teaching">
                                                         Catechism Teaching
                                                     </option>
@@ -248,27 +252,27 @@
 
                                                 <optgroup label="Community and Social Skills">
                                                     <option
-                                                        {{ in_array("Event Planning and Coordination", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Event Planning and Coordination', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Event Planning and Coordination">
                                                         Event Planning and Coordination
                                                     </option>
                                                     <option
-                                                        {{ in_array("Community Outreach", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Community Outreach', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Community Outreach">
                                                         Community Outreach
                                                     </option>
                                                     <option
-                                                        {{ in_array("Fundraising and Development", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Fundraising and Development', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Fundraising and Development">
                                                         Fundraising and Development
                                                     </option>
                                                     <option
-                                                        {{ in_array("Volunteer Management", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Volunteer Management', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Volunteer Management">
                                                         Volunteer Management
                                                     </option>
                                                     <option
-                                                        {{ in_array("Conflict Resolution", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Conflict Resolution', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Conflict Resolution">
                                                         Conflict Resolution
                                                     </option>
@@ -276,32 +280,32 @@
 
                                                 <optgroup label="Administrative and Technical Skills">
                                                     <option
-                                                        {{ in_array("Administration and Office Management", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Administration and Office Management', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Administration and Office Management">
                                                         Administration and Office Management
                                                     </option>
                                                     <option
-                                                        {{ in_array("Financial Management and Accounting", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Financial Management and Accounting', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Financial Management and Accounting">
                                                         Financial Management and Accounting
                                                     </option>
                                                     <option
-                                                        {{ in_array("IT Support and Systems Management", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('IT Support and Systems Management', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="IT Support and Systems Management">
                                                         IT Support and Systems Management
                                                     </option>
                                                     <option
-                                                        {{ in_array("Website Development and Maintenance", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Website Development and Maintenance', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Website Development and Maintenance">
                                                         Website Development and Maintenance
                                                     </option>
                                                     <option
-                                                        {{ in_array("Graphic Design", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Graphic Design', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Graphic Design">
                                                         Graphic Design
                                                     </option>
                                                     <option
-                                                        {{ in_array("Content Creation and Management", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Content Creation and Management', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Content Creation and Management">
                                                         Content Creation and Management
                                                     </option>
@@ -309,22 +313,22 @@
 
                                                 <optgroup label="Educational and Training Skills">
                                                     <option
-                                                        {{ in_array("Teaching and Instruction", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Teaching and Instruction', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Teaching and Instruction">
                                                         Teaching and Instruction
                                                     </option>
                                                     <option
-                                                        {{ in_array("Workshop Facilitation", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Workshop Facilitation', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Workshop Facilitation">
                                                         Workshop Facilitation
                                                     </option>
                                                     <option
-                                                        {{ in_array("Youth Mentorship and Leadership", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Youth Mentorship and Leadership', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Youth Mentorship and Leadership">
                                                         Youth Mentorship and Leadership
                                                     </option>
                                                     <option
-                                                        {{ in_array("Life Skills Coaching", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Life Skills Coaching', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Life Skills Coaching">
                                                         Life Skills Coaching
                                                     </option>
@@ -332,27 +336,27 @@
 
                                                 <optgroup label="Creative and Artistic Skills">
                                                     <option
-                                                        {{ in_array("Music and Instrument Playing", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Music and Instrument Playing', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Music and Instrument Playing">
                                                         Music and Instrument Playing
                                                     </option>
                                                     <option
-                                                        {{ in_array("Singing and Vocal Training", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Singing and Vocal Training', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Singing and Vocal Training">
                                                         Singing and Vocal Training
                                                     </option>
                                                     <option
-                                                        {{ in_array("Drama and Theatrical Arts", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Drama and Theatrical Arts', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Drama and Theatrical Arts">
                                                         Drama and Theatrical Arts
                                                     </option>
                                                     <option
-                                                        {{ in_array("Visual Arts and Crafts", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Visual Arts and Crafts', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Visual Arts and Crafts">
                                                         Visual Arts and Crafts
                                                     </option>
                                                     <option
-                                                        {{ in_array("Writing and Editing", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Writing and Editing', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Writing and Editing">
                                                         Writing and Editing
                                                     </option>
@@ -360,22 +364,22 @@
 
                                                 <optgroup label="Health and Wellness Skills">
                                                     <option
-                                                        {{ in_array("Counseling and Mental Health Support", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Counseling and Mental Health Support', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Counseling and Mental Health Support">
                                                         Counseling and Mental Health Support
                                                     </option>
                                                     <option
-                                                        {{ in_array("Health and Fitness Training", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Health and Fitness Training', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Health and Fitness Training">
                                                         Health and Fitness Training
                                                     </option>
                                                     <option
-                                                        {{ in_array("First Aid and Medical Support", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('First Aid and Medical Support', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="First Aid and Medical Support">
                                                         First Aid and Medical Support
                                                     </option>
                                                     <option
-                                                        {{ in_array("Nutrition and Wellness Coaching", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Nutrition and Wellness Coaching', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Nutrition and Wellness Coaching">
                                                         Nutrition and Wellness Coaching
                                                     </option>
@@ -383,22 +387,22 @@
 
                                                 <optgroup label="Logistics and Support Skills">
                                                     <option
-                                                        {{ in_array("Transportation Coordination", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Transportation Coordination', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Transportation Coordination">
                                                         Transportation Coordination
                                                     </option>
                                                     <option
-                                                        {{ in_array("Food Preparation and Catering", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Food Preparation and Catering', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Food Preparation and Catering">
                                                         Food Preparation and Catering
                                                     </option>
                                                     <option
-                                                        {{ in_array("etup and Teardown (Event Logistics)", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('etup and Teardown (Event Logistics)', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Setup and Teardown (Event Logistics)">
                                                         Setup and Teardown (Event Logistics)
                                                     </option>
                                                     <option
-                                                        {{ in_array("Audio/Visual Equipment Management", (optional($user->user_details)->god_given_skill ?? [])) ? 'selected' : null }}
+                                                        {{ in_array('Audio/Visual Equipment Management', optional($user->user_details)->god_given_skill ?? []) ? 'selected' : null }}
                                                         value="Audio/Visual Equipment Management">
                                                         Audio/Visual Equipment Management
                                                     </option>
@@ -416,8 +420,9 @@
                                                         <i class="ri-map-pin-line"></i>
                                                     </span>
                                                 </div>
-                                                <input type="text" name="address" class="form-control" id="address-field" placeholder="Address"
-                                                value="{{ optional($user->user_details)->address }}">
+                                                <input type="text" name="address" class="form-control"
+                                                    id="address-field" placeholder="Address"
+                                                    value="{{ optional($user->user_details)->address }}">
                                             </div>
                                         </div>
                                     </div>
@@ -429,8 +434,10 @@
                                                     <i class="ri-facebook-fill"></i>
                                                 </span>
                                             </div>
-                                            <input type="url" class="form-control" name="facebook_link" id="facebook-link-field" 
-                                                value="{{ optional($user->user_details)->facebook_link }}" placeholder="Facebook Link">
+                                            <input type="url" class="form-control" name="facebook_link"
+                                                id="facebook-link-field"
+                                                value="{{ optional($user->user_details)->facebook_link }}"
+                                                placeholder="Facebook Link">
                                         </div>
                                     </div>
 
@@ -441,8 +448,10 @@
                                                     <i class="ri-instagram-fill"></i>
                                                 </span>
                                             </div>
-                                            <input type="url" class="form-control" name="instagram_link" id="instagram-link-field"
-                                                value="{{ optional($user->user_details)->instagram_link }}" placeholder="Instagram Link">
+                                            <input type="url" class="form-control" name="instagram_link"
+                                                id="instagram-link-field"
+                                                value="{{ optional($user->user_details)->instagram_link }}"
+                                                placeholder="Instagram Link">
                                         </div>
                                     </div>
 
@@ -453,8 +462,10 @@
                                                     <i class="ri-twitter-x-fill"></i>
                                                 </span>
                                             </div>
-                                            <input type="url" class="form-control" id="twitter-link-field" placeholder="Twitter" 
-                                                value="{{ optional($user->user_details)->twitter_link }}" name="twitter_link">
+                                            <input type="url" class="form-control" id="twitter-link-field"
+                                                placeholder="Twitter"
+                                                value="{{ optional($user->user_details)->twitter_link }}"
+                                                name="twitter_link">
                                         </div>
                                     </div>
 
@@ -475,7 +486,7 @@
                         <div class="tab-pane" id="changePassword" role="tabpanel">
                             <form action="{{ route('users.profile.change_password', $user->id) }}" method="POST">
                                 @csrf
-                                @method("PUT")
+                                @method('PUT')
                                 <div class="row g-2">
                                     <div class="col-lg-4">
                                         <div>
@@ -519,7 +530,15 @@
 
                         <!--service-->
                         <div class="tab-pane" id="service" role="tabpanel">
+                            @if ($errors->any())
+                                @push('scripts')
+                                    <script>
+                                        toastr.error("Multiple entries are invalid or do not match with the required format.", "Submission failed");
+                                    </script>
+                                @endpush
+                            @endif
                             <form action="{{ route('users.profile.services.put', auth()->user()->id) }}" method="POST">
+
                                 @csrf
                                 @method('PUT')
                                 <div id="newlink">
@@ -618,7 +637,8 @@
                                                     </div>
                                                 </div>
                                                 <div class="hstack gap-2 justify-content-end">
-                                                    <a class="btn btn-success" href="javascript:deleteEl({{ $key + 1 }})">Delete</a>
+                                                    <a class="btn btn-success"
+                                                        href="javascript:deleteEl({{ $key + 1 }})">Delete</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -628,7 +648,8 @@
                                 <div id="newForm" style="display: none;"></div>
                                 <div class="col-lg-12">
                                     <div class="hstack gap-2">
-                                        <button type="submit" id="update-service-btn" class="btn btn-success">Update</button>
+                                        <button type="submit" id="update-service-btn"
+                                            class="btn btn-success">Update</button>
                                         <a href="javascript:new_link()" class="btn btn-primary">Add
                                             New</a>
                                     </div>
@@ -734,14 +755,12 @@
 
             let serviceContainers = document.querySelectorAll('.service-container');
 
-            if(serviceContainers.length === 0) {
+            if (serviceContainers.length === 0) {
                 $("#update-service-btn").attr("disabled", true);
             } else {
                 $("#update-service-btn").removeAttr("disabled");
             }
 
         });
-
-        
     </script>
 @endsection

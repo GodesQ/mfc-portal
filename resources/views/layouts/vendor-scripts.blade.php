@@ -63,3 +63,5 @@
 
 @yield('script')
 @yield('script-bottom')
+
+@stack('scripts')

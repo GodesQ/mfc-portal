@@ -19,7 +19,7 @@
             <a href="#" onclick="window.history.back()" class="btn btn-dark">
                 <i class="ri-arrow-left-line"></i>
                 Back
-            </a>            
+            </a>
         </div>
         <div class="row my-3">
             <div class="col-xl-5">
@@ -61,7 +61,8 @@
                         <div class="my-2 border px-3 py-2 rounded">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="d-flex align-items-center gap-3">
-                                    <img src="{{ URL::asset('uploads/avatars/' . $event_registration->user->avatar) }}" class="avatar avatar-md" style="border-radius: 50%;" alt="">
+                                    <img src="{{ URL::asset('uploads/avatars/' . $event_registration->user->avatar) }}"
+                                        class="avatar avatar-md" style="border-radius: 50%;" alt="">
                                     <div>
                                         <h3 class="fw-bold">
                                             {{ $event_registration->user->first_name . ' ' . $event_registration->user->last_name }}
@@ -93,7 +94,13 @@
                                 <!--end col-->
                                 <div class="col-xl-5 col-5">
                                     <p class="text-muted mb-2 fw-medium">Payment Status</p>
-                                    <span class="badge bg-success-subtle text-success fs-11" id="payment-status">Paid</span>
+                                    @if ($event_registration->transaction->status == 'paid')
+                                        <span class="badge bg-success-subtle text-success fs-11"
+                                            id="payment-status">Paid</span>
+                                    @else
+                                        <span class="badge bg-warning-subtle text-warning fs-11"
+                                            id="payment-status">Unpaid</span>
+                                    @endif
                                 </div>
                                 <!--end col-->
                                 <div class="col-xl-5 col-5">

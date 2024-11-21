@@ -31,64 +31,50 @@ class EventsController extends Controller
         $endPoint = 'list';
 
         if ($request->ajax()) {
-            $events = Event::get();
+            // Optimize by eager loading sections
+            $events = Event::with('sections')->get();
+
             return DataTables::of($events)
                 ->editColumn('start_date', function ($event) {
                     return Carbon::parse($event->start_date)->format('F d, Y');
                 })
                 ->addColumn('actions', function ($event) {
                     $actions = "<div class='hstack gap-2'>
-                        <a href='" . route('events.registrations.index', ['event' => $event->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Registration List'><i class='ri-file-list-3-line align-bottom'></i></a>
-                        <button type='button' class='btn btn-soft-success btn-sm edit-btn' id='" . $event->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='View'><i class='ri-pencil-fill align-bottom'></i></button>
-                        <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $event->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
-                    </div>";
+                    <a href='" . route('events.registrations.index', ['event' => $event->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Registration List'><i class='ri-file-list-3-line align-bottom'></i></a>
+                    <button type='button' class='btn btn-soft-success btn-sm edit-btn' id='" . $event->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='View'><i class='ri-pencil-fill align-bottom'></i></button>
+                    <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $event->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
+                </div>";
 
                     return $actions;
                 })
                 ->addColumn('section', function ($event) {
-                    $sections = Section::whereIn('id', $event->section_ids)->get();
+                    $sectionColors = [
+                        'kids' => '#fa6b02',
+                        'youth' => '#0066ab',
+                        'singles' => '#1c8265',
+                        'servants' => '#ffad09',
+                        'handmaids' => '#ee2c2e',
+                        'couples' => '#2a81d9',
+                    ];
+
                     $output = "<div class='d-flex flex-wrap gap-1'>";
 
-                    foreach ($sections as $section) {
-                        switch ($section->name) {
-                            case 'kids':
-                                $color = '#fa6b02';
-                                break;
-                            case 'youth':
-                                $color = '#0066ab';
-                                break;
-                            case 'singles':
-                                $color = '#1c8265';
-                                break;
-                            case 'servants':
-                                $color = '#ffad09';
-                                break;
-                            case 'handmaids':
-                                $color = '#ee2c2e';
-                                break;
-                            case 'couples':
-                                $color = '#2a81d9';
-                                break;
-                            default:
-                                $color = '#7852a9';
-                                break;
-                        }
-
-                        $output .= "<div class='badge' style='background: $color '>$section->name</div>";
+                    foreach ($event->sections as $section) {
+                        $color = $sectionColors[$section->name] ?? '#7852a9'; // Default color if not found
+                        $output .= "<div class='badge' style='background: $color'>{$section->name}</div>";
                     }
 
                     $output .= "</div>";
-                    // // Return 'N/A' if no section is found
-                    // return $sections ? $sections->name : 'N/A';
                     return $output;
                 })
                 ->rawColumns(['actions', 'section'])
                 ->make(true);
         }
 
-        $sections = Section::get();
+        $sections = Section::all(); // Use all() instead of get()
         return view('pages.events.list', compact('endPoint', 'sections'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -233,7 +219,7 @@ class EventsController extends Controller
 
     public function all(Request $request)
     {
-        $events = Event::query();
+        $events = Event::query()->active();
         $user = auth()->user();
         $user_section_id = $user->section_id;
         $user_area = $user->area;
@@ -277,60 +263,38 @@ class EventsController extends Controller
         $user_section_id = $user->section_id;
         $user_area = $user->area;
 
+        // Define section color mapping
+        $sectionColors = [
+            'kids' => '#fa6b02',
+            'youth' => '#0066ab',
+            'singles' => '#1c8265',
+            'servants' => '#ffad09',
+            'handmaids' => '#ee2c2e',
+            'couples' => '#2a81d9',
+        ];
+
         $events = Event::where('status', 'Active')
             ->when(! $user->hasRole('super_admin'), function ($q) use ($user_section_id, $user_area) {
                 $q->where(function ($subquery) use ($user_section_id, $user_area) {
                     $subquery->whereJsonContains('section_ids', (string) $user_section_id)
                         ->orWhereIn('type', [1, 2, 3, 4])
                         ->where('area', $user_area)
-                        ->whereNotNull('area'); // worldwide, national, regional, ncr
+                        ->whereNotNull('area');
                 });
             })
-
             ->get()
-            ->map(function ($event) {
+            ->map(function ($event) use ($sectionColors) {
 
-                $sections = Section::whereIn('id', $event->section_ids)->get();
+                // Fetch section names for the event
+                $sectionNames = Section::whereIn('id', $event->section_ids)->pluck('name')->toArray();
 
-                $colors = [];
-                foreach ($sections as $key => $section) {
-                    switch ($section->name) {
-                        case 'kids':
-                            $color = '#fa6b02';
-                            break;
-                        case 'youth':
-                            $color = '#0066ab';
-                            break;
-                        case 'singles':
-                            $color = '#1c8265';
-                            break;
-                        case 'servants':
-                            $color = '#ffad09';
-                            break;
-                        case 'handmaids':
-                            $color = '#ee2c2e';
-                            break;
-                        case 'couples':
-                            $color = '#2a81d9';
-                            break;
-                        default:
-                            $color = '#7852a9';
-                            break;
-                    }
-                    array_push($colors, $color);
-                }
+                // Get colors based on section names
+                $colors = array_map(function ($name) use ($sectionColors) {
+                    return $sectionColors[$name] ?? '#7852a9';  // Default color if not found
+                }, $sectionNames);
 
-                $percentage = 100 / count($colors);
-                $colorStops = [];
-                foreach ($colors as $index => $color) {
-                    $colorStops[] = "$color";
-                }
-
-                if (count($colors) > 1) {
-                    $background = "#7852a9";
-                } else {
-                    $background = $colors[0];
-                }
+                // Determine background color
+                $background = count($colors) > 1 ? '#7852a9' : $colors[0];
 
                 return [
                     'id' => $event->id,
@@ -348,7 +312,7 @@ class EventsController extends Controller
                         'background' => $background,
                         'section_ids' => $event->section_ids,
                     ],
-                    'allDay' => true
+                    'allDay' => true,
                 ];
             });
 
@@ -356,5 +320,6 @@ class EventsController extends Controller
             'events' => $events
         ]);
     }
+
 
 }

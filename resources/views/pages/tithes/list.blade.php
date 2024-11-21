@@ -19,9 +19,12 @@
                 <div class="d-flex align-items-center justify-content-end">
                     <div class="flex-shrink-0">
                         <div class="d-flex flex-wrap gap-2">
-                            <a href="#" class="btn btn-primary add-btn text-capitalize" data-bs-toggle="modal"
-                                data-bs-target="#add-tithe-form" onclick="handleOpenTitheForm('0')">
-                                <i class="mdi mdi-plus fs-15"></i> Add Tithe</a>
+                            @role('super_admin')
+                                <a href="#" class="btn btn-primary add-btn text-capitalize" data-bs-toggle="modal"
+                                    data-bs-target="#add-tithe-form" onclick="handleOpenTitheForm('0')">
+                                    <i class="mdi mdi-plus fs-15"></i> Add Tithe</a>
+                            @endrole
+
                             <a href="#" class="btn btn-primary add-btn text-capitalize" data-bs-toggle="modal"
                                 data-bs-target="#add-tithe-form" onclick="handleOpenTitheForm('1')">
                                 <i class="mdi mdi-hand-coin fs-15"></i> Give Tithe</a>

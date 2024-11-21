@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Profile\UpdateProfileServiceRequest;
 use App\Http\Requests\User\StoreRequest;
 use App\Models\Section;
 use App\Models\User;
@@ -21,40 +22,27 @@ class UsersController extends Controller
      */
     public function index(Request $request, string $section)
     {
-        //
-        $users = '';
-        $btn_color = '';
-        $breadcrumb = $section;
-        switch ($section) {
-            case 'kids':
-                $users = User::where('section_id', 1)->get();
-                $btn_color = 'btn-danger';
-                break;
-            case 'youth':
-                $users = User::where('section_id', 2)->get();
-                $btn_color = 'btn-primary';
-                break;
-            case 'singles':
-                $users = User::where('section_id', 3)->get();
-                $btn_color = 'btn-success';
-                break;
-            case 'handmaids':
-                $users = User::where('section_id', 4)->get();
-                $btn_color = 'btn-red';
-                break;
-            case 'servants':
-                $users = User::where('section_id', 5)->get();
-                $btn_color = 'btn-warning';
-                break;
-            case 'couples':
-                $users = User::where('section_id', 6)->get();
-                $btn_color = 'btn-info';
-                break;
-            default:
-                $users = User::get();
-                $btn_color = 'btn-info';
-                break;
+        // Define section mappings
+        $sectionMap = [
+            'kids' => ['section_id' => 1, 'btn_color' => 'btn-danger'],
+            'youth' => ['section_id' => 2, 'btn_color' => 'btn-primary'],
+            'singles' => ['section_id' => 3, 'btn_color' => 'btn-success'],
+            'handmaids' => ['section_id' => 4, 'btn_color' => 'btn-red'],
+            'servants' => ['section_id' => 5, 'btn_color' => 'btn-warning'],
+            'couples' => ['section_id' => 6, 'btn_color' => 'btn-info'],
+        ];
+
+        // Set default section values
+        $btn_color = 'btn-info';
+        $section_id = null;
+
+        if (array_key_exists($section, $sectionMap)) {
+            $section_id = $sectionMap[$section]['section_id'];
+            $btn_color = $sectionMap[$section]['btn_color'];
         }
+
+        // Query the users based on the section
+        $users = $section_id ? User::where('section_id', $section_id)->get() : User::all();
 
         if ($request->ajax()) {
             return DataTables::of($users)
@@ -63,23 +51,24 @@ class UsersController extends Controller
                 })
                 ->addColumn('actions', function ($user) {
                     $actions = "<div class='hstack gap-2'>
-                        <button type='button' class='btn btn-soft-success btn-sm edit-btn' id='" . $user->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit'><i class='ri-pencil-fill align-bottom'></i></button>
-                        <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $user->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-fill align-bottom'></i></button>
-                    </div>";
+                    <button type='button' class='btn btn-soft-success btn-sm edit-btn' id='" . $user->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit'><i class='ri-pencil-fill align-bottom'></i></button>
+                    <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $user->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-fill align-bottom'></i></button>
+                </div>";
 
                     return $actions;
                 })
                 ->addColumn('name', function ($user) {
-                    $name = $user->first_name . ' ' . $user->last_name;
-
-                    return $name;
+                    return $user->first_name . ' ' . $user->last_name;
                 })
                 ->rawColumns(['actions', 'name'])
                 ->make(true);
         }
 
-        $sections = Section::get();
-        $roles = Role::get();
+        // Retrieve sections and roles
+        $sections = Section::all();
+        $roles = Role::all();
+
+        // Return view with data
         return view('pages.users.index', compact('section', 'breadcrumb', 'btn_color', 'sections', 'roles'));
     }
 
@@ -117,7 +106,7 @@ class UsersController extends Controller
         return back()->withSuccess("Profile Updated Successfully");
     }
 
-    public function updateProfileService(Request $request, $id)
+    public function updateProfileService(UpdateProfileServiceRequest $request, $id)
     {
         $user = User::findOrFail($id);
 
@@ -138,7 +127,7 @@ class UsersController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if (!Hash::check($request->old_password, $user->password))
+        if (! Hash::check($request->old_password, $user->password))
             return back()->with('fail', "The user password is not match in the old password.");
 
         $user->update([

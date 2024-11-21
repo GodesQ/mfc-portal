@@ -47,10 +47,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('/announcements', AnnouncementController::class);
 
         Route::get('/users/search', [UsersController::class, 'search'])->name('search');
-        Route::get('/users/profile/{user_id}');
+        // Route::get('/users/profile/{user_id}');
         Route::resource('/users', UsersController::class)->except(['index', 'destroy']);
-        
-        Route::delete('/directory/{user_id}/users', [UsersController::class,'destroy'])->name('users.destroy');
+
+        Route::delete('/directory/{user_id}/users', [UsersController::class, 'destroy'])->name('users.destroy');
         Route::get('/directory/{section}', [UsersController::class, 'index'])->name('users.index');
 
         Route::get('/profile/{user}', [UsersController::class, 'profile'])->name('users.profile');
@@ -63,13 +63,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('events/all', [EventsController::class, 'all'])->name('events.all');
         Route::get('events/full-calendar', [EventsController::class, 'fullCalendar'])->name('events.full_calendar');
         Route::resource('/events', EventsController::class)->except(['show']);
-        
+
         Route::get('/events/registrations/{id}', [EventRegistrationController::class, 'show'])->name('events.registrations.show');
-        Route::get('/events/{event}/registrations', [EventRegistrationController::class,'list'])->name('events.registrations.index');
+        Route::get('/events/{event}/registrations', [EventRegistrationController::class, 'list'])->name('events.registrations.index');
         Route::get('/events/{event_id}/register', [EventRegistrationController::class, 'register'])->name('events.register');
         Route::post('/events/register', [EventRegistrationController::class, 'save_registration'])->name('events.register.post');
         Route::get('/users/{user_id}/events/registrations', [EventRegistrationController::class, 'userRegistrations'])->name('users.events.registrations');
-        
+
         Route::resource('/tithes', TithesController::class);
         Route::get('tithes/chart/user-monthly', [TithesController::class, 'userMonthlyTithes'])->name('tithes.chart.user-monthly');
 
@@ -98,7 +98,7 @@ Route::post('/paymaya/webhook/payment-failed', [PaymayaController::class, 'check
 
 Route::get('/payments/success', [RedirectController::class, 'payment_success'])->name('payments/success');
 
-Route::fallback( function() {
+Route::fallback(function () {
     return redirect()->route('root');
 });
 

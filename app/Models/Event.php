@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -34,7 +35,7 @@ class Event extends Model
      *
      * @var array
      */
-    protected  $casts = [
+    protected $casts = [
         'section_ids' => 'array',
         'is_open_for_non_community' => 'boolean',
         'is_enable_event_registration' => 'boolean',
@@ -44,12 +45,18 @@ class Event extends Model
     //     return $this->belongsTo(Section::class, 'section_id');
     // }
 
-    public function sections() {
+    public function scopeActive(Builder $query) : void
+    {
+        $query->where('status', 'Active');
+    }
+
+    public function sections()
+    {
         $sections = Section::select('name')
-                    ->whereIn('id', $this->section_ids)
-                    ->get()->map(function ($section) {
-                        return $section->name;
-                    })->toArray();
+            ->whereIn('id', $this->section_ids)
+            ->get()->map(function ($section) {
+                return $section->name;
+            })->toArray();
         return $sections;
     }
 }

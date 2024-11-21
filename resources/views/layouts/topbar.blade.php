@@ -66,8 +66,8 @@
                 <div class="dropdown topbar-head-dropdown ms-1 header-item" id="notificationDropdown">
                     <button type="button"
                         class="btn btn-icon btn-topbar material-shadow-none btn-ghost-secondary rounded-circle"
-                        id="page-header-notifications-dropdown" data-bs-toggle="dropdown"
-                        data-bs-auto-close="outside" aria-haspopup="true" aria-expanded="false">
+                        id="page-header-notifications-dropdown" data-bs-toggle="dropdown" data-bs-auto-close="outside"
+                        aria-haspopup="true" aria-expanded="false">
                         <i class='bx bx-bell fs-22'></i>
                         <span
                             class="position-absolute topbar-badge fs-10 translate-middle badge rounded-pill bg-danger">3<span
@@ -236,10 +236,11 @@
                             <span class="text-start ms-xl-2">
                                 <span
                                     class="d-none d-xl-inline-block ms-1 fw-medium user-name-text text-capitalize">{{ Auth::user()->first_name . ' ' . Auth::user()->last_name }}</span>
-                                    @php
-                                        $role = Spatie\Permission\Models\Role::find(auth()->user()->role_id);
-                                    @endphp
-                                <span class="d-none d-xl-block ms-1 fs-12 user-name-sub-text text-capitalize">{{ $role->name == 'super_admin' ? 'Super Admin' : $role->name }}</span>
+                                @php
+                                    $role = Spatie\Permission\Models\Role::find(auth()->user()->role_id);
+                                @endphp
+                                <span
+                                    class="d-none d-xl-block ms-1 fs-12 user-name-sub-text text-capitalize">{{ $role->name == 'super_admin' ? 'Super Admin' : $role->name }}</span>
                             </span>
                         </span>
                     </button>
@@ -250,10 +251,6 @@
                                 class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span
                                 class="align-middle">Profile</span></a>
                         <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="pages-profile-settings"><span
-                                class="badge bg-success-subtle text-success mt-1 float-end">New</span><i
-                                class="mdi mdi-cog-outline text-muted fs-16 align-middle me-1"></i> <span
-                                class="align-middle">Settings</span></a>
                         <a class="dropdown-item " href="javascript:void();"
                             onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
                                 class="bx bx-power-off font-size-16 align-middle me-1"></i> <span
