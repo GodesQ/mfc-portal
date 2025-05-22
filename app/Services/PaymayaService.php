@@ -6,16 +6,19 @@ use Exception;
 use Illuminate\Support\Facades\Http;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
-class PaymayaService {
-    public function __construct() {
-    
+class PaymayaService
+{
+    public function __construct()
+    {
+
     }
 
-    public function pay(array $request_model) {
+    public function pay(array $request_model)
+    {
         try {
-            $authToken = config('app.env') === "development" ? base64_encode(config("services.paymaya.test_api_key") . ":") : base64_encode(config("services.paymaya.api_key") . ":");
-            
-            $url = config('app.env') === "development" ? config("services.paymaya.test_url") : config("services.paymaya.url");
+            $authToken = config('app.env') !== "production" ? base64_encode(config("services.paymaya.test_api_key") . ":") : base64_encode(config("services.paymaya.api_key") . ":");
+
+            $url = config('app.env') !== "production" ? config("services.paymaya.test_url") : config("services.paymaya.url");
 
             $response = Http::withHeaders([
                 'accept' => 'application/json',
@@ -25,7 +28,7 @@ class PaymayaService {
 
             $statusCode = $response->getStatusCode();
 
-            if($statusCode != 200) {
+            if ($statusCode != 200) {
                 $content = json_decode($response->getBody()->getContents());
                 throw new Exception($content->error . ' in Paymaya Payment Gateway.');
             }
@@ -38,10 +41,13 @@ class PaymayaService {
         }
     }
 
-    public function createRequestModel($transaction, $paymaya_user_details) {
-        $total_amount = config('app.env') === "production" ? $transaction->total_amount : 2;
+    public function createRequestModel($transaction, $paymaya_user_details)
+    {
+        // $total_amount = config('app.env') === "production" ? $transaction->total_amount : 2;
+        $total_amount = $transaction->total_amount;
 
         return [
+            "authorizationType" => "NORMAL",
             "totalAmount" => [
                 "value" => $total_amount,
                 "currency" => "PHP",
