@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventAttendancesController;
+use App\Http\Controllers\Api\TitheController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -18,5 +20,16 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return "";
 });
+
+Route::prefix('v1')->group(function (): void {
+    Route::post('login', [AuthController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
+
+    Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::get('users/{user_id}/tithes', [TitheController::class, 'userTithes']);
+        Route::post('tithes', [TitheController::class, 'store']);
+    });
+});
+
 
 Route::post('events/attendances', [EventAttendancesController::class, 'saveAttendance']);

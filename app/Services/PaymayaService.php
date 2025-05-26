@@ -57,7 +57,7 @@ class PaymayaService
                 "lastName" => $paymaya_user_details['lastname'] ?? '',
             ],
             "redirectUrl" => [
-                "success" => route('payments/success') . "?transaction_id=" . $transaction->transaction_code,
+                "success" => route('payments.success') . "?transaction_id=" . $transaction->transaction_code,
             ],
             "requestReferenceNumber" => $transaction->reference_code,
         ];

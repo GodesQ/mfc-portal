@@ -3,6 +3,9 @@
 namespace App\Models;
 
 use App\Notifications\SendEmailVerification;
+use App\Services\ExceptionHandlerService;
+use App\Services\SmsService;
+use Exception;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,6 +33,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'avatar',
         'username',
         'email_verified_at',
+        'contact_number_verified_at',
+        'country_code',
         'contact_number',
         'area',
         'chapter',
@@ -46,7 +51,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'created_at',
     ];
 
-    public static array $status = ['Inactive', 'Active'];
+    public static array $status = ['inactive', 'active'];
 
     public static array $chapter = ['Chapter 1', 'Chapter 2', 'Chapter 3'];
 
@@ -68,7 +73,9 @@ class User extends Authenticatable implements MustVerifyEmail
      * @var array
      */
     protected $casts = [
+        'country_code' => 'integer',
         'email_verified_at' => 'datetime',
+        'contact_number_verified_at' => 'datetime',
     ];
 
     public function sendEmailVerificationNotification()
@@ -88,6 +95,28 @@ class User extends Authenticatable implements MustVerifyEmail
         return redirect()->route('verification.notice');
     }
 
+    public function sendOTPVerificationNotification()
+    {
+        try {
+            $otp = random_int(1000, 9999);
+
+            $otp = OTP::create([
+                'otp_code' => $otp,
+                'user_id' => $this->id,
+                'expires_at' => Carbon::now()->addMinutes(10),
+            ]);
+
+            $smsService = new SmsService;
+            $request_model = $smsService->request_model($this, $otp);
+            $response = $smsService->send($request_model);
+
+            return $response;
+        } catch (Exception $exception) {
+            throw $exception;
+        }
+
+    }
+
     public function generateNextMfcId()
     {
         $mfc_number = generateNewMFCId();
@@ -101,17 +130,17 @@ class User extends Authenticatable implements MustVerifyEmail
         return $mfc_number;
     }
 
-    public function section() : BelongsTo
+    public function section(): BelongsTo
     {
         return $this->belongsTo(Section::class, 'section_id');
     }
 
-    public function user_details() : HasOne
+    public function user_details(): HasOne
     {
         return $this->hasOne(UserDetail::class, 'user_id');
     }
 
-    public function missionary_services() : HasMany
+    public function missionary_services(): HasMany
     {
         return $this->hasMany(UserMissionaryService::class, 'user_id');
     }

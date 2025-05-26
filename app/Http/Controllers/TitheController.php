@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\Tithe\StoreRequest;
 use App\Models\Tithe;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\UserTransactionDetail;
+use App\Services\ExceptionHandlerService;
 use App\Services\PaymayaService;
+use App\Services\TitheService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -14,7 +17,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
-class TithesController extends Controller
+class TitheController extends Controller
 {
     private $paymayaService;
     public function __construct(PaymayaService $paymayaService)
@@ -87,73 +90,21 @@ class TithesController extends Controller
     /**
      * Store a newly created resource in database.
      */
-    public function store(Request $request)
+    public function store(StoreRequest $request)
     {
         try {
-            DB::beginTransaction();
+            $titheService = new TitheService;
+            $result = $titheService->store($request);
 
-            $user = User::where('mfc_id_number', $request->mfc_user_id)->first();
-            if (! $user)
-                throw new Exception("User not found based on your mfc user id.", 404);
-
-            $convenience_fee = 50.00;
-
-            if ($request->amount >= 50) {
-                $convenience_fee = 0.00;
+            if ($result['payment_url']) {
+                return redirect($result['payment_url']);
             }
 
-            $total_amount = $request->amount + $convenience_fee;
-
-            $transaction_code = generateTransactionCode();
-            $reference_code = generateReferenceCode();
-
-            $transaction = Transaction::create([
-                "transaction_code" => $transaction_code,
-                "reference_code" => $reference_code,
-                "convenience_fee" => $convenience_fee,
-                "received_from_id" => auth()->user()->id,
-                "sub_amount" => $request->amount,
-                "total_amount" => $total_amount,
-                "payment_mode" => $request->is_payment_required ? "N/A" : "cash",
-                "payment_type" => "tithe",
-                "status" => "pending",
-            ]);
-
-            Tithe::create([
-                "mfc_user_id" => $user->mfc_id_number,
-                "transaction_id" => $transaction->id,
-                "payment_mode" => "N/A",
-                "amount" => $request->amount,
-                "for_the_month_of" => $request->for_the_month_of,
-                "status" => $request->is_payment_required ? "unpaid" : "paid",
-            ]);
-
-
-            if ($request->is_payment_required == 1) {
-                $paymaya_user_details = [
-                    'firstname' => $user->first_name,
-                    'lastname' => $user->last_name,
-                ];
-
-                $payment_request_model = $this->paymayaService->createRequestModel($transaction, $paymaya_user_details);
-                $payment_response = $this->paymayaService->pay($payment_request_model);
-
-                $transaction->update([
-                    'checkout_id' => $payment_response['checkoutId'],
-                    'payment_link' => $payment_response['redirectUrl'],
-                ]);
-
-                DB::commit();
-
-                return redirect($payment_response['redirectUrl']);
-            } else {
-                DB::commit();
-                return redirect()->route('tithes.index');
-            }
+            return redirect()->route('tithes.index')->withSuccess('Tithe Added Successfully!');
 
         } catch (Exception $exception) {
-            DB::rollBack();
-            return back()->with('fail', $exception->getMessage());
+            $exceptionHandler = new ExceptionHandlerService();
+            return $exceptionHandler->handler($request, $exception);
         }
     }
 

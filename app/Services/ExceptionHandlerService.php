@@ -2,44 +2,63 @@
 
 namespace App\Services;
 
+use Exception;
+use Illuminate\Support\Facades\Log;
+
 class ExceptionHandlerService
 {
-    public function __handler($request, $exception)
+    public function handler($request, Exception $exception)
     {
-        if ($request->accepts('application/json')) {
-            return $this->__handleJSONResponse($exception);
+        Log::error($exception->getMessage(), ['exception' => $exception]); // Logging error
+
+        if ($request->expectsJson() || $request->ajax()) {
+            return $this->handleJSONResponse($exception);
         }
 
-        return $this->__handleHTMLResponse($exception);
+        return $this->handleHTMLResponse($exception);
     }
 
-    public function __handleJSONResponse($exception)
+    public function handleJSONResponse(Exception $exception)
     {
-        $resultCode = $this->__getExceptionCode($exception);
+        $resultCode = $this->getExceptionCode($exception);
 
         $result = [
-            'error' => $exception,
-            'message' => $resultCode == 500 ? self::serverErrorMessage() : $exception->getMessage(),
+            'error' => class_basename($exception),
+            'message' => $resultCode == 500 ? self::serverErrorMessage() : ($exception->getMessage() ?? "Oops! Something wen't wrong. Please try again."),
         ];
+
+        if (config('app.debug')) {
+            $result['debug'] = [
+                'ip_address' => request()->ip(),
+                'trace' => $exception->getTrace(),
+                'file' => $exception->getFile(),
+                'line' => $exception->getLine(),
+            ];
+        }
 
         return response()->json($result, $resultCode);
     }
 
-    public function __handleHTMLResponse($exception)
+    public function handleHTMLResponse(Exception $exception)
     {
-        return back()->with('failed', $exception->getMessage());
+        $exceptionCode = $this->getExceptionCode($exception);
+        $exceptionMessage = config('app.debug') ? ($exception->getMessage() ?? "Oops! Something wen't wrong. Please try again.") : self::serverErrorMessage();
+
+        return view('error.auth-500', ['message' => $exceptionMessage, 'exception' => $exception, 'status_code' => $exceptionCode]);
     }
 
-    private function __getExceptionCode($exception)
+    private function getExceptionCode(Exception $exception)
     {
         $exception_code = $exception->getCode();
-        $result_code = $exception_code == 0 || is_nan($exception_code) ? 500 : (int) $exception_code;
 
-        return $result_code;
+        // Ensure the code is numeric and within valid HTTP status codes (100-599)
+        return is_numeric($exception_code) && $exception_code >= 100 && $exception_code <= 599
+            ? (int) $exception_code
+            : 500;
     }
 
     private static function serverErrorMessage()
     {
-        return "Server Error Found. Please contact customer service to resolved the issue.";
+        return "Server Error Found. Please screenshot this error/issue and contact customer service to resolve the issue.";
     }
 }

@@ -11,10 +11,11 @@ use App\Http\Controllers\PaymayaController;
 use App\Http\Controllers\PermissionsController;
 use App\Http\Controllers\RedirectController;
 use App\Http\Controllers\RolesController;
-use App\Http\Controllers\TithesController;
+use App\Http\Controllers\TitheController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WebhookController;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,6 +44,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::resource('/dashboards', DashboardController::class)->middleware(['auth', 'verified', 'nocache']);
 
+    Route::get('system-server-logs', [\Rap2hpoutre\LaravelLogViewer\LogViewerController::class, 'index']);
+
     Route::prefix('dashboard')->middleware(['auth', 'verified', 'checkSession'])->group(function () {
         Route::resource('/announcements', AnnouncementController::class);
 
@@ -70,8 +73,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/events/register', [EventRegistrationController::class, 'save_registration'])->name('events.register.post');
         Route::get('/users/{user_id}/events/registrations', [EventRegistrationController::class, 'userRegistrations'])->name('users.events.registrations');
 
-        Route::resource('/tithes', TithesController::class);
-        Route::get('tithes/chart/user-monthly', [TithesController::class, 'userMonthlyTithes'])->name('tithes.chart.user-monthly');
+        Route::resource('/tithes', TitheController::class);
+        Route::get('tithes/chart/user-monthly', [TitheController::class, 'userMonthlyTithes'])->name('tithes.chart.user-monthly');
 
         Route::get('attendances', [EventAttendanceController::class, 'index'])->name('attendances.index');
         Route::post('attendances/users', [EventAttendanceController::class, 'storeUser'])->name('attendances.users.store');
@@ -91,15 +94,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-Route::post('/paymaya/webhook/checkout-success', [PaymayaController::class, 'checkout_success']);
-Route::post('/paymaya/webhook/checkout-failed', [PaymayaController::class, 'checkout_failed']);
-Route::post('/paymaya/webhook/payment-success', [PaymayaController::class, 'payment_success']);
-Route::post('/paymaya/webhook/payment-failed', [PaymayaController::class, 'checkout_failed']);
-
-Route::get('/payments/success', [RedirectController::class, 'payment_success'])->name('payments/success');
 
 Route::fallback(function () {
     return redirect()->route('root');
+});
+
+Route::post('payments/webhook', function (Request $request) {
+    Log::info('webhook-response', $request->all());
+});
+
+Route::group(['prefix' => 'redirect'], function () {
+    Route::group(['prefix' => 'payment'], function () {
+        Route::get('success', [RedirectController::class, 'payment_success'])->name('payments.success');
+    });
 });
 
 require __DIR__ . '/auth.php';

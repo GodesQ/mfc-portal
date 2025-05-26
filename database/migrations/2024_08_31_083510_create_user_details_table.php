@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -14,7 +13,7 @@ return new class extends Migration
         Schema::create('user_details', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained('users')->nullable()->cascadeOnDelete();
-            $table->json('god_given_skill')->nullable();
+            $table->json('god_given_skills')->nullable();
             $table->string('address')->nullable();
             $table->date('birthday')->nullable();
             $table->string('facebook_link')->nullable();

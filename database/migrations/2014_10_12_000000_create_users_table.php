@@ -22,14 +22,16 @@ class CreateUsersTable extends Migration
             $table->string('last_name')->nullable();
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('contact_number_verified_at')->nullable();
             $table->string('username')->unique()->nullable();
             $table->string('password');
             $table->text('avatar')->nullable();
+            $table->integer('country_code')->default('63')->nullable();
             $table->string('contact_number')->unique()->nullable();
             $table->string('area')->nullable();
             $table->enum('chapter', User::$chapter)->nullable();
             $table->enum('gender', User::$gender)->nullable();
-            $table->enum('status', User::$status)->nullable()->default('Active');
+            $table->enum('status', User::$status)->nullable()->default('active');
             $table->rememberToken();
             $table->timestamps();
 

@@ -37,6 +37,12 @@ return [
         'secret_key' => env('PAYMAYA_SECRET_KEY'),
         'test_api_key' => env('PAYMAYA_TEST_API_KEY'),
         'test_secret_key' => env('PAYMAYA_TEST_SECRET_KEY')
-    ]
+    ],
+
+    'sms' => [
+        'url' => 'https://api.semaphore.co/api/v4',
+        'api_key' => env('SEMAPHORE_API_KEY'),
+        'sender_name' => 'GodesQ',
+    ],
 
 ];

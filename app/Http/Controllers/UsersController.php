@@ -98,9 +98,9 @@ class UsersController extends Controller
         }
 
         if ($user->user_details) {
-            $user->user_details->update(array_merge($user_data, ['god_given_skill' => $skills]));
+            $user->user_details->update(array_merge($user_data, ['god_given_skills' => $skills]));
         } else {
-            UserDetail::create(array_merge($user_data, ['user_id' => $user->id, 'god_given_skill' => $skills]));
+            UserDetail::create(array_merge($user_data, ['user_id' => $user->id, 'god_given_skills' => $skills]));
         }
 
         return back()->withSuccess("Profile Updated Successfully");
@@ -127,7 +127,7 @@ class UsersController extends Controller
     {
         $user = User::findOrFail($id);
 
-        if (! Hash::check($request->old_password, $user->password))
+        if (!Hash::check($request->old_password, $user->password))
             return back()->with('fail', "The user password is not match in the old password.");
 
         $user->update([

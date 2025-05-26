@@ -12,7 +12,7 @@ class UserDetail extends Model
 
     protected $fillable = [
         "user_id",
-        "god_given_skill",
+        "god_given_skills",
         "address",
         "birthday",
         "facebook_link",
@@ -21,6 +21,6 @@ class UserDetail extends Model
     ];
 
     protected $casts = [
-        "god_given_skill" => "array",
+        "god_given_skills" => "array",
     ];
 }
