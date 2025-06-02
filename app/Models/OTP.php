@@ -14,6 +14,7 @@ class OTP extends Model
     protected $fillable = [
         'otp_code',
         'user_id',
+        'number_of_resend',
         'is_used',
         'expires_at',
     ];

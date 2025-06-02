@@ -2,39 +2,34 @@
 
 namespace App\Services;
 
+use App\Models\OTP;
 use App\Models\Section;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Auth\Events\Registered;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthService
 {
-    public function login($request, $credentials)
+    public function login($credentials)
     {
-        try {
-            $user = User::where('country_code', $credentials['country_code'])
-                ->where('contact_number', $credentials['contact_number'])
-                ->first();
+        $user = $this->findUserByCredentials($credentials);
 
-            if (!$user) {
-                throw new Exception('Invalid Credentials.', 404);
-            }
-
-            if (!Hash::check($credentials['password'], $user->password)) {
-                throw new Exception('Invalid Credentials.', 404);
-            }
-
-            return $user;
-        } catch (Exception $exception) {
-            throw $exception;
+        if (!$user || !Hash::check($credentials['password'], $user->password)) {
+            throw new Exception('Invalid Credentials.', 404);
         }
+
+        return $user;
     }
 
     public function register($request)
     {
-        $section = Section::where('name', $request->section)->first();
+        $section = Section::find($request->section_id);
+        if (!$section) {
+            throw new Exception('Section not found.', 404);
+        }
+
         $data = $request->validated();
         $mfc_id_number = generateNewMFCId();
         $role_id = 7; // member role
@@ -47,10 +42,41 @@ class AuthService
 
         $user->assignRole('member');
 
-        if (config('auth.verification') === 'email') {
+        if (config('auth.verification') === 'email' && $request->has('email')) {
             event(new Registered($user));
         } else {
             $user->sendOTPVerificationNotification();
         }
+
+        return $user;
+    }
+
+    public function otpVerify($request)
+    {
+        $otp = OTP::where('otp_code', $request->otp_code)
+            ->where('user_id', $request->user_id)
+            ->latest()
+            ->first();
+
+        if (!$otp) {
+            throw new Exception('OTP Not Found.', 404);
+        }
+
+        if ($otp->is_used) {
+            throw new Exception('OTP has already been used.', 400);
+        }
+
+        if ($otp->expires_at <= Carbon::now()) {
+            throw new Exception('Your otp has already expired. Please resend a new OTP.', 400);
+        }
+
+        $otp->update(['is_used' => true]);
+    }
+
+    private function findUserByCredentials($credentials)
+    {
+        return User::where('country_code', $credentials['country_code'] ?? null)
+            ->where('contact_number', $credentials['contact_number'] ?? null)
+            ->first();
     }
 }

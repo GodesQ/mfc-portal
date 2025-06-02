@@ -26,6 +26,10 @@ Route::prefix('v1')->group(function (): void {
     Route::post('register', [AuthController::class, 'register']);
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
+        Route::post('logout', [AuthController::class, 'logout']);
+        Route::post('otp/resend', [AuthController::class, 'resendOTP']);
+        Route::post('otp/verify', [AuthController::class, 'verifyOTP']);
+
         Route::get('users/{user_id}/tithes', [TitheController::class, 'userTithes']);
         Route::post('tithes', [TitheController::class, 'store']);
     });

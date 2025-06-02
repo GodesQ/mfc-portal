@@ -98,7 +98,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendOTPVerificationNotification()
     {
         try {
-            $otp = random_int(1000, 9999);
+            $otp = random_int(100000, 999999);
 
             $otp = OTP::create([
                 'otp_code' => $otp,
