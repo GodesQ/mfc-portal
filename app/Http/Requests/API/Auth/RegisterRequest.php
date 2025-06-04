@@ -28,7 +28,7 @@ class RegisterRequest extends FormRequest
             'password' => ['required', 'min:8'],
             'email' => ['nullable', 'email', 'unique:users,email'],
             'country_code' => ['required', 'integer'],
-            'contact_number' => ['required'],
+            'contact_number' => ['required', 'unique:users,contact_number'],
             'section_id' => ['required', 'exists:sections,id']
         ];
     }
