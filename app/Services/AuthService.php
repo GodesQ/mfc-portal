@@ -45,7 +45,7 @@ class AuthService
         if (config('auth.verification') === 'email' && $request->has('email')) {
             event(new Registered($user));
         } else {
-            // $user->sendOTPVerificationNotification();
+            $user->sendOTPVerificationNotification();
         }
 
         return $user;
