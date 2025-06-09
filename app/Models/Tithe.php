@@ -12,11 +12,18 @@ class Tithe extends Model
     protected $table = "tithes";
     protected $fillable = ["mfc_user_id", "transaction_id", "payment_mode", "amount", "for_the_month_of", "status"];
 
-    public function user() : BelongsTo {
+    protected $casts = [
+        'amount' => 'double',
+        'transaction_id' => 'integer',
+    ];
+
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class, "mfc_user_id", "mfc_id_number");
     }
 
-    public function transaction() : BelongsTo {
+    public function transaction(): BelongsTo
+    {
         return $this->belongsTo(Transaction::class, "transaction_id");
     }
 }
