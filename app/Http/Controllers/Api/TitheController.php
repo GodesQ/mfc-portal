@@ -5,17 +5,61 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Tithe\StoreRequest;
 use App\Http\Resources\TitheResource;
+use App\Models\Tithe;
 use App\Services\ExceptionHandlerService;
 use App\Services\TitheService;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class TitheController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        
+        $user = Auth::user();
+        $query = Tithe::query();
+
+        // Date range filter
+        if ($request->has('date_start') && $request->has('date_end')) {
+            $query->whereBetween('created_at', [
+                $request->date_start,
+                $request->date_end
+            ]);
+        } elseif ($request->has('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        // Month range filter
+        if ($request->has('month_start') && $request->has('month_end')) {
+            $query->whereBetween('created_at', [
+                Carbon::parse($request->month_start)->startOfMonth(),
+                Carbon::parse($request->month_end)->endOfMonth()
+            ]);
+        } elseif ($request->has('month')) {
+            $query->whereBetween('created_at', [
+                Carbon::parse($request->month)->startOfMonth(),
+                Carbon::parse($request->month)->endOfMonth()
+            ]);
+        }
+
+        if ($request->has('status')) {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('min_amount')) {
+            $query->where('amount', '>=', $request->min_amount);
+        }
+        if ($request->has('max_amount')) {
+            $query->where('amount', '<=', $request->max_amount);
+        }
+
+        $query->where('mfc_user_id', $user->mfc_id_number);
+
+        return response()->json([
+            'status' => 'success',
+            'tithes' => TitheResource::collection($query->get()),
+        ]);
     }
 
     public function userTithes(Request $request, $user_id)

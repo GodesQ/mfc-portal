@@ -31,6 +31,7 @@ Route::prefix('v1')->group(function (): void {
         Route::post('otp/verify', [AuthController::class, 'verifyOTP']);
 
         Route::get('users/{user_id}/tithes', [TitheController::class, 'userTithes']);
+        Route::get('tithes', [TitheController::class, 'index']);
         Route::post('tithes', [TitheController::class, 'store']);
     });
 });
