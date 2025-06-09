@@ -47,11 +47,12 @@ class TitheController extends Controller
             $query->where('status', $request->status);
         }
 
-        if ($request->has('min_amount')) {
-            $query->where('amount', '>=', $request->min_amount);
-        }
-        if ($request->has('max_amount')) {
-            $query->where('amount', '<=', $request->max_amount);
+
+        if ($request->filled('min_amount') && $request->filled('max_amount')) {
+            $query->whereBetween('amount', [
+                $request->min_amount,
+                $request->max_amount
+            ]);
         }
 
         $query->where('mfc_user_id', $user->mfc_id_number);

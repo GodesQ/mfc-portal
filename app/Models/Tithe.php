@@ -13,7 +13,6 @@ class Tithe extends Model
     protected $fillable = ["mfc_user_id", "transaction_id", "payment_mode", "amount", "for_the_month_of", "status"];
 
     protected $casts = [
-        'amount' => 'double',
         'transaction_id' => 'integer',
     ];
 
