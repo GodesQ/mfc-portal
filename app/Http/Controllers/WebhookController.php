@@ -17,8 +17,11 @@ class WebhookController extends Controller
     {
         Log::info('Transaction', [$request->all()]);
 
+
         try {
             $transaction = Transaction::where('reference_code', $request->requestReferenceNumber)->first();
+
+            $fundSource = $request->fundSource['type'] ?? 'N/A';
 
             if (!$transaction)
                 throw new Exception("Transaction Not Found", 404);
@@ -26,10 +29,12 @@ class WebhookController extends Controller
             if ($request->status === "PAYMENT_SUCCESS" || $request->status === "AUTHORIZED") {
                 $transaction->update([
                     'status' => 'paid',
+                    'payment_mode' => $fundSource,
                 ]);
 
                 Tithe::where('transaction_id', $transaction->id)->update([
-                    'status' => 'paid'
+                    'status' => 'paid',
+                    'payment_mode' => $fundSource,
                 ]);
             }
 
