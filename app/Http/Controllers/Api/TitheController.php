@@ -70,7 +70,7 @@ class TitheController extends Controller
     {
         $user = Auth::user();
         $titheService = new TitheService;
-        $tithes = $titheService->getUserTithes($user);
+        $tithes = $titheService->getUserTithes($request, $user);
 
         return response()->json([
             'status' => 'success',

@@ -5,19 +5,54 @@ namespace App\Services;
 use App\Models\Tithe;
 use App\Models\Transaction;
 use App\Models\User;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class TitheService
 {
-    public function getUserTithes($user)
+    public function getUserTithes($request, $user)
     {
-        $tithes = Tithe::where('mfc_user_id', $user->mfc_id_number)
-            ->latest()
-            ->get();
+        $query = Tithe::query();
 
-        return $tithes;
+        $query->where('mfc_user_id', $user->mfc_id_number);
+
+        // Date range filter
+        if ($request->has('date_start') && $request->has('date_end')) {
+            $query->whereBetween('created_at', [
+                $request->date_start,
+                $request->date_end
+            ]);
+        } elseif ($request->has('date')) {
+            $query->whereDate('created_at', $request->date);
+        }
+
+        // Month range filter
+        if ($request->has('month_start') && $request->has('month_end')) {
+            $start = Carbon::parse($request->month_start)->startOfMonth();
+            $end = Carbon::parse($request->month_end)->startOfMonth();
+
+            $months = [];
+            while ($start <= $end) {
+                $months[] = $start->format('F'); // "F" gives full month name like "May"
+                $start->addMonth();
+            }
+
+            $query->whereIn('for_the_month_of', $months);
+
+        } elseif ($request->has('month')) {
+            $monthName = Carbon::parse($request->month)->format('F');
+            $query->where('for_the_month_of', $monthName);
+        }
+
+        if ($request->filled('min_amount') && $request->filled('max_amount')) {
+            $minAmount = (int) $request->min_amount;
+            $maxAmount = (int) $request->max_amount;
+            $query->whereBetween('amount', [$minAmount, $maxAmount]);
+        }
+
+        return $query->get();
     }
 
     public function store($request)
