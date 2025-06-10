@@ -24,7 +24,7 @@
                                     style="width: 250px; height: 250px; object-fit: cover; border-radius: 50%;" />
                             </div>
                             <div>
-                                <h4 class="text-xl">Payment Canceled!</h4>
+                                <h4 class="text-xl">Payment Cancelled!</h4>
                                 <p class="text-muted w-75 mx-auto">Your payment was not completed. This could be because
                                     you chose to cancel or the session expired.</p>
 
