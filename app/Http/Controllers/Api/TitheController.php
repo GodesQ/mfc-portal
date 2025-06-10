@@ -47,7 +47,6 @@ class TitheController extends Controller
             $query->where('status', $request->status);
         }
 
-
         if ($request->filled('min_amount') && $request->filled('max_amount')) {
             $minAmount = (int) $request->min_amount;
             $maxAmount = (int) $request->max_amount;
