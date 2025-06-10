@@ -1,7 +1,7 @@
 @extends('layouts.master-without-nav')
 
 @section('title')
-    Payment Canceled
+    Payment Cancelled
 @endsection
 
 @section('body')
