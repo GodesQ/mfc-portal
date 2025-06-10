@@ -32,15 +32,20 @@ class TitheController extends Controller
 
         // Month range filter
         if ($request->has('month_start') && $request->has('month_end')) {
-            $query->whereBetween('created_at', [
-                Carbon::parse($request->month_start)->startOfMonth(),
-                Carbon::parse($request->month_end)->endOfMonth()
-            ]);
+            $start = Carbon::parse($request->month_start)->startOfMonth();
+            $end = Carbon::parse($request->month_end)->startOfMonth();
+
+            $months = [];
+            while ($start <= $end) {
+                $months[] = $start->format('F'); // "F" gives full month name like "May"
+                $start->addMonth();
+            }
+
+            $query->whereIn('for_the_month_of', $months);
+
         } elseif ($request->has('month')) {
-            $query->whereBetween('created_at', [
-                Carbon::parse($request->month)->startOfMonth(),
-                Carbon::parse($request->month)->endOfMonth()
-            ]);
+            $monthName = Carbon::parse($request->month)->format('F');
+            $query->where('for_the_month_of', $monthName);
         }
 
         if ($request->has('status')) {
