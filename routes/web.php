@@ -99,15 +99,13 @@ Route::fallback(function () {
     return redirect()->route('root');
 });
 
-Route::post('payments/webhook', function (Request $request) {
-    Log::info('webhook-response', $request->all());
-});
+Route::post('payments/webhook', [WebhookController::class, 'webhook']);
 
 Route::group(['prefix' => 'redirect'], function () {
     Route::group(['prefix' => 'payment'], function () {
         Route::get('success', [RedirectController::class, 'payment_success'])->name('payments.success');
         Route::get('failed', [RedirectController::class, 'payment_failed'])->name('payments.failed');
-        Route::get('canceled', [RedirectController::class, 'payment_canceled'])->name('payments.canceled');
+        Route::get('cancelled', [RedirectController::class, 'payment_canceled'])->name('payments.cancelled');
     });
 
 
