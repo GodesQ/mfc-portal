@@ -106,7 +106,11 @@ Route::post('payments/webhook', function (Request $request) {
 Route::group(['prefix' => 'redirect'], function () {
     Route::group(['prefix' => 'payment'], function () {
         Route::get('success', [RedirectController::class, 'payment_success'])->name('payments.success');
+        Route::get('failed', [RedirectController::class, 'payment_failed'])->name('payments.failed');
+        Route::get('canceled', [RedirectController::class, 'payment_canceled'])->name('payments.canceled');
     });
+
+
 });
 
 require __DIR__ . '/auth.php';
