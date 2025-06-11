@@ -98,9 +98,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendOTPVerificationNotification()
     {
         try {
-            $otp = random_int(100000, 999999);
-            if (config('app.debug')) {
-                $otp = 123456;
+            $otp = 123456;
+
+            if (config('services.sms.enable')) {
+                $otp = random_int(100000, 999999);
             }
 
             $otp = OTP::create([
@@ -109,7 +110,7 @@ class User extends Authenticatable implements MustVerifyEmail
                 'expires_at' => Carbon::now()->addMinutes(10),
             ]);
 
-            if (config('app.env') === 'production') {
+            if (config('services.sms.enable')) {
                 $smsService = new SmsService;
                 $request_model = $smsService->request_model($this, $otp);
                 $response = $smsService->send($request_model);

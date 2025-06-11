@@ -43,6 +43,7 @@ return [
         'url' => 'https://api.semaphore.co/api/v4',
         'api_key' => env('SEMAPHORE_API_KEY'),
         'sender_name' => 'GodesQ',
+        'enable' => env('SMS_ENABLE', true),
     ],
 
 ];
