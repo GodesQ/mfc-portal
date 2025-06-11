@@ -5,77 +5,77 @@ namespace App\Http\Controllers;
 use App\Enum\PaymentType;
 use App\Models\Tithe;
 use App\Models\Transaction;
+use App\Services\ExceptionHandlerService;
+use App\Services\PaymayaService;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class PaymayaController extends Controller
-{   
-    public function checkout_success(Request $request) {
-        $reference_number = $request->requestReferenceNumber;
+{
+    public function generatePaymentLink(Request $request)
+    {
 
-        $transaction = Transaction::where('reference_code', $reference_number)->first();
-
-        abort_if(!$transaction, 404);
-
-        $transaction->update([
-            'transaction_response_json' => json_encode($request->all()),
-            'status' => 'paid',
+        $validated = $request->validate([
+            'transaction_id' => 'required|exists:transactions,id',
         ]);
 
-        if($transaction->payment_type === PaymentType::TITHE) {
+        try {
+            $user = Auth::user();
+            if (!$user) {
+                throw new Exception('Unauthenticated.');
+            }
+
+            $transaction = Transaction::findOrFail($validated['transaction_id']);
             $tithe = Tithe::where('transaction_id', $transaction->id)->first();
 
-            $tithe->update([
-                'status' => "paid",
+            if ($transaction->status !== 'pending') {
+                throw new Exception(
+                    sprintf('Invalid transaction status: %s. Expected status: pending.', $transaction->status),
+                    400
+                );
+            }
+
+            $paymentResponse = $this->processPayment($transaction, $user);
+            $this->updateTransactionWithPayment($transaction, $paymentResponse);
+
+            return response()->json([
+                'status' => 'success',
+                'data' => [
+                    'payment_link' => $paymentResponse['redirectUrl'],
+                ],
+            ], 201);
+
+        } catch (Exception $exception) {
+            Log::error('Failed to generate payment link', [
+                'transaction_id' => $request->transaction_id,
+                'error' => $exception->getMessage(),
             ]);
+            $exceptionService = new ExceptionHandlerService();
+            return $exceptionService->handler($request, $exception);
         }
-
-        return response(['message' => "OK"], 200);
-    }
-    public function checkout_failed(Request $request) {
-        $reference_number = $request->requestReferenceNumber;
-
-        $transaction = Transaction::where('reference_code', $reference_number)->first();
-
-        abort_if(!$transaction, 404);
-
-        $transaction->update([
-            'transaction_response_json' => json_encode($request->all()),
-            'status' => 'failed',
-        ]);
-
-        if($transaction->payment_type === PaymentType::TITHE) {
-            $tithe = Tithe::where('transaction_id', $transaction->id)->first();
-
-            $tithe->update([
-                'status' => "failed",
-            ]);
-        }
-
-        return response(['message' => "OK"], 200);
     }
 
-    public function payment_success(Request $request) {
-        $reference_number = $request->requestReferenceNumber;
+    protected function processPayment($transaction, $user)
+    {
+        $paymayaService = new PaymayaService();
 
-        $transaction = Transaction::where('reference_code', $reference_number)->first();
+        $paymayaUserDetails = [
+            'firstname' => $user->first_name,
+            'lastname' => $user->last_name,
+        ];
 
-        abort_if(!$transaction, 404);
+        $paymentRequestModel = $paymayaService->createRequestModel($transaction, $paymayaUserDetails);
+        return $paymayaService->pay($paymentRequestModel);
+    }
 
+    protected function updateTransactionWithPayment($transaction, $paymentResponse)
+    {
         $transaction->update([
-            'transaction_response_json' => json_encode($request->all()),
-            'status' => 'paid',
+            'checkout_id' => $paymentResponse['checkoutId'],
+            'payment_link' => $paymentResponse['redirectUrl'],
         ]);
-
-        if($transaction->payment_type === PaymentType::TITHE) {
-            $tithe = Tithe::where('transaction_id', $transaction->id)->first();
-
-            $tithe->update([
-                'status' => "paid",
-            ]);
-        }
-
-        return response(['message' => "OK"], 200);
     }
 
 

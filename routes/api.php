@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventAttendancesController;
 use App\Http\Controllers\Api\TitheController;
+use App\Http\Controllers\PaymayaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +34,8 @@ Route::prefix('v1')->group(function (): void {
         Route::get('users/{user_id}/tithes', [TitheController::class, 'userTithes']);
         Route::get('tithes', [TitheController::class, 'index']);
         Route::post('tithes', [TitheController::class, 'store']);
+
+        Route::post('payments/link', [PaymayaController::class, 'generatePaymentLink']);
     });
 });
 
