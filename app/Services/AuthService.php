@@ -70,6 +70,12 @@ class AuthService
             throw new Exception('Your otp has already expired. Please resend a new OTP.', 400);
         }
 
+        $user = User::where('id', $request->user_id)->first();
+
+        $user->update([
+            'contact_number_verified_at' => Carbon::now(),
+        ]);
+
         $otp->update(['is_used' => true]);
     }
 

@@ -22,6 +22,7 @@ class UserResource extends JsonResource
             'last_name' => $this->last_name,
             'email' => $this->email,
             'email_verified_at' => $this->email_verified_at,
+            'contact_number_verified_at' => $this->contact_number_verified_at,
             'username' => $this->username,
             'avatar' => URL::asset('uploads') . '/avatars/' . $this->avatar,
             'country_code' => $this->country_code,
