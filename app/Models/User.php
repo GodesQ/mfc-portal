@@ -78,6 +78,11 @@ class User extends Authenticatable implements MustVerifyEmail
         'contact_number_verified_at' => 'datetime',
     ];
 
+    public function tithes()
+    {
+        return $this->hasMany(Tithe::class, 'mfc_user_id', 'mfc_id_number');
+    }
+
     public function sendEmailVerificationNotification()
     {
         $otp = random_int(1000, 9999);

@@ -22,6 +22,7 @@ class UsersController extends Controller
      */
     public function index(Request $request, string $section)
     {
+        $breadcrumb = "Users";
         // Define section mappings
         $sectionMap = [
             'kids' => ['section_id' => 1, 'btn_color' => 'btn-danger'],
@@ -67,6 +68,7 @@ class UsersController extends Controller
         // Retrieve sections and roles
         $sections = Section::all();
         $roles = Role::all();
+
 
         // Return view with data
         return view('pages.users.index', compact('section', 'breadcrumb', 'btn_color', 'sections', 'roles'));
