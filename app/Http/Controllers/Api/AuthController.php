@@ -20,7 +20,7 @@ class AuthController extends Controller
         try {
             $credentials = $request->validated();
             $authService = new AuthService();
-            $user = $authService->login($request, $credentials);
+            $user = $authService->login($credentials);
 
             return response()->json([
                 'status' => 'success',
