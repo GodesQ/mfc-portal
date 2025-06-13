@@ -20,6 +20,8 @@ class AuthService
             throw new Exception('Invalid Credentials.', 404);
         }
 
+        // dd($user->pa);
+
         return $user;
     }
 
@@ -35,6 +37,7 @@ class AuthService
         $role_id = 7; // member role
 
         $user = User::create(array_merge($data, [
+            'password' => Hash::make($request->password),
             'mfc_id_number' => $mfc_id_number,
             'section' => $section->id,
             'role_id' => $role_id,
