@@ -22,13 +22,14 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="text-center mt-sm-5 mb-4 text-white-50">
-                        <div>
-                            <a href="index" class="d-inline-block auth-logo">
-                                <img src="{{ URL::asset('build/images/logo-wide-white.png')}}" alt="" height="150">
-                            </a>
+                            <div>
+                                <a href="index" class="d-inline-block auth-logo">
+                                    <img src="{{ URL::asset('build/images/logo-wide-white.png') }}" alt=""
+                                        height="150">
+                                </a>
+                            </div>
+                            <p class="mt-3 fs-15 fw-medium" style="color: white;">Let's bring the evangelization online.</p>
                         </div>
-                        <p class="mt-3 fs-15 fw-medium" style="color: white;">Let's bring the evangelization online.</p>
-                    </div>
                     </div>
                 </div>
                 <!-- end row -->
@@ -52,21 +53,21 @@
                                     Enter your email and instructions will be sent to you!
                                 </div>
                                 <div class="p-2">
-                                    <form>
+                                    <form action="{{ route('forgot-password.post') }}" method="POST">
+                                        @csrf
                                         <div class="mb-4">
-                                            <label class="form-label">Email</label>
-                                            <input type="email" class="form-control" id="email" placeholder="Enter Email">
+                                            <label for="email-field" class="form-label">Email</label>
+                                            <input name="email" type="email" class="form-control" id="email-field"
+                                                placeholder="Enter Email">
                                         </div>
 
                                         <div class="text-center mt-4">
                                             <button class="btn btn-primary w-100" type="submit">Send Reset Link</button>
                                         </div>
-                                    </form><!-- end form -->
+                                    </form>
                                 </div>
                             </div>
-                            <!-- end card body -->
                         </div>
-                        <!-- end card -->
 
                         <div class="mt-4 text-center">
                             <p class="mb-0">Wait, I remember my password... <a href="auth-signin-basic"
@@ -87,7 +88,12 @@
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="text-center">
-                            <p class="mb-0 text-muted">&copy; <script>document.write(new Date().getFullYear())</script> MFC Portal. Crafted with <i class="mdi mdi-heart text-danger"></i> by <a href="https://godesq.com/" target="_blank">GodesQ Digital Marketing Services</a></p>
+                            <p class="mb-0 text-muted">&copy;
+                                <script>
+                                    document.write(new Date().getFullYear())
+                                </script> MFC Portal. Crafted with <i class="mdi mdi-heart text-danger"></i>
+                                by <a href="https://godesq.com/" target="_blank">GodesQ Digital Marketing Services</a>
+                            </p>
                         </div>
                     </div>
                 </div>

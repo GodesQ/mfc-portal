@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AnnouncementController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventAttendanceController;
 use App\Http\Controllers\EventsController;
@@ -34,6 +36,10 @@ Route::middleware(['guest', 'nocache'])->group(function () {
     Route::get('/login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::get('/forgot-password', [AuthenticatedSessionController::class, 'reset_password'])->name('password.update');
 });
+
+Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('forgot-password.post');
+Route::get('password-reset', [ResetPasswordController::class, 'viewResetPassword']);
+Route::post('password-reset', [ResetPasswordController::class, 'reset'])->name('password-reset.post');
 
 Route::get('/events/show/{identifier}', [EventsController::class, 'show'])->name('events.show');
 

@@ -61,7 +61,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'status' => 'success',
-                'message' => 'Verified Successfully',
+                'message' => 'Resend Successfully',
             ]);
 
         } catch (Exception $exception) {
@@ -74,11 +74,12 @@ class AuthController extends Controller
     {
         try {
             $authService = new AuthService();
-            $authService->otpVerify($request);
+            $user = $authService->otpVerify($request);
 
             return response()->json([
                 'status' => 'success',
                 'message' => 'Verified Successfully',
+                'user' => UserResource::make($user->load('user_details', 'section')),
             ]);
 
         } catch (Exception $exception) {

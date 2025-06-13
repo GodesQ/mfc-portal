@@ -77,6 +77,8 @@ class AuthService
         ]);
 
         $otp->update(['is_used' => true]);
+
+        return $user;
     }
 
     private function findUserByCredentials($credentials)

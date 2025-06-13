@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventAttendancesController;
 use App\Http\Controllers\Api\TitheController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\PaymayaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,8 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
 Route::prefix('v1')->group(function (): void {
     Route::post('login', [AuthController::class, 'login']);
     Route::post('register', [AuthController::class, 'register']);
+
+    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 
     Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('logout', [AuthController::class, 'logout']);
