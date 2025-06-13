@@ -8,7 +8,7 @@
             Directory
         @endslot
         @slot('title')
-            {{ $breadcrumb }}
+            {{ $breadcrumb ?? '' }}
         @endslot
     @endcomponent
 
@@ -98,7 +98,7 @@
                                     $('#users_datatables').DataTable().ajax
                                         .reload(null,
                                             false
-                                            ); // false to keep the current page
+                                        ); // false to keep the current page
                                 },
                                 error: function(xhr, response, error) {
                                     showErrorMessage(xhr.statusText);

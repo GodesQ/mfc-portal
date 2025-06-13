@@ -20,7 +20,9 @@ class AuthService
             throw new Exception('Invalid Credentials.', 404);
         }
 
-        // dd($user->pa);
+        if (!$user->contact_number_verified_at) {
+            $user->sendOTPVerificationNotification();
+        }
 
         return $user;
     }
