@@ -20,8 +20,13 @@ class AuthService
             throw new Exception('Invalid Credentials.', 404);
         }
 
+        $otp = OTP::where('user_id', $user->id)->first();
+
         if (!$user->contact_number_verified_at) {
-            $user->sendOTPVerificationNotification();
+            if (!$otp || $otp->isExpired()) {
+                OTP::where('user_id', $user->id)->delete();
+                $user->sendOTPVerificationNotification();
+            }
         }
 
         return $user;
