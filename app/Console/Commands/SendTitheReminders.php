@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Http;
 
 class SendTitheReminders extends Command
 {
@@ -24,14 +23,15 @@ class SendTitheReminders extends Command
         // })
         //     ->get();
 
-        // $users = User::where('id', 6)->get();
-        $user = User::find(6);
-        $this->sendReminder($user);
         // foreach ($users as $user) {
-        //     $this->sendReminder($user);
+
         // }
 
-        $this->info("Sent reminders to 1 users");
+
+        $user = User::find(6);
+        $this->sendReminder($user);
+
+        $this->info("Sent reminders to {$user->count()} users");
     }
 
     protected function sendReminder($user)
@@ -42,7 +42,7 @@ class SendTitheReminders extends Command
         $endpoint = "https://{$instanceId}.pushnotifications.pusher.com/publish_api/v1/instances/{$instanceId}/publishes";
 
         try {
-            $payload = [
+            $payload = json_encode([
                 'interests' => [$interest],
                 'web' => [
                     'notification' => [
@@ -78,22 +78,33 @@ class SendTitheReminders extends Command
                         'user_id' => $user->id,
                     ]
                 ]
-            ];
+            ]);
 
-            $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $secretKey
-            ])->post($endpoint, $payload);
+            $ch = curl_init($endpoint);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Content-Type: application/json',
+                'Authorization: Bearer ' . $secretKey
+            ]);
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 
-            if ($response->failed()) {
-                $error = $response->json('error', 'HTTP request failed with status ' . $response->status());
-                Log::error('Notification Error', $error);
-                throw new \Exception($error);
+            $response = curl_exec($ch);
+            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+            if ($response === false) {
+                throw new \Exception(curl_error($ch));
+            }
+
+            curl_close($ch);
+
+            if ($httpCode >= 400) {
+                $error = json_decode($response, true);
+                throw new \Exception($error['error'] ?? 'HTTP request failed with status ' . $httpCode);
             }
 
             $this->info("Notified user {$user->id} via interest: {$interest}");
         } catch (\Exception $e) {
-            Log::error('Notification Error', [$e]);
             if (str_contains($e->getMessage(), 'no devices')) {
                 $this->warn("User {$user->id} has no devices registered");
             } else {

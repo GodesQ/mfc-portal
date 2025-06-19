@@ -19,6 +19,7 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\WebhookController;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
+use Pusher\PushNotifications\PushNotifications;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,19 @@ Route::middleware(['guest', 'nocache'])->group(function () {
 Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('forgot-password.post');
 Route::get('password-reset', [ResetPasswordController::class, 'viewResetPassword']);
 Route::post('password-reset', [ResetPasswordController::class, 'reset'])->name('password-reset.post');
+
+// Route::get('/test-notify/{userId}', function ($userId) {
+//     $beamsClient = new PushNotifications([
+//         'instanceId' => config('broadcasting.connections.pusher.options.beams_instance_id'),
+//         'secretKey' => config('broadcasting.connections.pusher.options.beams_secret_key'),
+//     ]);
+//     $interests = ["user-{$userId}-tithe-reminder"];
+//     $beamsClient->publishToInterests(
+//         $interests,
+
+//     );
+//     return response()->json(['status' => 'sent']);
+// });
 
 Route::get('/events/show/{identifier}', [EventsController::class, 'show'])->name('events.show');
 
@@ -101,9 +115,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 
-Route::fallback(function () {
-    return redirect()->route('root');
-});
+// Route::fallback(function () {
+//     return redirect()->route('root');
+// });
 
 Route::post('payments/webhook', [WebhookController::class, 'webhook']);
 

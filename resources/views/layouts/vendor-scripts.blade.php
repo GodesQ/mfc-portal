@@ -40,6 +40,7 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 {{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script> --}}
 <script src="{{ URL::asset('build/js/app.js') }}"></script>
+<script src="https://js.pusher.com/beams/2.1.0/push-notifications-cdn.js"></script>
 
 @if (Session::get('success'))
     <script>
@@ -60,6 +61,17 @@
         toastr.error("{{ Session::get('fail') }}", 'Failed');
     </script>
 @endif
+
+<script>
+    const beamsClient = new PusherPushNotifications.Client({
+        instanceId: 'ad77469d-ee17-42fc-9e18-c59fd42a74f8',
+    });
+
+    beamsClient.start()
+        .then(() => beamsClient.addDeviceInterest('debug-mfc-app'))
+        .then(() => console.log('Successfully registered and subscribed!'))
+        .catch(console.error);
+</script>
 
 @yield('script')
 @yield('script-bottom')

@@ -83,6 +83,12 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Tithe::class, 'mfc_user_id', 'mfc_id_number');
     }
 
+    public function routeNotificationForPusherPushNotifications($notification): string
+    {
+        // return "user-{$this->id}-tithe-reminder";
+        return "debug-mfc-app";
+    }
+
     public function sendEmailVerificationNotification()
     {
         $otp = random_int(1000, 9999);
@@ -140,6 +146,20 @@ class User extends Authenticatable implements MustVerifyEmail
         }
 
         return $mfc_number;
+    }
+
+    // Relationship to notifications
+    public function notifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable')
+            ->orderBy('created_at', 'desc');
+    }
+
+    public function unreadNotifications()
+    {
+        return $this->morphMany(Notification::class, 'notifiable')
+            ->whereNull('read_at')
+            ->orderBy('created_at', 'desc');
     }
 
     public function section(): BelongsTo
