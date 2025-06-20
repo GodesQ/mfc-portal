@@ -17,7 +17,7 @@ class Kernel extends ConsoleKernel
     {
         // Run at 10am on the 15th of every month
         $schedule->command('tithe:send-reminders')
-            ->everyMinute()
+            ->everyFiveMinutes()
             ->timezone('Asia/Manila');
     }
 
