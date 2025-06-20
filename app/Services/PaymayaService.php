@@ -1,104 +1,70 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Services;
 
-use Illuminate\Console\Command;
-use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Log;
+use Exception;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Illuminate\Support\Facades\Http;
 
-class SendTitheReminders extends Command
+class PaymayaService
 {
-    protected $signature = 'tithe:send-reminders';
-    protected $description = 'Send monthly tithe reminders to users';
-
-    public function handle()
+    public function __construct()
     {
-        // Get users who haven't tithed this month
-        $currentMonthName = now()->englishMonth; // Gets current month name (e.g. "July")
 
-        // $users = User::whereDoesntHave('tithes', function ($query) use ($currentMonthName) {
-        //     $query->where('for_the_month_of', $currentMonthName)
-        //         ->whereYear('created_at', now()->year);
-        // })
-        //     ->get();
-
-        // $users = User::where('id', 6)->get();
-        $user = User::find(6);
-        $this->sendReminder($user);
-        // foreach ($users as $user) {
-        //     $this->sendReminder($user);
-        // }
-
-        $this->info("Sent reminders to 1 users");
     }
 
-    protected function sendReminder($user)
+    public function pay($request_model)
     {
-        $interest = "debug-mfc-app";
-        $instanceId = config('broadcasting.connections.pusher.options.beams_instance_id');
-        $secretKey = config('broadcasting.connections.pusher.options.beams_secret_key');
-        $endpoint = "https://{$instanceId}.pushnotifications.pusher.com/publish_api/v1/instances/{$instanceId}/publishes";
-
         try {
-            $payload = [
-                'interests' => [$interest],
-                'web' => [
-                    'notification' => [
-                        'title' => 'Tithe Reminder',
-                        'body' => "Dear {$user->first_name}, you haven't submitted this month's tithe",
-                    ],
-                    'data' => [
-                        'type' => 'tithe_reminder',
-                        'user_id' => $user->id,
-                    ]
-                ],
-                'apns' => [
-                    'aps' => [
-                        'alert' => [
-                            'title' => 'Tithe Reminder',
-                            'body' => "Dear {$user->first_name}, you haven't submitted this month's tithe",
-                        ],
-                        'sound' => 'default',
-                        'badge' => 1,
-                    ],
-                    'data' => [
-                        'type' => 'tithe_reminder',
-                        'user_id' => $user->id,
-                    ]
-                ],
-                'fcm' => [
-                    'notification' => [
-                        'title' => 'Tithe Reminder',
-                        'body' => "Dear {$user->first_name}, you haven't submitted this month's tithe",
-                    ],
-                    'data' => [
-                        'type' => 'tithe_reminder',
-                        'user_id' => $user->id,
-                    ]
-                ]
-            ];
+            $authToken = config('app.env') !== "production" ? base64_encode(config("services.paymaya.test_api_key") . ":") : base64_encode(config("services.paymaya.api_key") . ":");
+            $url = config('app.env') !== "production" ? config("services.paymaya.test_url") : config("services.paymaya.url");
 
             $response = Http::withHeaders([
-                'Content-Type' => 'application/json',
-                'Authorization' => 'Bearer ' . $secretKey
-            ])->post($endpoint, $payload);
+                'accept' => 'application/json',
+                'content-type' => 'application/json',
+                'Authorization' => 'Basic ' . $authToken,
+            ])->post($url, $request_model);
 
-            if ($response->failed()) {
-                $error = $response->json('error', 'HTTP request failed with status ' . $response->status());
-                Log::error('Notification Error', $error);
-                throw new \Exception($error);
+            $statusCode = $response->getStatusCode();
+
+            if ($statusCode != 200) {
+                $content = json_decode($response->getBody()->getContents());
+                throw new Exception($content->error . ' in Paymaya Payment Gateway.');
             }
 
-            $this->info("Notified user {$user->id} via interest: {$interest}");
-        } catch (\Exception $e) {
-            Log::error('Notification Error', [$e]);
-            if (str_contains($e->getMessage(), 'no devices')) {
-                $this->warn("User {$user->id} has no devices registered");
-            } else {
-                $this->error("Failed to notify user {$user->id}: {$e->getMessage()}");
-            }
+            $responseData = json_decode($response->getBody(), true);
+
+            return $responseData;
+
+        } catch (Exception $exception) {
+            throw $exception;
         }
     }
+
+    public function createRequestModel($transaction, $paymaya_user_details)
+    {
+        $total_amount = $transaction->total_amount;
+
+        return [
+            "authorizationType" => "NORMAL",
+            "totalAmount" => [
+                "value" => $total_amount,
+                "currency" => "PHP",
+            ],
+            "buyer" => [
+                "firstName" => $paymaya_user_details['firstname'] ?? '',
+                "lastName" => $paymaya_user_details['lastname'] ?? '',
+            ],
+            "redirectUrl" => [
+                "success" => route('payments.success') . "?transaction_id=" . $transaction->transaction_code,
+                "failed" => route('payments.failed') . "?transaction_id=" . $transaction->transaction_code,
+                "canceled" => route('payments.cancelled') . "?transaction_id=" . $transaction->transaction_code,
+
+            ],
+            "requestReferenceNumber" => $transaction->reference_code,
+        ];
+    }
+
+
+
 }

@@ -85,8 +85,8 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function routeNotificationForPusherPushNotifications($notification): string
     {
-        // return "user-{$this->id}-tithe-reminder";
-        return "debug-mfc-app";
+        return "user-{$this->id}-tithe-reminder";
+        // return "debug-mfc-app";
     }
 
     public function sendEmailVerificationNotification()

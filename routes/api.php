@@ -4,7 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventAttendancesController;
 use App\Http\Controllers\Api\TitheController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
-use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\PaymayaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -41,6 +41,7 @@ Route::prefix('v1')->group(function (): void {
 
         Route::post('payments/link', [PaymayaController::class, 'generatePaymentLink']);
 
+        Route::get('users/{user_id}/notifications', [NotificationController::class, 'getUserNotifications']);
         Route::post('notifications/register-device', [NotificationController::class, 'registerDevice']);
     });
 });

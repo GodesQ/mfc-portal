@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Http;
 
 class SendTitheReminders extends Command
 {
@@ -17,32 +18,29 @@ class SendTitheReminders extends Command
         // Get users who haven't tithed this month
         $currentMonthName = now()->englishMonth; // Gets current month name (e.g. "July")
 
-        // $users = User::whereDoesntHave('tithes', function ($query) use ($currentMonthName) {
-        //     $query->where('for_the_month_of', $currentMonthName)
-        //         ->whereYear('created_at', now()->year);
-        // })
-        //     ->get();
+        $users = User::whereDoesntHave('tithes', function ($query) use ($currentMonthName) {
+            $query->where('for_the_month_of', $currentMonthName)
+                ->whereYear('created_at', now()->year);
+        })
+            ->get();
 
-        // foreach ($users as $user) {
+        foreach ($users as $user) {
+            $this->sendReminder($user);
+        }
 
-        // }
-
-
-        $user = User::find(6);
-        $this->sendReminder($user);
-
-        $this->info("Sent reminders to {$user->count()} users");
+        $this->info("Sent reminders to {$users->count()} users");
     }
 
     protected function sendReminder($user)
     {
-        $interest = "debug-mfc-app";
+        // $interest = "debug-mfc-app";
+        $interest = "user-{$user->id}-tithe-reminder";
         $instanceId = config('broadcasting.connections.pusher.options.beams_instance_id');
         $secretKey = config('broadcasting.connections.pusher.options.beams_secret_key');
         $endpoint = "https://{$instanceId}.pushnotifications.pusher.com/publish_api/v1/instances/{$instanceId}/publishes";
 
         try {
-            $payload = json_encode([
+            $payload = [
                 'interests' => [$interest],
                 'web' => [
                     'notification' => [
@@ -78,38 +76,44 @@ class SendTitheReminders extends Command
                         'user_id' => $user->id,
                     ]
                 ]
-            ]);
+            ];
 
-            $ch = curl_init($endpoint);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Authorization: Bearer ' . $secretKey
-            ]);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+            $response = Http::withHeaders([
+                'Content-Type' => 'application/json',
+                'Authorization' => 'Bearer ' . $secretKey
+            ])->post($endpoint, $payload);
 
-            $response = curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-
-            if ($response === false) {
-                throw new \Exception(curl_error($ch));
+            if ($response->failed()) {
+                $error = $response->json('error', 'HTTP request failed with status ' . $response->status());
+                throw new \Exception($error);
             }
 
-            curl_close($ch);
-
-            if ($httpCode >= 400) {
-                $error = json_decode($response, true);
-                throw new \Exception($error['error'] ?? 'HTTP request failed with status ' . $httpCode);
-            }
+            $this->storeNotification($user, $payload);
 
             $this->info("Notified user {$user->id} via interest: {$interest}");
         } catch (\Exception $e) {
+            Log::error($e->getMessage(), [$e]);
             if (str_contains($e->getMessage(), 'no devices')) {
                 $this->warn("User {$user->id} has no devices registered");
             } else {
                 $this->error("Failed to notify user {$user->id}: {$e->getMessage()}");
             }
         }
+    }
+
+    protected function storeNotification($user, $payload)
+    {
+        $user->notifications()->create([
+            'type' => 'tithe_reminder',
+            'notifiable_type' => User::class,
+            'notifiable_id' => $user->id,
+            'data' => json_encode([
+                'title' => $payload['web']['notification']['title'],
+                'body' => $payload['web']['notification']['body'],
+                'user_id' => $payload['web']['data']['user_id'],
+                'created_at' => now()->toDateTimeString(),
+            ]),
+            'read_at' => null,
+        ]);
     }
 }
