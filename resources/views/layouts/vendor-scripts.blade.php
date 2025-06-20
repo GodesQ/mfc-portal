@@ -18,10 +18,10 @@
 </script>
 <script
     src="{{ URL::asset('build/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js') }}">
-</script>
+    </script>
 <script
     src="{{ URL::asset('build/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js') }}">
-</script>
+    </script>
 <script src="{{ URL::asset('build/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js') }}"></script>
 
 
@@ -38,7 +38,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-{{-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script> --}}
+{{--
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script> --}}
 <script src="{{ URL::asset('build/js/app.js') }}"></script>
 <script src="https://js.pusher.com/beams/2.1.0/push-notifications-cdn.js"></script>
 
@@ -68,7 +69,7 @@
     });
 
     beamsClient.start()
-        .then(() => beamsClient.addDeviceInterest('debug-mfc-app'))
+        .then(() => beamsClient.addDeviceInterest("user-{{auth()->user()->id}}-tithe-reminder"))
         .then(() => console.log('Successfully registered and subscribed!'))
         .catch(console.error);
 </script>
