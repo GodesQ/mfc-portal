@@ -20,6 +20,13 @@ class RedirectController extends Controller
 
             $items = [];
 
+            $fundSource = $request->fundSource['type'] ?? 'maya';
+
+            $transaction->update([
+                'status' => 'paid',
+                'payment_mode' => $fundSource,
+            ]);
+
             if ($transaction->payment_type == PaymentType::EVENT_REGISTRATION) {
                 $items = EventRegistration::where('transaction_id', $transaction->id)->get()->map(function ($row) {
                     return [
@@ -46,6 +53,11 @@ class RedirectController extends Controller
                         'amount' => $row->amount,
                     ];
                 });
+
+                Tithe::where('transaction_id', $transaction->id)->update([
+                    'status' => 'paid',
+                    'payment_mode' => $fundSource,
+                ]);
             }
 
             return view('pages.payments.redirect-success', compact('transaction', 'items'));
