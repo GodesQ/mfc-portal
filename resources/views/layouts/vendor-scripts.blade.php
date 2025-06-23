@@ -18,10 +18,10 @@
 </script>
 <script
     src="{{ URL::asset('build/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js') }}">
-    </script>
+</script>
 <script
     src="{{ URL::asset('build/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js') }}">
-    </script>
+</script>
 <script src="{{ URL::asset('build/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js') }}"></script>
 
 
@@ -68,10 +68,14 @@
         instanceId: 'ad77469d-ee17-42fc-9e18-c59fd42a74f8',
     });
 
-    beamsClient.start()
-        .then(() => beamsClient.addDeviceInterest("user-{{auth()->user()->id}}-tithe-reminder"))
-        .then(() => console.log('Successfully registered and subscribed!'))
-        .catch(console.error);
+    const userId = "{{ auth()->user()->id ?? null }}";
+
+    if (userId) {
+        beamsClient.start()
+            .then(() => beamsClient.addDeviceInterest(`user-${userId}-tithe-reminder`))
+            .then(() => console.log('Successfully registered and subscribed!'))
+            .catch(console.error);
+    }
 </script>
 
 @yield('script')
