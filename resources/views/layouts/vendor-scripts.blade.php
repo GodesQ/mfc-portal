@@ -17,11 +17,11 @@
 <script src="{{ URL::asset('build/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js') }}">
 </script>
 <script
-    src="{{ URL::asset('build/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js') }}">
-</script>
+  src="{{ URL::asset('build/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js') }}">
+  </script>
 <script
-    src="{{ URL::asset('build/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js') }}">
-</script>
+  src="{{ URL::asset('build/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js') }}">
+  </script>
 <script src="{{ URL::asset('build/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js') }}"></script>
 
 
@@ -44,38 +44,38 @@
 <script src="https://js.pusher.com/beams/2.1.0/push-notifications-cdn.js"></script>
 
 @if (Session::get('success'))
-    <script>
-        toastr.options = {
-            closeButton: true, // Add close button
-            timeOut: 2000
-        };
-        toastr.success("{{ Session::get('success') }}", "Success");
-    </script>
+  <script>
+    toastr.options = {
+    closeButton: true, // Add close button
+    timeOut: 2000
+    };
+    toastr.success("{{ Session::get('success') }}", "Success");
+  </script>
 @endif
 
 @if (Session::get('fail'))
-    <script>
-        toastr.options = {
-            closeButton: true, // Add close button
-            timeOut: 3000
-        };
-        toastr.error("{{ Session::get('fail') }}", 'Failed');
-    </script>
+  <script>
+    toastr.options = {
+    closeButton: true, // Add close button
+    timeOut: 3000
+    };
+    toastr.error("{{ Session::get('fail') }}", 'Failed');
+  </script>
 @endif
 
 <script>
-    const beamsClient = new PusherPushNotifications.Client({
-        instanceId: 'ad77469d-ee17-42fc-9e18-c59fd42a74f8',
-    });
+  const beamsClient = new PusherPushNotifications.Client({
+    instanceId: "{{ env('PUSHER_BEAMS_INSTANCE_ID') }}",
+  });
 
-    const userId = "{{ auth()->user()->id ?? null }}";
+  const userId = "{{ auth()->user()->id ?? null }}";
 
-    if (userId) {
-        beamsClient.start()
-            .then(() => beamsClient.addDeviceInterest(`user-${userId}-tithe-reminder`))
-            .then(() => console.log('Successfully registered and subscribed!'))
-            .catch(console.error);
-    }
+  if (userId) {
+    beamsClient.start()
+      .then(() => beamsClient.addDeviceInterest(`user-${userId}-tithe-reminder`))
+      .then(() => console.log('Successfully registered and subscribed!', userId))
+      .catch(console.error);
+  }
 </script>
 
 @yield('script')

@@ -2,76 +2,125 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use NotificationChannels\PusherPushNotifications\PusherBeam;
 use Pusher\PushNotifications\PushNotifications;
+use Illuminate\Support\Facades\Http;
+
 
 class NotificationController extends Controller
 {
-    public function registerDevice(Request $request)
-    {
-        $request->validate([
-            'token' => 'required|string',
-            'platform' => 'required|in:ios,android'
-        ]);
+  public function sendNotification(Request $request)
+  {
+    // Validate the request
+    $request->validate([
+      'user_id' => 'required|exists:users,id',
+      'title' => 'sometimes|string',
+      'message' => 'sometimes|string',
+      'type' => 'nullable|string',
+    ]);
 
-        $user = $request->user();
+    // Get the user
+    $user = User::find($request->user_id);
 
-        $beamsClient = new PushNotifications([
-            'instanceId' => config('broadcasting.connections.pusher.options.beams_instance_id'),
-            'secretKey' => config('broadcasting.connections.pusher.options.beams_secret_key'),
-        ]);
+    // Prepare the interest name
+    $interest = "user-{$user->id}-tithe-reminder";
 
-        try {
-            if ($request->platform === 'ios') {
-                $beamsClient->publishToInterests(
-                    ["user-{$user->id}-ios"],
-                    [
-                        'apns' => [
-                            'aps' => [
-                                'alert' => [
-                                    'title' => 'Tithe Reminder',
-                                    'body' => 'You haven\'t submitted your tithe for this month yet.',
-                                ],
-                            ],
-                        ],
-                    ]
-                );
-            } else {
-                $beamsClient->publishToInterests(
-                    ["user-{$user->id}-android"],
-                    [
-                        'fcm' => [
-                            'notification' => [
-                                'title' => 'Tithe Reminder',
-                                'body' => 'You haven\'t submitted your tithe for this month yet.',
-                            ],
-                        ],
-                    ]
-                );
-            }
+    // Get Pusher Beams credentials
+    $instanceId = config('broadcasting.connections.pusher.options.beams_instance_id');
+    $secretKey = config('broadcasting.connections.pusher.options.beams_secret_key');
+    $endpoint = "https://{$instanceId}.pushnotifications.pusher.com/publish_api/v1/instances/{$instanceId}/publishes";
 
-            return response()->json(['status' => 'success', 'message' => 'Device registered successfully']);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
+    // Customize the notification message if provided
+    $title = $request->title ?? 'Tithe Reminder';
+    $body = $request->message ?? "Dear {$user->first_name}, you haven't submitted this month's tithe";
+    $type = $request->type ?? 'tithe_reminder';
+
+    try {
+      $payload = [
+        'interests' => [$interest],
+        'web' => [
+          'notification' => [
+            'title' => $title,
+            'body' => $body,
+          ],
+          'data' => [
+            'type' => $type,
+            'user_id' => $user->id,
+          ]
+        ],
+        'apns' => [
+          'aps' => [
+            'alert' => [
+              'title' => $title,
+              'body' => $body,
+            ],
+            'sound' => 'default',
+            'badge' => 1,
+          ],
+          'data' => [
+            'type' => $type,
+            'user_id' => $user->id,
+          ]
+        ],
+        'fcm' => [
+          'notification' => [
+            'title' => $title,
+            'body' => $body,
+          ],
+          'data' => [
+            'type' => $type,
+            'user_id' => $user->id,
+          ]
+        ]
+      ];
+
+      $response = Http::withHeaders([
+        'Content-Type' => 'application/json',
+        'Authorization' => 'Bearer ' . $secretKey
+      ])->post($endpoint, $payload);
+
+      if ($response->failed()) {
+        $error = $response->json('error', 'HTTP request failed with status ' . $response->status());
+        throw new Exception($error);
+      }
+
+      return response()->json([
+        'success' => true,
+        'message' => "Notification sent successfully to user {$user->id}",
+        'interest' => $interest,
+        'payload' => $payload
+      ]);
+
+    } catch (Exception $e) {
+      Log::error($e->getMessage(), [$e]);
+
+      return response()->json([
+        'success' => false,
+        'message' => "Failed to send notification: {$e->getMessage()}",
+        'error' => $e->getMessage()
+      ], 500);
     }
+  }
 
-    public function getNotifications(Request $request)
-    {
-        $notifications = $request->user()->notifications()
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($notification) {
-                return [
-                    'id' => $notification->id,
-                    'title' => 'Tithe Reminder',
-                    'body' => $notification->data['title'] ?? 'You haven\'t submitted your tithe for this month yet.',
-                    'read_at' => $notification->read_at,
-                    'created_at' => $notification->created_at->toDateTimeString(),
-                ];
-            });
+  public function getNotifications(Request $request)
+  {
+    $notifications = $request->user()->notifications()
+      ->orderBy('created_at', 'desc')
+      ->get()
+      ->map(function ($notification) {
+        return [
+          'id' => $notification->id,
+          'title' => 'Tithe Reminder',
+          'body' => $notification->data['title'] ?? 'You haven\'t submitted your tithe for this month yet.',
+          'read_at' => $notification->read_at,
+          'created_at' => $notification->created_at->toDateTimeString(),
+        ];
+      });
 
-        return response()->json($notifications);
-    }
+    return response()->json($notifications);
+  }
 }

@@ -21,7 +21,6 @@ class Kernel extends ConsoleKernel
     $schedule->command('tithe:send-reminders')
       ->everyFifteenMinutes()
       ->timezone('Asia/Manila');
-
   }
 
   /**
