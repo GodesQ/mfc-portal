@@ -88,6 +88,8 @@ class NotificationController extends Controller
         throw new Exception($error);
       }
 
+      $this->storeNotification($user, $payload);
+
       return response()->json([
         'success' => true,
         'message' => "Notification sent successfully to user {$user->id}",
@@ -122,5 +124,21 @@ class NotificationController extends Controller
       });
 
     return response()->json($notifications);
+  }
+
+  protected function storeNotification($user, $payload)
+  {
+    $user->notifications()->create([
+      'type' => 'tithe_reminder',
+      'notifiable_type' => User::class,
+      'notifiable_id' => $user->id,
+      'data' => json_encode([
+        'title' => $payload['web']['notification']['title'],
+        'body' => $payload['web']['notification']['body'],
+        'user_id' => $payload['web']['data']['user_id'],
+        'created_at' => now()->toDateTimeString(),
+      ]),
+      'read_at' => null,
+    ]);
   }
 }
