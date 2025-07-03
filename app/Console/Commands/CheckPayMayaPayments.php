@@ -36,7 +36,10 @@ class CheckPayMayaPayments extends Command
     // Get transactions created in the last 24 hours with unpaid status
     $cutoffTime = Carbon::now()->subDay();
 
-    $transactions = Transaction::where('status', 'unpaid')
+    $transactions = Transaction::where(function ($query) {
+      $query->where('status', 'pending')
+        ->orWhere('status', 'unpaid');
+    })
       ->where('created_at', '>=', $cutoffTime)
       ->whereNotNull('checkout_id') // Assuming you store PayMaya Checkout ID
       ->get();
