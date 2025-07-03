@@ -70,7 +70,7 @@ class CheckPayMayaPayments extends Command
             if ($transaction->payment_type == PaymentType::TITHE) {
               Tithe::where('transaction_id', $transaction->id)->update([
                 'status' => 'paid',
-                'payment_mode' => null,
+                'payment_mode' => 'maya',
               ]);
             }
 
