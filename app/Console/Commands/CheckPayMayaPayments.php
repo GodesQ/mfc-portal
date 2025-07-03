@@ -41,6 +41,8 @@ class CheckPayMayaPayments extends Command
       ->whereNotNull('checkout_id') // Assuming you store PayMaya Checkout ID
       ->get();
 
+    Log::info('transactions', ['transactions' => $transactions]);
+
     $this->info('Found ' . $transactions->count() . ' transactions to check.');
 
     foreach ($transactions as $transaction) {
