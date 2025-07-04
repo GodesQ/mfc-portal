@@ -45,6 +45,7 @@ Route::prefix('v1')->group(function (): void {
     Route::put('transactions/{id}/update-status', [TransactionController::class, 'updateStatus']);
 
     Route::get('users/{user_id}/notifications', [NotificationController::class, 'getUserNotifications']);
+    Route::patch('notifications/{id}/read', [NotificationController::class, 'updateReadStatus']);
     Route::post('notifications/register-device', [NotificationController::class, 'registerDevice']);
   });
 });
