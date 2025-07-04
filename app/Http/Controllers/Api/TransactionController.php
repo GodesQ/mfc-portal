@@ -17,6 +17,7 @@ class TransactionController extends Controller
   {
     try {
       $authUser = auth()->user();
+      dd($authUser);
 
       $transaction = Transaction::where("id", $request->id)->first();
 
