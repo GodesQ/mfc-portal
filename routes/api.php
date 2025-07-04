@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventAttendancesController;
 use App\Http\Controllers\Api\TitheController;
+use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Api\NotificationController;
 use App\Http\Controllers\PaymayaController;
@@ -21,29 +22,31 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
-    return "";
+  return "";
 });
 
 Route::prefix('v1')->group(function (): void {
-    Route::post('login', [AuthController::class, 'login']);
-    Route::post('register', [AuthController::class, 'register']);
+  Route::post('login', [AuthController::class, 'login']);
+  Route::post('register', [AuthController::class, 'register']);
 
-    Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
+  Route::post('forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 
-    Route::group(['middleware' => 'auth:sanctum'], function () {
-        Route::post('logout', [AuthController::class, 'logout']);
-        Route::post('otp/resend', [AuthController::class, 'resendOTP']);
-        Route::post('otp/verify', [AuthController::class, 'verifyOTP']);
+  Route::group(['middleware' => 'auth:sanctum'], function () {
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::post('otp/resend', [AuthController::class, 'resendOTP']);
+    Route::post('otp/verify', [AuthController::class, 'verifyOTP']);
 
-        Route::get('users/{user_id}/tithes', [TitheController::class, 'userTithes']);
-        Route::get('tithes', [TitheController::class, 'index']);
-        Route::post('tithes', [TitheController::class, 'store']);
+    Route::get('users/{user_id}/tithes', [TitheController::class, 'userTithes']);
+    Route::get('tithes', [TitheController::class, 'index']);
+    Route::post('tithes', [TitheController::class, 'store']);
 
-        Route::post('payments/link', [PaymayaController::class, 'generatePaymentLink']);
+    Route::post('payments/link', [PaymayaController::class, 'generatePaymentLink']);
 
-        Route::get('users/{user_id}/notifications', [NotificationController::class, 'getUserNotifications']);
-        Route::post('notifications/register-device', [NotificationController::class, 'registerDevice']);
-    });
+    Route::put('transactions/{id}/update-status', [TransactionController::class, 'updateStatus']);
+
+    Route::get('users/{user_id}/notifications', [NotificationController::class, 'getUserNotifications']);
+    Route::post('notifications/register-device', [NotificationController::class, 'registerDevice']);
+  });
 });
 
 
