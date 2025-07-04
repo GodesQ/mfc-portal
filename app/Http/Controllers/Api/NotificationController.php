@@ -34,7 +34,10 @@ class NotificationController extends Controller
         'read_at' => Carbon::now(),
       ]);
 
-      return response()->noContent();
+      return response()->json([
+        'status' => 'success',
+        'message' => 'Read Notification Successfully'
+      ]);
 
     } catch (Exception $exception) {
       $exceptionService = new ExceptionHandlerService();
