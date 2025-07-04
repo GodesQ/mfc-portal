@@ -17,11 +17,10 @@ class TransactionController extends Controller
   {
     try {
       $authUser = auth()->user();
-      dd($authUser);
 
       $transaction = Transaction::where("id", $request->id)->first();
 
-      if ($authUser->id !== $transaction->received_from_id) {
+      if ($authUser->id != $transaction->received_from_id) {
         throw new Exception("Invalid User", 401);
       }
 
