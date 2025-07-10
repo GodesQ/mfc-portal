@@ -22,10 +22,10 @@ class RedirectController extends Controller
 
       $fundSource = $request->fundSource['type'] ?? 'maya';
 
-      // $transaction->update([
-      //     'status' => 'paid',
-      //     'payment_mode' => $fundSource,
-      // ]);
+      $transaction->update([
+        'status' => 'paid',
+        'payment_mode' => 'maya',
+      ]);
 
       if ($transaction->payment_type == PaymentType::EVENT_REGISTRATION) {
         $items = EventRegistration::where('transaction_id', $transaction->id)->get()->map(function ($row) {
@@ -54,10 +54,10 @@ class RedirectController extends Controller
           ];
         });
 
-        // Tithe::where('transaction_id', $transaction->id)->update([
-        //     'status' => 'paid',
-        //     'payment_mode' => 'maya',
-        // ]);
+        Tithe::where('transaction_id', $transaction->id)->update([
+          'status' => 'paid',
+          'payment_mode' => 'maya',
+        ]);
       }
 
       return view('pages.payments.redirect-success', compact('transaction', 'items'));
