@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventAttendancesController;
+use App\Http\Controllers\Api\EventController;
 use App\Http\Controllers\Api\TitheController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -43,6 +44,8 @@ Route::prefix('v1')->group(function (): void {
     Route::post('payments/link', [PaymayaController::class, 'generatePaymentLink']);
 
     Route::put('transactions/{id}/update-status', [TransactionController::class, 'updateStatus']);
+
+    Route::get('events', [EventController::class, 'index']);
 
     Route::get('users/{user_id}/notifications', [NotificationController::class, 'getUserNotifications']);
     Route::patch('notifications/{id}/read', [NotificationController::class, 'updateReadStatus']);
