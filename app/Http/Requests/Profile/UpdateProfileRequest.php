@@ -25,6 +25,7 @@ class UpdateProfileRequest extends FormRequest
     return [
       'first_name' => ['required', 'string', 'max:255'],
       'last_name' => ['required', 'string', 'max:255'],
+      'avatar' => ['nullable', 'image', 'max:2048'], // Optional avatar image, max size 2MB
       'section_id' => ['required', 'exists:sections,id'],
       'username' => ['required', 'string', 'max:255', Rule::unique('users')->ignore(auth()->id())],
       'contact_number' => ['nullable', 'string', 'max:15'],

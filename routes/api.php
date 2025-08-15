@@ -38,7 +38,7 @@ Route::prefix('v1')->group(function (): void {
     Route::post('otp/resend', [AuthController::class, 'resendOTP']);
     Route::post('otp/verify', [AuthController::class, 'verifyOTP']);
 
-    Route::put('profile', [ProfileController::class, 'updateProfile']);
+    Route::post('profile', [ProfileController::class, 'updateProfile']);
 
     Route::get('users/{user_id}/tithes', [TitheController::class, 'userTithes']);
     Route::get('tithes', [TitheController::class, 'index']);
