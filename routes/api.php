@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\EventAttendancesController;
 use App\Http\Controllers\Api\EventController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\TitheController;
 use App\Http\Controllers\Api\TransactionController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -36,6 +37,8 @@ Route::prefix('v1')->group(function (): void {
     Route::post('logout', [AuthController::class, 'logout']);
     Route::post('otp/resend', [AuthController::class, 'resendOTP']);
     Route::post('otp/verify', [AuthController::class, 'verifyOTP']);
+
+    Route::put('profile', [ProfileController::class, 'updateProfile']);
 
     Route::get('users/{user_id}/tithes', [TitheController::class, 'userTithes']);
     Route::get('tithes', [TitheController::class, 'index']);
