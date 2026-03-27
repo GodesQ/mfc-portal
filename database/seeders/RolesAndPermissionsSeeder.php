@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -181,12 +180,5 @@ class RolesAndPermissionsSeeder extends Seeder
             'view-event',
             'create-tithes',
         ]);
-
-        $user = User::find(1);
-
-        $user->assignRole('super_admin');
-        $user->role_id = 1;
-        $user->save();
-
     }
 }
