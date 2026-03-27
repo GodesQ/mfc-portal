@@ -31,12 +31,22 @@ class EventsController extends Controller
         $endPoint = 'list';
 
         if ($request->ajax()) {
-            // Optimize by eager loading sections
-            $events = Event::with('sections')->get();
+            $sectionNames = Section::query()->pluck('name', 'id');
+            $events = Event::query();
 
             return DataTables::of($events)
                 ->editColumn('start_date', function ($event) {
+                    if (! $event->start_date) {
+                        return 'N/A';
+                    }
+
                     return Carbon::parse($event->start_date)->format('F d, Y');
+                })
+                ->editColumn('status', function ($event) {
+                    $status = $event->status ?? 'N/A';
+                    $badgeClass = strcasecmp($status, 'Active') === 0 ? 'bg-success' : 'bg-secondary';
+
+                    return "<span class='badge {$badgeClass}'>{$status}</span>";
                 })
                 ->addColumn('actions', function ($event) {
                     $actions = "<div class='hstack gap-2'>
@@ -47,7 +57,7 @@ class EventsController extends Controller
 
                     return $actions;
                 })
-                ->addColumn('section', function ($event) {
+                ->addColumn('section', function ($event) use ($sectionNames) {
                     $sectionColors = [
                         'kids' => '#fa6b02',
                         'youth' => '#0066ab',
@@ -59,15 +69,21 @@ class EventsController extends Controller
 
                     $output = "<div class='d-flex flex-wrap gap-1'>";
 
-                    foreach ($event->sections as $section) {
-                        $color = $sectionColors[$section->name] ?? '#7852a9'; // Default color if not found
-                        $output .= "<div class='badge' style='background: $color'>{$section->name}</div>";
+                    foreach ((array) $event->section_ids as $sectionId) {
+                        $sectionName = $sectionNames->get((int) $sectionId);
+
+                        if (! $sectionName) {
+                            continue;
+                        }
+
+                        $color = $sectionColors[$sectionName] ?? '#7852a9';
+                        $output .= "<div class='badge' style='background: {$color}'>{$sectionName}</div>";
                     }
 
                     $output .= "</div>";
                     return $output;
                 })
-                ->rawColumns(['actions', 'section'])
+                ->rawColumns(['actions', 'section', 'status'])
                 ->make(true);
         }
 
