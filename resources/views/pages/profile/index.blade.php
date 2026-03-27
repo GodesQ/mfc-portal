@@ -46,7 +46,6 @@
                         <script>
                             document.getElementById('copy-mfc-id').addEventListener('click', function(event) {
                                 event.preventDefault(); // Prevent default action
-                                console.log('test');
 
                                 const mfcId = document.getElementById('mfc-id').textContent;
                                 navigator.clipboard.writeText(mfcId).then(function() {
@@ -115,7 +114,8 @@
                                             <label for="lastnameInput" class="form-label">Last
                                                 Name</label>
                                             <input type="text" class="form-control" id="lastnameInput"
-                                                placeholder="Enter your lastname" value="{{ $user->last_name }}">
+                                                placeholder="Enter your lastname" name="last_name"
+                                                value="{{ $user->last_name }}">
                                         </div>
                                     </div>
                                     <!--end col-->
@@ -537,121 +537,136 @@
                                     </script>
                                 @endpush
                             @endif
-                            <form action="{{ route('users.profile.services.put', auth()->user()->id) }}" method="POST">
+                            @php
+                                $serviceRows = old('service_category') !== null
+                                    ? collect(old('service_category', []))->map(function ($category, $index) {
+                                        return [
+                                            'id' => old('service_ids.' . $index),
+                                            'service_category' => $category,
+                                            'service_type' => old('service_type.' . $index),
+                                            'section' => old('section.' . $index),
+                                            'area' => old('service_area.' . $index),
+                                        ];
+                                    })->values()
+                                    : $user->missionary_services->map(function ($service) {
+                                        return [
+                                            'id' => $service->id,
+                                            'service_category' => $service->service_category,
+                                            'service_type' => $service->service_type,
+                                            'section' => $service->section,
+                                            'area' => $service->area,
+                                        ];
+                                    })->values();
+                            @endphp
+                            <form action="{{ route('users.profile.services.put', $user->id) }}" method="POST">
 
                                 @csrf
                                 @method('PUT')
-                                <div id="newlink">
-                                    @forelse ($user->missionary_services as $key => $service)
-                                        <div id="{{ $key + 1 }}" class="containerElement">
+                                <div id="service-repeater">
+                                    @foreach ($serviceRows as $service)
+                                        <div class="containerElement mb-3">
+                                            <input type="hidden" name="service_ids[]" value="{{ $service['id'] }}">
                                             <div class="row service-container">
                                                 <span class="menu-title mb-1">Service</span>
-                                                <div class="col-3">
+                                                <div class="col-lg-3">
                                                     <div class="mb-3">
-                                                        <label for="service_category1" class="form-label">MFC/LCSC</label>
-                                                        <select name="service_category[]" id="service_category1"
-                                                            data-choices data-choices-search-false
-                                                            data-choices-sorting-false class="service-category-select">
-                                                            <option
-                                                                {{ $service->service_category == '' ? 'selected' : null }}
-                                                                value="">Select one</option>
-                                                            <option
-                                                                {{ $service->service_category == 'mfc' ? 'selected' : null }}
-                                                                value="mfc" value="{{ $service->service_category }}">
+                                                        <label class="form-label">MFC/LCSC</label>
+                                                        <select name="service_category[]" class="service-category-select form-select">
+                                                            <option value="">Select one</option>
+                                                            <option value="mfc"
+                                                                {{ $service['service_category'] === 'mfc' ? 'selected' : null }}>
                                                                 MFC</option>
-                                                            <option
-                                                                {{ $service->service_category == 'lcsc' ? 'selected' : null }}
-                                                                value="lcsc">LCSC</option>
+                                                            <option value="lcsc"
+                                                                {{ $service['service_category'] === 'lcsc' ? 'selected' : null }}>
+                                                                LCSC</option>
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-3" id="service_type_container">
+                                                <div class="col-lg-3">
                                                     <div class="mb-3">
-                                                        <label for="service_type1" class="form-label">Service Type</label>
-                                                        <select name="service_type[]" id="service_type1"
-                                                            selected-data="{{ $service->service_type }}"
-                                                            class="service-type-select form-select">
+                                                        <label class="form-label">Service Type</label>
+                                                        <select name="service_type[]" class="service-type-select form-select"
+                                                            data-selected="{{ $service['service_type'] ?? '' }}">
                                                         </select>
                                                     </div>
                                                 </div>
-
-                                                <div class="col-3" id="section_container">
-                                                    <div class="mb-3">
-                                                        <label for="section1" class="form-label">Section/Pillar</label>
-                                                        <select name="section[]" id="section1"
-                                                            selected-data="{{ $service->section }}"
-                                                            class="section-select form-select">
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <!--end col-->
 
                                                 <div class="col-lg-3">
                                                     <div class="mb-3">
-                                                        <label for="service_area1" class="form-label">Area</label>
-                                                        <select name="service_area[]" id="service_area1" data-choices
-                                                            data-choices-sorting-false class="sercive-area-select">
-                                                            <option {{ $service->area == '' ? 'selected' : null }}
-                                                                value="">Select Area</option>
-                                                            <option
-                                                                {{ $service->area == 'NCR - North' ? 'selected' : null }}
-                                                                value="NCR - North">NCR - North</option>
-                                                            <option
-                                                                {{ $service->area == 'NCR - South' ? 'selected' : null }}
-                                                                value="NCR - South">NCR - South</option>
-                                                            <option
-                                                                {{ $service->area == 'NCR - East' ? 'selected' : null }}
-                                                                value="NCR - East">NCR - East</option>
-                                                            <option
-                                                                {{ $service->area == 'NCR - Central' ? 'selected' : null }}
-                                                                value="NCR - Central">NCR - Central</option>
-                                                            <option
-                                                                {{ $service->area == 'South Luzon' ? 'selected' : null }}
-                                                                value="South Luzon">South Luzon</option>
-                                                            <option
-                                                                {{ $service->area == 'North & Central Luzon' ? 'selected' : null }}
-                                                                value="North & Central Luzon">North & Central Luzon
-                                                            </option>
-                                                            <option {{ $service->area == 'Visayas' ? 'selected' : null }}
-                                                                value="Visayas">Visayas</option>
-                                                            <option {{ $service->area == 'Mindanao' ? 'selected' : null }}
-                                                                value="Mindanao">Mindanao</option>
-                                                            <option
-                                                                {{ $service->area == 'International' ? 'selected' : null }}
-                                                                value="International">International</option>
-                                                            <option {{ $service->area == 'Baguio' ? 'selected' : null }}
-                                                                value="Baguio">Baguio</option>
-                                                            <option {{ $service->area == 'Palawan' ? 'selected' : null }}
-                                                                value="Palawan">Palawan</option>
-                                                            <option {{ $service->area == 'Batangas' ? 'selected' : null }}
-                                                                value="Batangas">Batangas</option>
-                                                            <option {{ $service->area == 'Laguna' ? 'selected' : null }}
-                                                                value="Laguna">Laguna</option>
-                                                            <option {{ $service->area == 'Pampanga' ? 'selected' : null }}
-                                                                value="Pampanga">Pampanga</option>
-                                                            <option {{ $service->area == 'Tarlac' ? 'selected' : null }}
-                                                                value="Tarlac">Tarlac</option>
-                                                            <option {{ $service->area == 'Other' ? 'selected' : null }}
-                                                                value="Other">Other</option>
+                                                        <label class="form-label">Section/Pillar</label>
+                                                        <select name="section[]" class="section-select form-select"
+                                                            data-selected="{{ $service['section'] ?? '' }}">
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-lg-3">
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Area</label>
+                                                        <select name="service_area[]" class="service-area-select form-select">
+                                                            <option value="">Select Area</option>
+                                                            <option value="NCR - North"
+                                                                {{ $service['area'] === 'NCR - North' ? 'selected' : null }}>
+                                                                NCR - North</option>
+                                                            <option value="NCR - South"
+                                                                {{ $service['area'] === 'NCR - South' ? 'selected' : null }}>
+                                                                NCR - South</option>
+                                                            <option value="NCR - East"
+                                                                {{ $service['area'] === 'NCR - East' ? 'selected' : null }}>
+                                                                NCR - East</option>
+                                                            <option value="NCR - Central"
+                                                                {{ $service['area'] === 'NCR - Central' ? 'selected' : null }}>
+                                                                NCR - Central</option>
+                                                            <option value="South Luzon"
+                                                                {{ $service['area'] === 'South Luzon' ? 'selected' : null }}>
+                                                                South Luzon</option>
+                                                            <option value="North & Central Luzon"
+                                                                {{ $service['area'] === 'North & Central Luzon' ? 'selected' : null }}>
+                                                                North & Central Luzon</option>
+                                                            <option value="Visayas"
+                                                                {{ $service['area'] === 'Visayas' ? 'selected' : null }}>
+                                                                Visayas</option>
+                                                            <option value="Mindanao"
+                                                                {{ $service['area'] === 'Mindanao' ? 'selected' : null }}>
+                                                                Mindanao</option>
+                                                            <option value="International"
+                                                                {{ $service['area'] === 'International' ? 'selected' : null }}>
+                                                                International</option>
+                                                            <option value="Baguio"
+                                                                {{ $service['area'] === 'Baguio' ? 'selected' : null }}>
+                                                                Baguio</option>
+                                                            <option value="Palawan"
+                                                                {{ $service['area'] === 'Palawan' ? 'selected' : null }}>
+                                                                Palawan</option>
+                                                            <option value="Batangas"
+                                                                {{ $service['area'] === 'Batangas' ? 'selected' : null }}>
+                                                                Batangas</option>
+                                                            <option value="Laguna"
+                                                                {{ $service['area'] === 'Laguna' ? 'selected' : null }}>
+                                                                Laguna</option>
+                                                            <option value="Pampanga"
+                                                                {{ $service['area'] === 'Pampanga' ? 'selected' : null }}>
+                                                                Pampanga</option>
+                                                            <option value="Tarlac"
+                                                                {{ $service['area'] === 'Tarlac' ? 'selected' : null }}>
+                                                                Tarlac</option>
+                                                            <option value="Other"
+                                                                {{ $service['area'] === 'Other' ? 'selected' : null }}>
+                                                                Other</option>
                                                         </select>
                                                     </div>
                                                 </div>
                                                 <div class="hstack gap-2 justify-content-end">
-                                                    <a class="btn btn-success"
-                                                        href="javascript:deleteEl({{ $key + 1 }})">Delete</a>
+                                                    <button type="button" class="btn btn-soft-danger remove-service-btn">Delete</button>
                                                 </div>
                                             </div>
                                         </div>
-                                    @empty
-                                    @endforelse
+                                    @endforeach
                                 </div>
-                                <div id="newForm" style="display: none;"></div>
                                 <div class="col-lg-12">
                                     <div class="hstack gap-2">
-                                        <button type="submit" id="update-service-btn"
-                                            class="btn btn-success">Update</button>
-                                        <a href="javascript:new_link()" class="btn btn-primary">Add
-                                            New</a>
+                                        <button type="submit" id="update-service-btn" class="btn btn-success">Update</button>
+                                        <button type="button" id="add-service-btn" class="btn btn-primary">Add New</button>
                                     </div>
                                 </div>
                                 <!--end col-->
@@ -671,77 +686,153 @@
     <script src="{{ URL::asset('build/js/app.js') }}"></script>
     <script>
         document.addEventListener("DOMContentLoaded", (event) => {
-            let mfcTypes = ["Servant Council", "National Coordinator", "Section Coordinator",
+            const mfcTypes = ["Servant Council", "National Coordinator", "Section Coordinator",
                 "Provincial Coordinator", "Area Servant", "Chapter Servant", "Unit Servant",
-                "Household Servant",
-                "Mission Volunteer", "Full Time"
+                "Household Servant", "Mission Volunteer", "Full Time"
             ];
-            let mfcSections = ["Kids", "Youth", "Singles", "Handmaids", "Servants", "Couples"];
-
-            let lcscTypes = ["LCSC Coordinator", "Pillar Head", "Area Coordinator", "Provincial Coordinator",
+            const mfcSections = ["Kids", "Youth", "Singles", "Handmaids", "Servants", "Couples"];
+            const lcscTypes = ["LCSC Coordinator", "Pillar Head", "Area Coordinator", "Provincial Coordinator",
                 "Full Time", "Mission Volunteer"
             ];
+            const lcscSections = ["LCSC", "Live Pure", "Live Life", "Live the Word", "Live Full", "Live the Faith"];
+            const serviceAreas = ["NCR - North", "NCR - South", "NCR - East", "NCR - Central", "South Luzon",
+                "North & Central Luzon", "Visayas", "Mindanao", "International", "Baguio", "Palawan",
+                "Batangas", "Laguna", "Pampanga", "Tarlac", "Other"
+            ];
+            const serviceRepeater = document.getElementById("service-repeater");
+            const addServiceButton = document.getElementById("add-service-btn");
 
-            let lcscSections = ["LCSC", "Live Pure", "Live Life", "Live the Word", "Live Full", "Live the Faith"];
-            let serviceTypeSelects = document.querySelectorAll(".service-type-select");
-            let sectionSelects = document.querySelectorAll(".section-select");
+            const populateSelect = (select, items, placeholder, selectedValue = "") => {
+                select.innerHTML = "";
 
-            serviceTypeSelects.forEach(select => {
-                let selectedValue = select.getAttribute("selected-data");
-                let container = $(select).closest(".containerElement");
-                let serviceCategorySelect = container.find('.service-category-select');
-                let serviceCategoryValue = serviceCategorySelect[0].value;
+                const placeholderOption = document.createElement("option");
+                placeholderOption.value = "";
+                placeholderOption.textContent = placeholder;
+                select.appendChild(placeholderOption);
 
-                if (serviceCategoryValue === "mfc") {
-                    mfcTypes.forEach(type => {
-                        var option = document.createElement("option");
-                        option.text = type;
-                        option.value = type;
-                        if (selectedValue == type) {
-                            option.setAttribute("selected", true);
-                        }
-                        select.add(option);
-                    })
-                } else {
-                    lcscTypes.forEach(type => {
-                        var option = document.createElement("option");
-                        option.text = type;
-                        option.value = type;
-                        if (selectedValue == type) {
-                            option.setAttribute("selected", true);
-                        }
-                        select.add(option);
-                    })
+                items.forEach(item => {
+                    const option = document.createElement("option");
+                    option.value = item;
+                    option.textContent = item;
+
+                    if (selectedValue === item) {
+                        option.selected = true;
+                    }
+
+                    select.appendChild(option);
+                });
+
+                select.value = selectedValue || "";
+            };
+
+            const syncServiceRow = (row) => {
+                const categorySelect = row.querySelector(".service-category-select");
+                const serviceTypeSelect = row.querySelector(".service-type-select");
+                const sectionSelect = row.querySelector(".section-select");
+                const selectedServiceType = serviceTypeSelect.dataset.selected || serviceTypeSelect.value || "";
+                const selectedSection = sectionSelect.dataset.selected || sectionSelect.value || "";
+                const selectedCategory = categorySelect.value;
+                const typeOptions = selectedCategory === "mfc" ? mfcTypes : selectedCategory === "lcsc" ? lcscTypes : [];
+                const sectionOptions = selectedCategory === "mfc" ? mfcSections : selectedCategory === "lcsc" ? lcscSections : [];
+
+                populateSelect(
+                    serviceTypeSelect,
+                    typeOptions,
+                    "Select service type",
+                    selectedServiceType
+                );
+                populateSelect(
+                    sectionSelect,
+                    sectionOptions,
+                    "Select section/pillar",
+                    selectedSection
+                );
+
+                serviceTypeSelect.dataset.selected = "";
+                sectionSelect.dataset.selected = "";
+            };
+
+            const buildServiceRow = (service = {}) => {
+                const wrapper = document.createElement("div");
+                wrapper.className = "containerElement mb-3";
+                wrapper.innerHTML = `
+                    <input type="hidden" name="service_ids[]" value="${service.id ? service.id : ""}">
+                    <div class="row service-container">
+                        <span class="menu-title mb-1">Service</span>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="form-label">MFC/LCSC</label>
+                                <select name="service_category[]" class="service-category-select form-select">
+                                    <option value="">Select one</option>
+                                    <option value="mfc">MFC</option>
+                                    <option value="lcsc">LCSC</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="form-label">Service Type</label>
+                                <select name="service_type[]" class="service-type-select form-select"></select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="form-label">Section/Pillar</label>
+                                <select name="section[]" class="section-select form-select"></select>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="mb-3">
+                                <label class="form-label">Area</label>
+                                <select name="service_area[]" class="service-area-select form-select"></select>
+                            </div>
+                        </div>
+                        <div class="hstack gap-2 justify-content-end">
+                            <button type="button" class="btn btn-soft-danger remove-service-btn">Delete</button>
+                        </div>
+                    </div>
+                `;
+
+                const categorySelect = wrapper.querySelector(".service-category-select");
+                const serviceTypeSelect = wrapper.querySelector(".service-type-select");
+                const sectionSelect = wrapper.querySelector(".section-select");
+                const serviceAreaSelect = wrapper.querySelector(".service-area-select");
+
+                categorySelect.value = service.service_category || "";
+                serviceTypeSelect.dataset.selected = service.service_type || "";
+                sectionSelect.dataset.selected = service.section || "";
+                populateSelect(serviceAreaSelect, serviceAreas, "Select Area", service.area || "");
+                syncServiceRow(wrapper);
+
+                return wrapper;
+            };
+
+            serviceRepeater.querySelectorAll(".containerElement").forEach(row => {
+                populateSelect(row.querySelector(".service-area-select"), serviceAreas, "Select Area", row.querySelector(
+                    ".service-area-select").value || "");
+                syncServiceRow(row);
+            });
+
+            serviceRepeater.addEventListener("change", (e) => {
+                if (e.target.classList.contains("service-category-select")) {
+                    const row = e.target.closest(".containerElement");
+                    const serviceTypeSelect = row.querySelector(".service-type-select");
+                    const sectionSelect = row.querySelector(".section-select");
+
+                    serviceTypeSelect.dataset.selected = "";
+                    sectionSelect.dataset.selected = "";
+                    syncServiceRow(row);
                 }
             });
 
-            sectionSelects.forEach(select => {
-                let selectedValue = select.getAttribute("selected-data");
-                let container = $(select).closest(".containerElement");
-                let serviceCategorySelect = container.find('.service-category-select');
-                let serviceCategoryValue = serviceCategorySelect[0].value;
-
-                if (serviceCategoryValue === "mfc") {
-                    mfcSections.forEach(type => {
-                        var option = document.createElement("option");
-                        option.text = type;
-                        option.value = type;
-                        if (selectedValue == type) {
-                            option.setAttribute("selected", true);
-                        }
-                        select.add(option);
-                    })
-                } else {
-                    lcscSections.forEach(type => {
-                        var option = document.createElement("option");
-                        option.text = type;
-                        option.value = type;
-                        if (selectedValue == type) {
-                            option.setAttribute("selected", true);
-                        }
-                        select.add(option);
-                    })
+            serviceRepeater.addEventListener("click", (e) => {
+                if (e.target.classList.contains("remove-service-btn")) {
+                    e.target.closest(".containerElement").remove();
                 }
+            });
+
+            addServiceButton.addEventListener("click", () => {
+                serviceRepeater.appendChild(buildServiceRow());
             });
 
             $('#birthday-field').flatpickr({
@@ -752,14 +843,6 @@
             });
 
             $("#god-given-skill-select").select2();
-
-            let serviceContainers = document.querySelectorAll('.service-container');
-
-            if (serviceContainers.length === 0) {
-                $("#update-service-btn").attr("disabled", true);
-            } else {
-                $("#update-service-btn").removeAttr("disabled");
-            }
 
         });
     </script>

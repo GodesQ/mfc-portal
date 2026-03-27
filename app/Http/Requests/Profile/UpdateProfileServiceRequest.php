@@ -22,17 +22,20 @@ class UpdateProfileServiceRequest extends FormRequest
     public function rules() : array
     {
         return [
-            'service_category' => ['required', 'array', 'min:1'], // Ensure there is at least one service category
-            'service_category.*' => ['required', 'string'], // Each service category should be a string
+            'service_ids' => ['nullable', 'array'],
+            'service_ids.*' => ['nullable', 'integer'],
 
-            'service_type' => ['required', 'array', 'min:1'], // Ensure there is at least one service type
-            'service_type.*' => ['required', 'string'], // Each service type should be a string
+            'service_category' => ['nullable', 'array'],
+            'service_category.*' => ['required_with:service_type.*,section.*,service_area.*', 'string'],
 
-            'section' => ['required', 'array', 'min:1'], // Ensure there is at least one section
-            'section.*' => ['required', 'string'], // Each section should be a string
+            'service_type' => ['nullable', 'array'],
+            'service_type.*' => ['required_with:service_category.*,section.*,service_area.*', 'string'],
 
-            'service_area' => ['required', 'array', 'min:1'], // Ensure there is at least one service area
-            'service_area.*' => ['required', 'string'], // Each service area should be a string
+            'section' => ['nullable', 'array'],
+            'section.*' => ['required_with:service_category.*,service_type.*,service_area.*', 'string'],
+
+            'service_area' => ['nullable', 'array'],
+            'service_area.*' => ['required_with:service_category.*,service_type.*,section.*', 'string'],
         ];
     }
 }

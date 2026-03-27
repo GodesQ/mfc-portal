@@ -111,15 +111,60 @@ class UsersController extends Controller
   public function updateProfileService(UpdateProfileServiceRequest $request, $id)
   {
     $user = User::findOrFail($id);
+    $serviceIds = $request->input('service_ids', []);
+    $serviceCategories = $request->input('service_category', []);
+    $serviceTypes = $request->input('service_type', []);
+    $sections = $request->input('section', []);
+    $serviceAreas = $request->input('service_area', []);
 
-    foreach ($request->service_category as $key => $category) {
-      UserMissionaryService::updateOrCreate([
-        "user_id" => $user->id,
-        "service_category" => $category,
-        "service_type" => $request->service_type[$key],
-        "section" => $request->section[$key],
-        "area" => $request->service_area[$key],
-      ], []);
+    $submittedServices = collect($serviceCategories)->map(function ($category, $key) use ($serviceIds, $serviceTypes, $sections, $serviceAreas) {
+      return [
+        'id' => $serviceIds[$key] ?? null,
+        'service_category' => $category,
+        'service_type' => $serviceTypes[$key] ?? null,
+        'section' => $sections[$key] ?? null,
+        'area' => $serviceAreas[$key] ?? null,
+      ];
+    })->filter(function ($service) {
+      return filled($service['service_category']) ||
+        filled($service['service_type']) ||
+        filled($service['section']) ||
+        filled($service['area']);
+    })->values();
+
+    $submittedIds = $submittedServices
+      ->pluck('id')
+      ->filter()
+      ->map(fn($id) => (int) $id)
+      ->all();
+
+    $user->missionary_services()
+      ->when(!empty($submittedIds), function ($query) use ($submittedIds) {
+        $query->whereNotIn('id', $submittedIds);
+      })
+      ->when(empty($submittedIds), function ($query) {
+        return $query;
+      })
+      ->delete();
+
+    foreach ($submittedServices as $service) {
+      $attributes = [
+        'service_category' => $service['service_category'],
+        'service_type' => $service['service_type'],
+        'section' => $service['section'],
+        'area' => $service['area'],
+      ];
+
+      if (!empty($service['id'])) {
+        $existingService = $user->missionary_services()->where('id', $service['id'])->first();
+
+        if ($existingService) {
+          $existingService->update($attributes);
+          continue;
+        }
+      }
+
+      $user->missionary_services()->create($attributes);
     }
 
     return back()->withSuccess("User service updated successfully.");
