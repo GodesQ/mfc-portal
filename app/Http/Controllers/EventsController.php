@@ -132,6 +132,7 @@ class EventsController extends Controller
 
             Event::create(array_merge($data, [
                 'section_ids' => $request->section_ids,
+                'description' => $request->input('description'),
                 'poster' => $filename,
                 'area' => $request->type == 5 ? auth()->user()->area : null,
                 'start_date' => $start_date,
@@ -199,6 +200,7 @@ class EventsController extends Controller
 
         $event->update(array_merge($data, [
             'section_ids' => $request->has('section_ids') ? $request->section_ids : null,
+            'description' => $request->input('description'),
             'start_date' => $start_date,
             'end_date' => $end_date,
         ]));

@@ -13,8 +13,8 @@
         }
 
         /* .fc-h-event .fc-event-main {
-                                color: #141414;
-                            } */
+                                    color: #141414;
+                                } */
 
         @media (min-width: 1024px) {
             .offcanvas-end {
@@ -83,7 +83,7 @@
                             </div> --}}
                         </div>
                     </div>
-                    @if(auth()->user()->hasRole('member'))
+                    @if (auth()->user()->hasRole('member'))
                         <div class="mb-2" id="member-events-tab">
                             <ul class="nav nav-pills nav-custom nav-custom-light mb-3" role="tablist">
                                 <li class="nav-item">
@@ -111,7 +111,7 @@
                             </div>
                         </div>
                     @endif
-                    @if(auth()->user()->hasRole('super_admin'))
+                    @if (auth()->user()->hasRole('super_admin'))
                         <div>
                             <h5 class="mb-1">Upcoming Events</h5>
                             <p class="text-muted">Don't miss scheduled events.</p>
@@ -543,7 +543,7 @@
 
     {{-- Google Location Places Search Javascript --}}
     <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initialize"
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDF42hfO7Dj8XFLrJY_SSF1bBM2Dj5XLQQ&libraries=places&callback=initialize"
         async></script>
     <script>
         function initialize() {

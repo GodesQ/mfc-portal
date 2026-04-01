@@ -43,7 +43,7 @@
                                 <select name="section_ids[]" id="event-section-field" class="form-select" multiple>
                                     <option value="">Select Event Section</option>
                                     @foreach ($sections as $section)
-                                      <option value="{{ $section->id }}">{{ $section->name}}</option>  
+                                        <option value="{{ $section->id }}">{{ $section->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -96,16 +96,16 @@
                         <div class="col-lg-12">
                             <div class="mb-3">
                                 <label for="description-field" class="form-label">Description</label>
-                                <textarea name="description" id="event-description-field" cols="30" rows="5" class="form-control" hidden></textarea>
+                                <textarea name="description" id="event-description-field" cols="30" rows="5" class="form-control"
+                                    hidden></textarea>
                                 <div class="" id="edit_event_description" style="height: 200px;"></div>
                             </div>
                         </div>
                         <div class="col-lg-12">
                             <div class="d-flex gap-5 mt-2">
                                 <div class="form-check form-radio-primary">
-                                    <input type="checkbox" class="form-check-input"
-                                        name="is_open_for_non_community" id="is-open-for-non-community-checkbox"
-                                        value="1">
+                                    <input type="checkbox" class="form-check-input" name="is_open_for_non_community"
+                                        id="is-open-for-non-community-checkbox" value="1">
                                     <label for="is-open-for-non-community-checkbox" class="form-check-label">Open for
                                         Non-Community</label>
                                 </div>
@@ -118,6 +118,13 @@
                                         Registration</label>
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-lg-12 d-none" id="public-link-container" style="margin-top: 15px;"
+                            data-url-template="{{ route('events.show', '__EVENT_ID__') }}">
+                            <h6>Public Link</h6>
+                            <a href="#" target="_blank" id="public-link-anchor">
+                                #
+                            </a>
                         </div>
                     </div>
                     <hr>
@@ -134,7 +141,29 @@
 <script>
     $("#event-section-field").select2();
 
-    $("#edit-event-form").submit(function (e) {
+    function updatePublicLink(eventId, isOpenForNonCommunity) {
+        const publicLinkContainer = document.getElementById("public-link-container");
+        const publicLinkAnchor = document.getElementById("public-link-anchor");
+        const urlTemplate = publicLinkContainer.dataset.urlTemplate;
+
+        if (isOpenForNonCommunity && eventId) {
+            const publicLink = urlTemplate.replace('__EVENT_ID__', eventId);
+            publicLinkAnchor.href = publicLink;
+            publicLinkAnchor.textContent = publicLink;
+            publicLinkContainer.classList.remove('d-none');
+            return;
+        }
+
+        publicLinkAnchor.href = '#';
+        publicLinkAnchor.textContent = '#';
+        publicLinkContainer.classList.add('d-none');
+    }
+
+    $("#is-open-for-non-community-checkbox").on('change', function() {
+        updatePublicLink($("#event-id-field").val(), this.checked);
+    });
+
+    $("#edit-event-form").submit(function(e) {
         e.preventDefault();
         let description_content = $('#edit_event_description .ql-editor').html();
         document.getElementById("event-description-field").value = description_content;
@@ -153,7 +182,7 @@
             processData: false,
             contentType: false,
             success: function(response) {
-                if(response.status) {
+                if (response.status) {
                     toastr.success(response.message);
                     location.reload();
                 }

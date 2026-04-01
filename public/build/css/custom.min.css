@@ -139,3 +139,21 @@ div#choices--mfc_section-item-choice-7 {
 footer.footer {
     z-index: 2;
 }
+
+div#ar-header-box {
+    text-align: center;
+}
+
+.header-logo {
+    display: flex;
+    justify-content: center;
+}
+
+div#header-details span {
+    font-size: 11px!important;
+    line-height: 10px;
+}
+
+div#header-details h6 {
+    margin-bottom: 0;
+}

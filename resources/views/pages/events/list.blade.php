@@ -152,7 +152,10 @@
                                 },
                                 success: function(response) {
                                     showSuccessMessage(response.message);
-                                    $('#events_datatable').DataTable().ajax.reload(null, false); // false to keep the current page
+                                    $('#events_datatable').DataTable().ajax
+                                        .reload(null,
+                                            false
+                                        ); // false to keep the current page
                                 },
                                 error: function(xhr, status, error) {
                                     showErrorMessage(xhr.statusText);
@@ -188,14 +191,12 @@
                     document.getElementById("event-latitude-field").value = event.latitude;
                     document.getElementById("event-longitude-field").value = event.longitude;
                     document.getElementById("event-description-field").value = event.description;
+                    document.getElementById("is-open-for-non-community-checkbox").checked = !!event
+                        .is_open_for_non_community;
+                    document.getElementById("is-enable-event-registration-checkbox").checked = !!event
+                        .is_enable_event_registration;
 
-                    if (event.is_open_for_non_community) {
-                        document.getElementById("is-open-for-non-community-checkbox").checked = true;
-                    }
-
-                    if (event.is_enable_event_registration) {
-                        document.getElementById("is-enable-event-registration-checkbox").checked = true;
-                    }
+                    updatePublicLink(event.id, event.is_open_for_non_community);
 
                     // let selectField = document.getElementById("event-section-field");
                     $('#event-section-field').val(event.section_ids).trigger('change');
@@ -344,13 +345,16 @@
     </script>
 
     {{-- Google Location Places Search Javascript --}}
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initialize" async></script>
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDF42hfO7Dj8XFLrJY_SSF1bBM2Dj5XLQQ&libraries=places&callback=initialize"
+        async></script>
     <script>
         function initialize() {
-            const activeModal = document.querySelector('.modal.show');  // Detect the currently active modal
+            const activeModal = document.querySelector('.modal.show'); // Detect the currently active modal
             if (activeModal) {
                 const isAddEventModal = activeModal.id === 'addEventModal';
-                const eventLocationInput = document.getElementById(isAddEventModal ? 'event_location' : 'event-location-field');
+                const eventLocationInput = document.getElementById(isAddEventModal ? 'event_location' :
+                    'event-location-field');
                 const latitudeInput = document.getElementById(isAddEventModal ? 'latitude' : 'event-latitude-field');
                 const longitudeInput = document.getElementById(isAddEventModal ? 'longitude' : 'event-longitude-field');
 
@@ -376,6 +380,5 @@
 
         // Trigger initialization when modals are shown
         $('#addEventModal, #event-modal').on('shown.bs.modal', initialize);
-
     </script>
 @endsection

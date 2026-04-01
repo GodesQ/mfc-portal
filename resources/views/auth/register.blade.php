@@ -90,13 +90,19 @@
                                             value="{{ old('contact_number') }}"></x-input_fields.contact-number>
 
                                         <x-input_fields.choices label="MFC Section" id="mfc_section" formId="registerForm"
-                                            name="section">
-                                            <option value="kids" class="text-capitalize">kids</option>
-                                            <option value="youth" class="text-capitalize">youth</option>
-                                            <option value="singles" class="text-capitalize">singles</option>
-                                            <option value="handmaids" class="text-capitalize">handmaids</option>
-                                            <option value="servants" class="text-capitalize">servants</option>
-                                            <option value="couples" class="text-capitalize">couples</option>
+                                            name="section" :isMfcSection="true">
+                                            <option value="kids" data-custom-properties='@json(['sectionSlug' => 'kids'])'
+                                                {{ old('section') == 'kids' ? 'selected' : null }}>Kids</option>
+                                            <option value="youth" data-custom-properties='@json(['sectionSlug' => 'youth'])'
+                                                {{ old('section') == 'youth' ? 'selected' : null }}>Youth</option>
+                                            <option value="singles" data-custom-properties='@json(['sectionSlug' => 'singles'])'
+                                                {{ old('section') == 'singles' ? 'selected' : null }}>Singles</option>
+                                            <option value="handmaids" data-custom-properties='@json(['sectionSlug' => 'handmaids'])'
+                                                {{ old('section') == 'handmaids' ? 'selected' : null }}>Handmaids</option>
+                                            <option value="servants" data-custom-properties='@json(['sectionSlug' => 'servants'])'
+                                                {{ old('section') == 'servants' ? 'selected' : null }}>Servants</option>
+                                            <option value="couples" data-custom-properties='@json(['sectionSlug' => 'couples'])'
+                                                {{ old('section') == 'couples' ? 'selected' : null }}>Couples</option>
                                         </x-input_fields.choices>
                                         <span class="text-danger danger">
                                             @error('section')

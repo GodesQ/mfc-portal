@@ -94,7 +94,7 @@
                     <div class="tab-content">
                         <!-- personalDetails -->
                         <div class="tab-pane active" id="personalDetails" role="tabpanel">
-                            <form action="{{ route('users.profile.update', $user->id) }}" method="POST">
+                            <form action="{{ route('users.profile.update', $user->id) }}" method="POST" id="profileForm">
                                 @csrf
                                 @method('PUT')
                                 <input type="hidden" id="user-id-field" value="{{ $user->id }}">
@@ -157,18 +157,16 @@
                                     </div>
                                     <!--end col-->
                                     <div class="col-lg-4">
-                                        <div class="mb-3">
-                                            <label for="JoiningdatInput" class="form-label">MFC Section</label>
-                                            <select name="section_id" id="mfc_section" class="form-select">
-                                                <option value="">Select Section</option>
-                                                @foreach ($sections as $section)
-                                                    <option value="{{ $section->id }}"
-                                                        {{ $section->id == $user->section_id ? 'selected' : null }}>
-                                                        {{ $section->name }}
-                                                    </option>
-                                                @endforeach
-                                            </select>
-                                        </div>
+                                        <x-input_fields.choices label="MFC Section" id="mfc_section" formId="profileForm"
+                                            name="section_id" :isMfcSection="true">
+                                            @foreach ($sections as $section)
+                                                <option value="{{ $section->id }}"
+                                                    data-custom-properties='@json(['sectionSlug' => $section->name])'
+                                                    {{ $section->id == $user->section_id ? 'selected' : null }}>
+                                                    {{ ucfirst($section->name) }}
+                                                </option>
+                                            @endforeach
+                                        </x-input_fields.choices>
                                     </div>
                                     <!--end col-->
 

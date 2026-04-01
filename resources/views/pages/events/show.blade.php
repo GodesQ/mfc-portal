@@ -23,8 +23,9 @@
 
     <nav class="main-nav">
         <div class="d-flex justify-content-between align-items-center">
-            <img class="rounded-circle" style="width: 60px;" src="{{ URL::asset('build/images/MFC-Logo.jpg') }}" alt="">
-            @if(auth()->user())
+            <img class="rounded-circle" style="width: 60px;" src="{{ URL::asset('build/images/MFC-Logo.jpg') }}"
+                alt="">
+            @if (auth()->user())
                 <div>
                     <a href="{{ route('dashboards.index') }}" class="btn btn-primary">Dashboard</a>
                 </div>
@@ -123,7 +124,7 @@
                 <div class="social-media-icons">
                     <h3 class="mb-1" style="font-size: 20px;">Our Social Media</h3>
                     <div class="m-[0px] d-flex gap-2" style="list-style: none;">
-                        <div >
+                        <div>
                             <a href="" title="Facebook">
                                 <i class="ri-facebook-fill fs-20"></i>
                             </a>
@@ -146,7 +147,7 @@
 
     <script src="{{ URL::asset('build/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script async
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDEmTK1XpJ2VJuylKczq2-49A6_WuUlfe4&libraries=places&callback=initialize">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDF42hfO7Dj8XFLrJY_SSF1bBM2Dj5XLQQ&libraries=places&callback=initialize">
     </script>
     <script>
         function initialize() {

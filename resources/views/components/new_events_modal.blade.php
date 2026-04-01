@@ -7,6 +7,86 @@
         .pac-container {
             z-index: 100000 !important;
         }
+
+        .select2-mfc-section {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            min-width: 0;
+        }
+
+        .select2-mfc-section__logo {
+            width: 1.5rem;
+            height: 1.5rem;
+            object-fit: contain;
+            flex-shrink: 0;
+        }
+
+        #addEventModal .select2-container {
+            width: 100% !important;
+        }
+
+        #addEventModal .select2-container--default .select2-selection--multiple {
+            min-height: 38px;
+            border: 1px solid #ced4da;
+            border-radius: 0.375rem;
+            padding: 0.25rem 0.5rem;
+        }
+
+        #addEventModal .select2-container--default.select2-container--focus .select2-selection--multiple {
+            border-color: #86b7fe;
+        }
+
+        #addEventModal .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+            padding: 0;
+        }
+
+        #addEventModal .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            display: inline-flex;
+            align-items: center;
+            background-color: #405189;
+            border: 0;
+            border-radius: 0.375rem;
+            color: #fff;
+            margin: 0;
+            padding: 0.375rem 0.625rem 0.375rem 1.5rem;
+            position: relative;
+            line-height: 1.2;
+        }
+
+        #addEventModal .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #fff;
+            border-right: 0;
+            left: 0.375rem;
+            margin-right: 0;
+            padding: 0;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: auto;
+        }
+
+        #addEventModal .select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+            display: inline-flex;
+            align-items: center;
+            min-width: 0;
+        }
+
+        #addEventModal .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+            background: transparent;
+            color: #fff;
+        }
+
+        #addEventModal .select2-container--default .select2-results__option .select2-mfc-section {
+            padding: 0.25rem 0;
+        }
+
+        #addEventModal .select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+            padding-left: 0px !important;
+        }
     </style>
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl" data-simplebar>
         <div class="modal-content border-0">
@@ -80,12 +160,12 @@
                                         <select name="section_ids[]" id="event_section" multiple="multiple"
                                             class="form-select">
                                             <option value="">Select Event Section</option>
-                                            <option value="1">Kids</option>
-                                            <option value="2">Youth</option>
-                                            <option value="3">Singles</option>
-                                            <option value="4">Handmaids</option>
-                                            <option value="5">Servants</option>
-                                            <option value="6">Couples</option>
+                                            <option value="1" data-section-slug="kids">Kids</option>
+                                            <option value="2" data-section-slug="youth">Youth</option>
+                                            <option value="3" data-section-slug="singles">Singles</option>
+                                            <option value="4" data-section-slug="handmaids">Handmaids</option>
+                                            <option value="5" data-section-slug="servants">Servants</option>
+                                            <option value="6" data-section-slug="couples">Couples</option>
                                         </select>
                                     </div>
                                 </div>
@@ -201,10 +281,47 @@
 
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
-    $("#event_section").select2();
-    document.addEventListener('DOMContentLoaded', function() {
-        var pond;
+    let pond;
+    let eventDescriptionEditor;
 
+    const mfcSectionAssets = {
+        kids: "{{ URL::asset('build/images/kids-logo.png') }}",
+        youth: "{{ URL::asset('build/images/youth-logo.png') }}",
+        singles: "{{ URL::asset('build/images/singles-logo.png') }}",
+        handmaids: "{{ URL::asset('build/images/handmaid-logo.png') }}",
+        servants: "{{ URL::asset('build/images/servant-logo.png') }}",
+        couples: "{{ URL::asset('build/images/couples-logo.png') }}",
+    };
+
+    function formatMfcSectionOption(option) {
+        if (!option.id) {
+            return option.text;
+        }
+
+        const sectionSlug = option.element?.dataset?.sectionSlug;
+        const logo = sectionSlug ? mfcSectionAssets[sectionSlug] : null;
+
+        if (!logo) {
+            return option.text;
+        }
+
+        return $(`
+            <span class="select2-mfc-section">
+                <img src="${logo}" alt="${option.text} logo" class="select2-mfc-section__logo">
+                <span>${option.text}</span>
+            </span>
+        `);
+    }
+
+    $("#event_section").select2({
+        templateResult: formatMfcSectionOption,
+        templateSelection: formatMfcSectionOption,
+        escapeMarkup: function(markup) {
+            return markup;
+        }
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
         let dateInput = document.getElementById('event_date');
         let timeInput = document.getElementById('event_time');
 
@@ -222,14 +339,22 @@
         let add_new_event_btn = document.getElementById('addNewEvent');
 
         add_new_event_btn.addEventListener('click', submitCreatedEvent);
+
+        $('#addEventModal').on('hidden.bs.modal', function() {
+            syncEventDescriptionInput();
+
+            if (eventDescriptionEditor) {
+                eventDescriptionEditor.setContents([]);
+            }
+
+            document.getElementById('event_description_input').value = '';
+        });
     });
 
     function submitCreatedEvent(e) {
         e.preventDefault();
 
-        let description_content = $('#edit_event_description .ql-editor').html();
-        var desc = document.getElementById('event_description_input');
-        desc.value = description_content;
+        syncEventDescriptionInput();
 
         var form = document.getElementById('event-form');
         const formData = new FormData(form);
@@ -321,7 +446,17 @@
             }
 
 
-        var quill = new Quill('#event_description', snowEditorData);
+        eventDescriptionEditor = new Quill('#event_description', snowEditorData);
+        eventDescriptionEditor.on('text-change', syncEventDescriptionInput);
+    }
+
+    const syncEventDescriptionInput = () => {
+        const desc = document.getElementById('event_description_input');
+        const editor = document.querySelector('#event_description .ql-editor');
+        const editorHtml = editor ? editor.innerHTML : '';
+        const editorText = editor ? editor.textContent.trim() : '';
+
+        desc.value = editorText.length ? editorHtml : '';
     }
 
     const setUpFilePond = () => {
