@@ -17,7 +17,7 @@ class DashboardController extends Controller
     public function index()
     {
         $user = auth()->user();
-        $recent_event_registrations = EventRegistration::latest()->with('event', 'user')->get();
+        $recent_event_registrations = EventRegistration::latest()->with('event', 'user', 'primary_user')->get();
 
         $recent_announcements = Announcement::select('id', 'title', 'content', 'status', 'created_at')
             ->where('status', 'shown')

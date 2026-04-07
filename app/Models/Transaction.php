@@ -14,6 +14,10 @@ class Transaction extends Model
         "transaction_code", 
         "reference_code",
         "received_from_id",
+        "payer_first_name",
+        "payer_last_name",
+        "payer_email",
+        "payer_contact_number",
         "donation",
         "convenience_fee",
         "sub_amount", 
@@ -28,5 +32,19 @@ class Transaction extends Model
 
     public function received_from_user() : BelongsTo {
         return $this->belongsTo(User::class,"received_from_id");
+    }
+
+    public function getPayerNameAttribute(): string
+    {
+        $firstName = $this->received_from_user?->first_name ?? $this->payer_first_name ?? '';
+        $lastName = $this->received_from_user?->last_name ?? $this->payer_last_name ?? '';
+        $fullName = trim($firstName . ' ' . $lastName);
+
+        return $fullName !== '' ? $fullName : 'Guest User';
+    }
+
+    public function getPayerMfcIdNumberAttribute(): ?string
+    {
+        return $this->received_from_user?->mfc_id_number;
     }
 }

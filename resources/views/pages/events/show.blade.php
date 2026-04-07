@@ -17,26 +17,32 @@
     <style>
         /* ─── MFC Theme Tokens ─────────────────────────────── */
         :root {
-            --navy:       #1E2D4E;
+            --navy: #1E2D4E;
             --navy-light: #2a3f6d;
-            --gold:       #F5C518;
+            --gold: #F5C518;
             --gold-light: #fdd835;
-            --blue:       #3B5EA6;
+            --blue: #3B5EA6;
             --blue-light: #7AA3CC;
-            --bg:         #F7F8FC;
-            --surface:    #FFFFFF;
-            --border:     #E8ECF4;
-            --text-body:  #4a5568;
+            --bg: #F7F8FC;
+            --surface: #FFFFFF;
+            --border: #E8ECF4;
+            --text-body: #4a5568;
             --text-muted: #8a96a8;
-            --radius-sm:  6px;
-            --radius-md:  12px;
-            --radius-lg:  20px;
-            --shadow-sm:  0 1px 3px rgba(30,45,78,.08);
-            --shadow-md:  0 4px 20px rgba(30,45,78,.10);
-            --shadow-lg:  0 8px 40px rgba(30,45,78,.14);
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --shadow-sm: 0 1px 3px rgba(30, 45, 78, .08);
+            --shadow-md: 0 4px 20px rgba(30, 45, 78, .10);
+            --shadow-lg: 0 8px 40px rgba(30, 45, 78, .14);
         }
 
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
@@ -108,11 +114,12 @@
             text-decoration: none;
             transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
         }
+
         .btn-mfc-primary:hover {
             background: var(--navy-light);
             color: #fff;
             transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(30,45,78,.25);
+            box-shadow: 0 4px 12px rgba(30, 45, 78, .25);
         }
 
         .btn-mfc-ghost {
@@ -131,15 +138,17 @@
             text-decoration: none;
             transition: border-color 0.2s, background 0.2s;
         }
+
         .btn-mfc-ghost:hover {
             border-color: var(--blue);
-            background: rgba(59,94,166,.06);
+            background: rgba(59, 94, 166, .06);
             color: var(--blue);
         }
 
         .btn-register {
             width: 100%;
             justify-content: center;
+            text-align: center;
             background: var(--gold);
             color: var(--navy);
             font-weight: 700;
@@ -152,11 +161,13 @@
             font-family: 'Inter', sans-serif;
             letter-spacing: 0.2px;
         }
+
         .btn-register:hover {
             background: var(--gold-light);
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(245,197,24,.40);
+            box-shadow: 0 6px 20px rgba(245, 197, 24, .40);
         }
+
         .btn-register:active {
             transform: translateY(0);
         }
@@ -177,13 +188,20 @@
             font-size: 13px;
             color: var(--text-muted);
         }
+
         .breadcrumb-row a {
             color: var(--blue);
             text-decoration: none;
             font-weight: 500;
         }
-        .breadcrumb-row a:hover { text-decoration: underline; }
-        .breadcrumb-row .sep { color: var(--border); }
+
+        .breadcrumb-row a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb-row .sep {
+            color: var(--border);
+        }
 
         /* ─── Two-column grid ──────────────────────────────── */
         .event-grid {
@@ -234,12 +252,12 @@
         }
 
         .tag-navy {
-            background: rgba(30,45,78,.08);
+            background: rgba(30, 45, 78, .08);
             color: var(--navy);
         }
 
         .tag-gold {
-            background: rgba(245,197,24,.15);
+            background: rgba(245, 197, 24, .15);
             color: #a07500;
         }
 
@@ -271,7 +289,9 @@
             color: var(--text-body);
         }
 
-        .event-description p { margin-bottom: 12px; }
+        .event-description p {
+            margin-bottom: 12px;
+        }
 
         .event-poster-wrap {
             margin-top: 28px;
@@ -329,13 +349,16 @@
             padding: 14px 0;
             border-bottom: 1px solid var(--border);
         }
-        .detail-item:last-child { border-bottom: none; }
+
+        .detail-item:last-child {
+            border-bottom: none;
+        }
 
         .detail-icon {
             width: 36px;
             height: 36px;
             border-radius: 10px;
-            background: rgba(59,94,166,.08);
+            background: rgba(59, 94, 166, .08);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -347,7 +370,10 @@
             color: var(--blue);
         }
 
-        .detail-content { flex: 1; }
+        .detail-content {
+            flex: 1;
+        }
+
         .detail-content__label {
             font-size: 11px;
             font-weight: 600;
@@ -356,6 +382,7 @@
             color: var(--text-muted);
             margin-bottom: 3px;
         }
+
         .detail-content__value {
             font-size: 14px;
             font-weight: 600;
@@ -373,28 +400,32 @@
             justify-content: space-between;
             margin: 18px 0;
         }
+
         .fee-label {
             font-size: 12px;
             font-weight: 600;
-            color: rgba(255,255,255,.65);
+            color: rgba(255, 255, 255, .65);
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
+
         .fee-amount {
             font-size: 22px;
             font-weight: 800;
             color: var(--gold);
             letter-spacing: -0.5px;
         }
+
         .fee-icon {
             width: 40px;
             height: 40px;
-            background: rgba(255,255,255,.1);
+            background: rgba(255, 255, 255, .1);
             border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
         }
+
         .fee-icon i {
             font-size: 18px;
             color: var(--gold);
@@ -403,7 +434,10 @@
         /* ─── Register CTA card ────────────────────────────── */
         .register-card {
             padding: 24px;
-            background: linear-gradient(160deg, rgba(59,94,166,.04) 0%, rgba(245,197,24,.04) 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: linear-gradient(160deg, rgba(59, 94, 166, .04) 0%, rgba(245, 197, 24, .04) 100%);
         }
 
         .register-note {
@@ -436,25 +470,40 @@
             transition: all 0.2s;
             font-size: 16px;
         }
-        .social-btn:hover { transform: translateY(-2px); }
+
+        .social-btn:hover {
+            transform: translateY(-2px);
+        }
 
         .social-btn--fb {
             background: #1877f2;
             color: #fff;
         }
-        .social-btn--fb:hover { background: #0e5fc7; color: #fff; }
+
+        .social-btn--fb:hover {
+            background: #0e5fc7;
+            color: #fff;
+        }
 
         .social-btn--ig {
             background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
             color: #fff;
         }
-        .social-btn--ig:hover { color: #fff; opacity: .9; }
+
+        .social-btn--ig:hover {
+            color: #fff;
+            opacity: .9;
+        }
 
         .social-btn--yt {
             background: #ff0000;
             color: #fff;
         }
-        .social-btn--yt:hover { background: #cc0000; color: #fff; }
+
+        .social-btn--yt:hover {
+            background: #cc0000;
+            color: #fff;
+        }
 
         /* ─── Divider helper ───────────────────────────────── */
         .content-divider {
@@ -606,10 +655,10 @@
                 <!-- Register CTA -->
                 @if ($event->is_enable_event_registration)
                     <div class="card-clean register-card">
-                        <button type="button" class="btn-register" id="register-event-btn">
+                        <a href="{{ route('events.register.public', ['event' => $event->id]) }}" class="btn-register">
                             <i class="ri-user-add-line" style="font-size:16px;"></i>
                             &nbsp;Register Now
-                        </button>
+                        </a>
                         <p class="register-note">
                             Review the event details before registering. <br>
                             Spots may be limited.
@@ -643,12 +692,9 @@
     <!-- end page -->
 
     <!-- Hidden inputs -->
-    @csrf
-    <input type="hidden" id="event_id" value="{{ $event->id }}">
     <input type="hidden" name="latitude" id="latitude" value="{{ $event->latitude }}">
     <input type="hidden" name="longitude" id="longitude" value="{{ $event->longitude }}">
 
-    <script src="{{ URL::asset('build/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script async
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDF42hfO7Dj8XFLrJY_SSF1bBM2Dj5XLQQ&libraries=places&callback=initialize">
     </script>
@@ -657,19 +703,46 @@
             const latitude = document.querySelector('#latitude');
             const longitude = document.querySelector('#longitude');
             const mapOptions = {
-                center: latitude.value && longitude.value
-                    ? new google.maps.LatLng(latitude.value, longitude.value)
-                    : new google.maps.LatLng(14.5995124, 120.9842195),
+                center: latitude.value && longitude.value ?
+                    new google.maps.LatLng(latitude.value, longitude.value) : new google.maps.LatLng(14.5995124,
+                        120.9842195),
                 zoom: 14,
                 disableDefaultUI: false,
                 scrollwheel: true,
                 draggable: true,
-                styles: [
-                    { elementType: 'geometry', stylers: [{ color: '#f5f7fb' }] },
-                    { elementType: 'labels.text.fill', stylers: [{ color: '#516091' }] },
-                    { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#ffffff' }] },
-                    { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#c8d8ec' }] },
-                    { featureType: 'poi.park', elementType: 'geometry', stylers: [{ color: '#d9ead3' }] },
+                styles: [{
+                        elementType: 'geometry',
+                        stylers: [{
+                            color: '#f5f7fb'
+                        }]
+                    },
+                    {
+                        elementType: 'labels.text.fill',
+                        stylers: [{
+                            color: '#516091'
+                        }]
+                    },
+                    {
+                        featureType: 'road',
+                        elementType: 'geometry',
+                        stylers: [{
+                            color: '#ffffff'
+                        }]
+                    },
+                    {
+                        featureType: 'water',
+                        elementType: 'geometry',
+                        stylers: [{
+                            color: '#c8d8ec'
+                        }]
+                    },
+                    {
+                        featureType: 'poi.park',
+                        elementType: 'geometry',
+                        stylers: [{
+                            color: '#d9ead3'
+                        }]
+                    },
                 ]
             };
 
@@ -691,42 +764,6 @@
                 });
             }
         }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            const registerBtn = document.getElementById('register-event-btn');
-            if (registerBtn) {
-                registerBtn.addEventListener('click', function (e) {
-                    const event_id = document.getElementById('event_id').value;
-                    const token = document.querySelector('input[name="_token"]').value;
-                    Swal.fire({
-                        title: 'Confirm Registration',
-                        text: 'Are you sure you want to register for this event? Please review the details before confirming.',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Yes, register me!',
-                        cancelButtonText: 'Cancel',
-                        showCloseButton: true,
-                        confirmButtonColor: '#1E2D4E',
-                        cancelButtonColor: '#8a96a8',
-                    }).then(function (result) {
-                        if (result.value) {
-                            $.ajax({
-                                method: 'POST',
-                                url: '/dashboard/events/register',
-                                headers: {
-                                    'X-CSRF-TOKEN': token,
-                                    'accept': 'application/json',
-                                },
-                                data: { event_id: event_id },
-                                success: function (response) {
-                                    window.location.href = response.redirect_url;
-                                }
-                            });
-                        }
-                    });
-                });
-            }
-        });
     </script>
 </body>
 

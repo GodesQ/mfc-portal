@@ -105,11 +105,14 @@
                                     <div class="col-lg-3 col-6">
                                         <p class="text-muted text-uppercase fw-semibold mb-0">Received From</p>
                                         <h5 class="fs-14 mb-0">
-                                            <span id="received-from">
-                                                {{ ($transaction->received_from_user->first_name ?? 'No First Name Found') . ' ' . ($transaction->received_from_user->last_name ?? 'No Last Name Found') }}</span>
-                                            <br>
-                                            <span
-                                                class="text-muted fs-12">#{{ $transaction->received_from_user->mfc_id_number ?? 'No MFC ID Number Found' }}</span>
+                                            <span id="received-from">{{ $transaction->payer_name }}</span>
+                                            @if ($transaction->payer_mfc_id_number)
+                                                <br>
+                                                <span class="text-muted fs-12">#{{ $transaction->payer_mfc_id_number }}</span>
+                                            @elseif ($transaction->payer_email)
+                                                <br>
+                                                <span class="text-muted fs-12">{{ $transaction->payer_email }}</span>
+                                            @endif
                                         </h5>
                                     </div>
                                     <!--end col-->
@@ -162,7 +165,12 @@
                                                     <th scope="row">{{ $item['id'] }}</th>
                                                     <td class="text-start">
                                                         <span class="fw-medium">{{ $item['name'] }}</span>
-                                                        <p class="text-muted mb-0">#{{ $item['mfc_id_number'] }}
+                                                        <p class="text-muted mb-0">
+                                                            @if ($item['mfc_id_number'] !== 'Guest User')
+                                                                #{{ $item['mfc_id_number'] }}
+                                                            @else
+                                                                {{ $item['mfc_id_number'] }}
+                                                            @endif
                                                         </p>
                                                     </td>
                                                     <td class="text-start">{{ $item['payment_type'] }}</td>

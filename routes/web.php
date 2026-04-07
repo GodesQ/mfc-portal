@@ -57,6 +57,10 @@ Route::post('password-reset', [ResetPasswordController::class, 'reset'])->name('
 // });
 
 Route::get('/events/show/{identifier}', [EventsController::class, 'show'])->name('events.show');
+Route::get('/events/{event}/register/public', [EventRegistrationController::class, 'publicEntry'])->name('events.register.public');
+Route::get('/events/{event}/register/member', [EventRegistrationController::class, 'memberEntry'])->name('events.register.member');
+Route::get('/events/{event}/register/guest', [EventRegistrationController::class, 'guestEntry'])->name('events.register.guest');
+Route::post('/events/{event}/register/guest', [EventRegistrationController::class, 'saveGuestRegistration'])->name('events.register.guest.post');
 
 Route::middleware(['auth', 'verified'])->group(function () {
   //Language Translation

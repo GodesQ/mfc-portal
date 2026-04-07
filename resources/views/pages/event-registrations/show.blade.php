@@ -61,13 +61,26 @@
                         <div class="my-2 border px-3 py-2 rounded">
                             <div class="d-flex justify-content-between align-items-center">
                                 <div class="d-flex align-items-center gap-3">
-                                    <img src="{{ URL::asset('uploads/avatars/' . $event_registration->user->avatar) }}"
-                                        class="avatar avatar-md" style="border-radius: 50%;" alt="">
+                                    @if ($event_registration->user?->avatar)
+                                        <img src="{{ URL::asset('uploads/avatars/' . $event_registration->user->avatar) }}"
+                                            class="avatar avatar-md" style="border-radius: 50%;" alt="">
+                                    @else
+                                        <div class="avatar avatar-md bg-light text-primary d-flex align-items-center justify-content-center"
+                                            style="border-radius: 50%;">
+                                            <i class="ri-user-3-line fs-24"></i>
+                                        </div>
+                                    @endif
                                     <div>
                                         <h3 class="fw-bold">
-                                            {{ $event_registration->user->first_name . ' ' . $event_registration->user->last_name }}
+                                            {{ $event_registration->display_name }}
                                         </h3>
-                                        <h6 class="text-muted">#{{ $event_registration->user->mfc_id_number }}</h6>
+                                        <h6 class="text-muted">
+                                            @if ($event_registration->display_mfc_id_number !== 'Guest User')
+                                                #{{ $event_registration->display_mfc_id_number }}
+                                            @else
+                                                {{ $event_registration->display_mfc_id_number }}
+                                            @endif
+                                        </h6>
                                     </div>
                                 </div>
                                 <div class="badge bg-primary py-2 px-3">Registered</div>
@@ -118,22 +131,19 @@
                                 <div class="row my-3 mt-3 gap-3">
                                     <div class="col-lg-5">
                                         <h6 class="text-muted" style="line-height: 10px;">Full Name</h6>
-                                        <h6 class="fw-semibold">{{ $event_registration->user->first_name }}
-                                            {{ $event_registration->user->last_name }}</h6>
+                                        <h6 class="fw-semibold">{{ $event_registration->display_name }}</h6>
                                     </div>
                                     <div class="col-lg-5">
                                         <h6 class="text-muted" style="line-height: 10px;">Contact Number</h6>
-                                        <h6 class="fw-semibold">
-                                            {{ $event_registration->user->contact_number ?? 'Not Found' }}</h6>
+                                        <h6 class="fw-semibold">{{ $event_registration->display_contact_number }}</h6>
                                     </div>
                                     <div class="col-lg-5">
                                         <h6 class="text-muted" style="line-height: 10px;">Email</h6>
-                                        <h6 class="fw-semibold">{{ $event_registration->user->email ?? 'Not Found' }}</h6>
+                                        <h6 class="fw-semibold">{{ $event_registration->display_email }}</h6>
                                     </div>
                                     <div class="col-lg-5">
                                         <h6 class="text-muted" style="line-height: 10px;">Address</h6>
-                                        <h6 class="fw-semibold">
-                                            {{ $event_registration->user->user_details->address ?? 'Not Found' }}</h6>
+                                        <h6 class="fw-semibold">{{ $event_registration->display_address }}</h6>
                                     </div>
                                 </div>
                             </div>

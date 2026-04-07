@@ -28,11 +28,14 @@ class RedirectController extends Controller
       ]);
 
       if ($transaction->payment_type == PaymentType::EVENT_REGISTRATION) {
-        $items = EventRegistration::where('transaction_id', $transaction->id)->get()->map(function ($row) {
+        $items = EventRegistration::where('transaction_id', $transaction->id)
+          ->with('user', 'event', 'event_user_detail')
+          ->get()
+          ->map(function ($row) {
           return [
             'id' => $row->id,
-            'name' => ($row->user->first_name ?? " ") . ' ' . ($row->user->last_name ?? " "),
-            'mfc_id_number' => ($row->user->mfc_id_number ?? " "),
+            'name' => $row->display_name,
+            'mfc_id_number' => $row->display_mfc_id_number,
             'payment_type' => "Event Registration",
             'event' => $row->event,
             'date' => Carbon::parse($row->created_at)->format('M d, Y'),

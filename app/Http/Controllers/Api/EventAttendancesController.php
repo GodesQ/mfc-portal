@@ -17,6 +17,7 @@ class EventAttendancesController extends Controller
 
             $event_registration = EventRegistration::where("registration_code", $registration_code)->first();
             if(!$event_registration) throw new Exception("Registration Not Found.", 404);
+            if (! $event_registration->user) throw new Exception("Guest registrations are not yet supported for attendance scanning.", 400);
             
             $event_attendance = EventAttendance::where("event_id", $event_registration->event_id)
                                 ->where("user_id", $event_registration->user->id)

@@ -51,7 +51,12 @@
                                                 <th scope="row">{{ $item['id'] }}</th>
                                                 <td class="text-start">
                                                     <span class="fw-medium">{{ $item['name'] }}</span>
-                                                    <p class="text-muted mb-0">{{ $item['mfc_id_number'] }}
+                                                    <p class="text-muted mb-0">
+                                                        @if ($item['mfc_id_number'] !== 'Guest User')
+                                                            #{{ $item['mfc_id_number'] }}
+                                                        @else
+                                                            {{ $item['mfc_id_number'] }}
+                                                        @endif
                                                     </p>
                                                 </td>
                                                 <td>{{ $item['payment_type'] }}</td>
@@ -98,7 +103,13 @@
                                 <!--end col-->
                                 <div class="col-lg-4 col-6">
                                     <p class="text-muted mb-2 text-uppercase fw-semibold">Payment Status</p>
-                                    <span class="badge bg-success-subtle text-success fs-11" id="payment-status">Paid</span>
+                                    @if ($transaction->status === 'paid')
+                                        <span class="badge bg-success-subtle text-success fs-11" id="payment-status">Paid</span>
+                                    @elseif ($transaction->status === 'failed')
+                                        <span class="badge bg-danger-subtle text-danger fs-11" id="payment-status">Failed</span>
+                                    @else
+                                        <span class="badge bg-warning-subtle text-warning fs-11" id="payment-status">{{ ucfirst($transaction->status) }}</span>
+                                    @endif
                                 </div>
                                 <div class="col-lg-4 col-6">
                                     <p class="text-muted mb-2 text-uppercase fw-semibold">Sub Amount</p>
@@ -121,6 +132,13 @@
                                 <div class="col-lg-8 col-6">
                                     <p class="text-muted mb-2 text-uppercase fw-semibold">Payment Link</p>
                                     <a href="{{ $transaction->payment_link }}" class="fs-14 mb-0">{{ $transaction->payment_link }}</a>
+                                </div>
+                                <div class="col-lg-8 col-6">
+                                    <p class="text-muted mb-2 text-uppercase fw-semibold">Received From</p>
+                                    <h5 class="fs-14 mb-0">{{ $transaction->payer_name }}</h5>
+                                    @if ($transaction->payer_email)
+                                        <small class="text-muted">{{ $transaction->payer_email }}</small>
+                                    @endif
                                 </div>
                                 <!--end col-->
                             </div>

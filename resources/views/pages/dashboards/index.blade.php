@@ -227,11 +227,16 @@
 
                                 <tbody>
                                     @foreach ($recent_event_registrations as $registration)
+                                        <?php
+                                        $avatar = $registration->user ? URL::asset('uploads/avatars/' . $registration->user->avatar) : URL::asset('build/images/MFC-Logo.jpg');
+                                        $firstName = $registration->primary_user->first_name ?? ($registration->user->first_name ?? '');
+                                        $lastName = $registration->primary_user->last_name ?? ($registration->user->last_name ?? '');
+                                        ?>
                                         <tr>
-                                            <td><img src="{{ URL::asset('uploads/avatars/' . $registration->user->avatar) }}"
-                                                    alt="" class="avatar-xs rounded-circle me-2 material-shadow">
+                                            <td><img src="{{ $avatar }}" alt=""
+                                                    class="avatar-xs rounded-circle me-2 material-shadow">
                                                 <a href="#javascript: void(0);"
-                                                    class="text-body fw-medium">{{ $registration->user->first_name . ' ' . $registration->user->last_name }}</a>
+                                                    class="text-body fw-medium">{{ $firstName . ' ' . $lastName }}</a>
                                             <td>{{ $registration->event->title }}</td>
                                             </td>
                                             <!-- <td><span class="badge bg-success-subtle text-success p-2">Deal Won</span></td> -->
@@ -242,11 +247,11 @@
                                         </tr>
                                     @endforeach
 
-                                </tbody><!-- end tbody -->
-                            </table><!-- end table -->
-                        </div><!-- end table responsive -->
-                    </div><!-- end card body -->
-                </div><!-- end card -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             @else
                 <!---- begin members dashboard ---->
                 <div id="mfc-timeline" class="timeline-2">
