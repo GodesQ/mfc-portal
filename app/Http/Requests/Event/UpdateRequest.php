@@ -23,12 +23,16 @@ class UpdateRequest extends FormRequest
     {
         return [
             "title" => ["required", "max:250"],
+            "type" => ["required"],
+            "section_ids" => ["required", "array"],
             "description" => ["required"],
             "event_date" => ["required"],
             "time" => ["required"],
             "location" => ["required"],
             "latitude" => ["required_with:location", "numeric"],
             "longitude" => ["required_with:location", "numeric"],
+            "reg_fee" => ["required"],
+            "poster" => ["nullable", "file", "mimes:jpeg,png,jpg"],
         ];
     }
 }

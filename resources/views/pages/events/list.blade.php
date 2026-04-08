@@ -2,11 +2,6 @@
 @section('title')
     @lang('translation.starter')
 @endsection
-@section('css')
-    <link rel="stylesheet" href="{{ URL::asset('build/libs/filepond/filepond.min.css') }}" type="text/css" />
-    <link rel="stylesheet"
-        href="{{ URL::asset('build/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.css') }}">
-@endsection
 @section('content')
     @component('components.breadcrumb')
         @slot('li_1')
@@ -23,9 +18,8 @@
                 <div class="d-flex align-items-center justify-content-end">
                     <div class="flex-shrink-0">
                         <div class="d-flex flex-wrap gap-2">
-                            <button type="button" class="btn btn-primary add-btn text-capitalize" data-bs-toggle="modal"
-                                data-bs-target="#addEventModal">
-                                <i class="ri-add-line align-bottom me-1"></i>add new event</button>
+                            <a href="{{ route('events.create') }}" class="btn btn-primary add-btn text-capitalize">
+                                <i class="ri-add-line align-bottom me-1"></i>add new event</a>
                             <button class="btn btn-soft-danger" id="remove-actions"><i
                                     class="ri-delete-bin-2-line"></i></button>
                         </div>
@@ -54,84 +48,12 @@
         <!--end col-->
     </div>
 
-    <!-- View Modal -->
-    @component('components.events.edit-form', ['sections' => $sections])
-        <!-- Any other slots or content you want to pass -->
-    @endcomponent
-
-    <!-- Create Modal -->
-    @component('components.new_events_modal')
-        @slot('route')
-            {{ route('events.store') }}
-        @endslot
-    @endcomponent
 @endsection
 @section('script')
-    <script src="{{ URL::asset('build/libs/filepond/filepond.min.js') }}"></script>
-    <script src="{{ URL::asset('build/libs/filepond-plugin-image-preview/filepond-plugin-image-preview.min.js') }}">
-    </script>
-    <script
-        src="{{ URL::asset('build/libs/filepond-plugin-file-validate-size/filepond-plugin-file-validate-size.min.js') }}">
-    </script>
-    <script
-        src="{{ URL::asset('build/libs/filepond-plugin-image-exif-orientation/filepond-plugin-image-exif-orientation.min.js') }}">
-    </script>
-    <script src="{{ URL::asset('build/libs/filepond-plugin-file-encode/filepond-plugin-file-encode.min.js') }}"></script>
-    <script src="{{ URL::asset('build/js/pages/form-file-upload.init.js') }}"></script>
     <script src="{{ URL::asset('build/js/app.js') }}"></script>
 
     <script>
         $(document).ready(function() {
-            var editEvent = new bootstrap.Modal(document.getElementById('event-modal'), {
-                keyboard: false
-            });
-
-            var snowEditorData = {};
-
-            snowEditorData.theme = 'snow',
-                snowEditorData.modules = {
-                    'toolbar': [
-                        [{
-                            'font': []
-                        }, {
-                            'size': []
-                        }],
-                        ['bold', 'italic', 'underline', 'strike'],
-                        [{
-                            'color': []
-                        }, {
-                            'background': []
-                        }],
-                        [{
-                            'script': 'super'
-                        }, {
-                            'script': 'sub'
-                        }],
-                        [{
-                            'header': [false, 1, 2, 3, 4, 5, 6]
-                        }, 'blockquote', 'code-block'],
-                        [{
-                            'list': 'ordered'
-                        }, {
-                            'list': 'bullet'
-                        }, {
-                            'indent': '-1'
-                        }, {
-                            'indent': '+1'
-                        }],
-                        ['direction', {
-                            'align': []
-                        }],
-                        ['link', 'image', 'video'],
-                        ['clean']
-                    ]
-                }
-
-
-            var quill = new Quill('#edit_event_description', snowEditorData);
-
-            quill.on('text-change', (delta, oldDelta, source) => {});
-
             // make sure that the table is loaded correctly
             $('#events_datatable').on('draw.dt', function() {
 
@@ -164,88 +86,6 @@
                         }
                     });
                 });
-
-                $('.edit-btn').click(function() {
-                    editEvent.show();
-                    var id = $(this).attr('id');
-
-                    $.ajax({
-                        url: `/events/show/${id}`,
-                        method: "GET",
-                        success: function(response) {
-                            displayEventValues(response.event);
-
-                            var editorContent = quill.root;
-                            editorContent.innerHTML = document.getElementById(
-                                'event-description-field').value;
-                        }
-                    })
-                })
-
-                function displayEventValues(event) {
-                    document.getElementById("event-id-field").value = event.id;
-                    document.getElementById("title-field").value = event.title;
-                    document.getElementById("event-type-field").value = event.type;
-                    document.getElementById("event-reg-fee").value = event.reg_fee;
-                    document.getElementById("event-location-field").value = event.location;
-                    document.getElementById("event-latitude-field").value = event.latitude;
-                    document.getElementById("event-longitude-field").value = event.longitude;
-                    document.getElementById("event-description-field").value = event.description;
-                    document.getElementById("is-open-for-non-community-checkbox").checked = !!event
-                        .is_open_for_non_community;
-                    document.getElementById("is-enable-event-registration-checkbox").checked = !!event
-                        .is_enable_event_registration;
-
-                    updatePublicLink(event.id, event.is_open_for_non_community);
-
-                    // let selectField = document.getElementById("event-section-field");
-                    $('#event-section-field').val(event.section_ids).trigger('change');
-
-
-                    var st_date = event.start_date;
-                    var ed_date = event.end_date;
-
-                    var date_r = function formatDate(date) {
-                        var d = new Date(date),
-                            month = '' + (d.getMonth() + 1),
-                            day = '' + d.getDate(),
-                            year = d.getFullYear();
-                        if (month.length < 2)
-                            month = '0' + month;
-                        if (day.length < 2)
-                            day = '0' + day;
-                        return [year, month, day].join('-');
-                    };
-
-                    var updateDay = null;
-
-                    if (ed_date != null) {
-                        var endUpdateDay = new Date(ed_date);
-                        updateDay = endUpdateDay.setDate(endUpdateDay.getDate());
-                    }
-
-                    var er_date = ed_date == null ? (date_r(st_date)) : (date_r(st_date)) + ' to ' + (
-                        date_r(updateDay));
-
-                    flatpickr(document.getElementById('event-date-field'), {
-                        defaultDate: er_date,
-                        altInput: true,
-                        altFormat: "j F Y",
-                        dateFormat: "Y-m-d",
-                        mode: ed_date !== null ? "range" : "range",
-                        onChange: function(selectedDates, dateStr, instance) {
-                            var date_range = dateStr;
-                        },
-                    });
-
-                    flatpickr("#event-time-field", {
-                        defaultDate: event.time, // Set default value
-                        noCalendar: true,
-                        enableTime: true,
-                        dateFormat: "H:i",
-                        time_24hr: false
-                    });
-                }
 
             });
 
@@ -329,56 +169,9 @@
                     ],
                 });
 
-                $('#addEventModal').on('hidden.bs.modal', function() {
-                    if ($(this).attr('data-id') == 1) {
-                        table.destroy();
-
-                        initializeTables();
-
-                        $(this).attr('data-id', 0);
-                    }
-                });
             }
 
             initializeTables();
         })
-    </script>
-
-    {{-- Google Location Places Search Javascript --}}
-    <script
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDF42hfO7Dj8XFLrJY_SSF1bBM2Dj5XLQQ&libraries=places&callback=initialize"
-        async></script>
-    <script>
-        function initialize() {
-            const activeModal = document.querySelector('.modal.show'); // Detect the currently active modal
-            if (activeModal) {
-                const isAddEventModal = activeModal.id === 'addEventModal';
-                const eventLocationInput = document.getElementById(isAddEventModal ? 'event_location' :
-                    'event-location-field');
-                const latitudeInput = document.getElementById(isAddEventModal ? 'latitude' : 'event-latitude-field');
-                const longitudeInput = document.getElementById(isAddEventModal ? 'longitude' : 'event-longitude-field');
-
-                if (!eventLocationInput) {
-                    console.error('Event location input not found.');
-                    return;
-                }
-
-                const searchBox = new google.maps.places.SearchBox(eventLocationInput);
-                searchBox.addListener('places_changed', () => {
-                    const place = searchBox.getPlaces()[0];
-                    if (place) {
-                        latitudeInput.value = place.geometry.location.lat();
-                        longitudeInput.value = place.geometry.location.lng();
-                    }
-                });
-
-                eventLocationInput.addEventListener('keydown', function(event) {
-                    if (event.key === 'Enter') event.preventDefault();
-                });
-            }
-        }
-
-        // Trigger initialization when modals are shown
-        $('#addEventModal, #event-modal').on('shown.bs.modal', initialize);
     </script>
 @endsection

@@ -51,7 +51,7 @@ class EventsController extends Controller
                 ->addColumn('actions', function ($event) {
                     $actions = "<div class='hstack gap-2'>
                     <a href='" . route('events.registrations.index', ['event' => $event->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Registration List'><i class='ri-file-list-3-line align-bottom'></i></a>
-                    <button type='button' class='btn btn-soft-success btn-sm edit-btn' id='" . $event->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='View'><i class='ri-pencil-fill align-bottom'></i></button>
+                    <a href='" . route('events.edit', ['event' => $event->id]) . "' class='btn btn-soft-success btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit'><i class='ri-pencil-fill align-bottom'></i></a>
                     <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $event->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
                 </div>";
 
@@ -97,7 +97,12 @@ class EventsController extends Controller
      */
     public function create()
     {
+        abort_if(! auth()->user()->hasRole('super_admin'), 403);
 
+        $endPoint = 'Create Event';
+        $sections = Section::all();
+
+        return view('pages.events.create', compact('endPoint', 'sections'));
     }
 
     /**
@@ -178,7 +183,13 @@ class EventsController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        abort_if(! auth()->user()->hasRole('super_admin'), 403);
+
+        $event = Event::findOrFail($id);
+        $endPoint = 'Edit Event';
+        $sections = Section::all();
+
+        return view('pages.events.edit', compact('event', 'endPoint', 'sections'));
     }
 
     /**
@@ -186,29 +197,57 @@ class EventsController extends Controller
      */
     public function update(UpdateRequest $request, string $id)
     {
-        $data = $request->except('_token', '_method', 'eventid');
-        $event = Event::findOrFail($id);
+        try {
+            DB::beginTransaction();
 
-        $start_date = $request->event_date;
-        $end_date = $request->event_date;
+            $data = $request->validated();
+            $event = Event::findOrFail($id);
 
-        if (strpos($request->event_date, 'to') !== false) {
-            $dates = explode(' to ', $request->event_date);
-            $start_date = $dates[0] ?? '';
-            $end_date = $dates[1] ?? '';
+            $start_date = $request->event_date;
+            $end_date = $request->event_date;
+
+            if (strpos($request->event_date, 'to') !== false) {
+                $dates = explode(' to ', $request->event_date);
+                $start_date = $dates[0] ?? '';
+                $end_date = $dates[1] ?? '';
+            }
+
+            $filename = $event->poster;
+            $file = null;
+
+            if ($request->hasFile('poster')) {
+                $file = $request->file('poster');
+                $filename = time() . '_' . $file->getClientOriginalName();
+
+                if ($event->poster) {
+                    @unlink(public_path('uploads/events/' . $event->poster));
+                }
+            }
+
+            $event->update(array_merge($data, [
+                'section_ids' => $request->section_ids,
+                'description' => $request->input('description'),
+                'poster' => $filename,
+                'start_date' => $start_date,
+                'end_date' => $end_date,
+                'is_open_for_non_community' => $request->has('is_open_for_non_community'),
+                'is_enable_event_registration' => $request->has('is_enable_event_registration'),
+            ]));
+
+            if ($file) {
+                $file->move(public_path('uploads/events'), $filename);
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'status' => TRUE,
+                'message' => "Event Successfully Updated."
+            ]);
+        } catch (Exception $exception) {
+            DB::rollBack();
+            return $this->exceptionHandler->__handler($request, $exception);
         }
-
-        $event->update(array_merge($data, [
-            'section_ids' => $request->has('section_ids') ? $request->section_ids : null,
-            'description' => $request->input('description'),
-            'start_date' => $start_date,
-            'end_date' => $end_date,
-        ]));
-
-        return response()->json([
-            'status' => TRUE,
-            'message' => "Event Successfully Updated."
-        ]);
 
     }
 
