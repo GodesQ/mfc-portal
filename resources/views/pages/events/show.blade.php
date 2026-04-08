@@ -1,56 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.public.public-layout')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $event->title }} | MFC Events</title>
-    <meta name="description" content="{{ strip_tags(Str::limit($event->description, 160)) }}">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ URL::asset('build/images/favicon.ico') }}">
-    @include('layouts.head-css')
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+@push('head-styles')
     <style>
-        /* ─── MFC Theme Tokens ─────────────────────────────── */
-        :root {
-            --navy: #1E2D4E;
-            --navy-light: #2a3f6d;
-            --gold: #F5C518;
-            --gold-light: #fdd835;
-            --blue: #3B5EA6;
-            --blue-light: #7AA3CC;
-            --bg: #F7F8FC;
-            --surface: #FFFFFF;
-            --border: #E8ECF4;
-            --text-body: #4a5568;
-            --text-muted: #8a96a8;
-            --radius-sm: 6px;
-            --radius-md: 12px;
-            --radius-lg: 20px;
-            --shadow-sm: 0 1px 3px rgba(30, 45, 78, .08);
-            --shadow-md: 0 4px 20px rgba(30, 45, 78, .10);
-            --shadow-lg: 0 8px 40px rgba(30, 45, 78, .14);
-        }
-
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg);
-            color: var(--navy);
-            min-height: 100vh;
-        }
-
         /* ─── Navbar ───────────────────────────────────────── */
         .mfc-nav {
             position: sticky;
@@ -163,7 +114,8 @@
         }
 
         .btn-register:hover {
-            background: var(--gold-light);
+            background: var(--gold-dark);
+            color: #fff;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(245, 197, 24, .40);
         }
@@ -392,7 +344,7 @@
 
         /* ─── Fee highlight ────────────────────────────────── */
         .fee-highlight {
-            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+            background: linear-gradient(135deg, var(--navy) 0%, var(--navy-soft) 100%);
             border-radius: var(--radius-md);
             padding: 18px 20px;
             display: flex;
@@ -517,10 +469,9 @@
             border-top: 3px solid var(--gold);
         }
     </style>
-</head>
+@endpush
 
-<body>
-
+@section('content')
     <!-- ── Navbar ──────────────────────────────────────────── -->
     <nav class="mfc-nav">
         <a href="#" class="mfc-nav__logo">
@@ -572,8 +523,8 @@
 
                 <!-- Body -->
                 <div class="event-body">
-                    <p class="section-label">About this event</p>
                     <div class="event-description">
+                        <p class="section-label">About this event</p>
                         {!! $event->description !!}
                     </div>
 
@@ -765,6 +716,4 @@
             }
         }
     </script>
-</body>
-
-</html>
+@endsection

@@ -1,48 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.public.public-layout')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $event->title }} Registration | MFC Events</title>
-    <link rel="shortcut icon" href="{{ URL::asset('build/images/favicon.ico') }}">
-    @include('layouts.head-css')
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+@push('head-styles')
     <style>
-        :root {
-            --navy: #1e2d4e;
-            --navy-soft: #31456f;
-            --gold: #f5c518;
-            --gold-soft: #ffe389;
-            --sky: #dce7fb;
-            --surface: #ffffff;
-            --canvas: #f5f7fc;
-            --border: #dce3f0;
-            --text: #21324f;
-            --muted: #6d7b95;
-            --success: #1d7a4d;
-            --radius-lg: 24px;
-            --radius-md: 18px;
-            --radius-sm: 12px;
-            --shadow: 0 20px 60px rgba(30, 45, 78, 0.12);
+        a {
+            color: inherit;
         }
-
-        * { box-sizing: border-box; }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: 'Inter', sans-serif;
-            color: var(--text);
-            background:
-                radial-gradient(circle at top left, rgba(245, 197, 24, 0.2), transparent 28%),
-                linear-gradient(180deg, #eef3fb 0%, var(--canvas) 45%, #f8fafd 100%);
-        }
-
-        a { color: inherit; }
 
         .page-shell {
             max-width: 1100px;
@@ -297,9 +259,9 @@
             }
         }
     </style>
-</head>
+@endpush
 
-<body>
+@section('content')
     <div class="page-shell">
         <div class="topbar">
             <a href="{{ route('events.show', ['identifier' => $event->title]) }}" class="back-link">
@@ -317,14 +279,16 @@
 
                 <h1>Choose how you want to continue for {{ $event->title }}.</h1>
                 <p class="hero-copy">
-                    Members can sign in and use the regular event registration form. Guests can continue without creating an account and will complete registration on the public form.
+                    Members can sign in and use the regular event registration form. Guests can continue without
+                    creating an account and will complete registration on the public form.
                 </p>
 
                 <div class="choice-grid">
                     <article class="choice-card">
                         <h2 class="choice-title">Register as Member</h2>
                         <p class="choice-copy">
-                            Continue with your member account so your registration stays linked to your existing profile and MFC ID.
+                            Continue with your member account so your registration stays linked to your existing profile
+                            and MFC ID.
                         </p>
                         <ul class="choice-points">
                             <li>Sign in first if you are not logged in yet.</li>
@@ -340,7 +304,8 @@
                     <article class="choice-card">
                         <h2 class="choice-title">Register as Guest</h2>
                         <p class="choice-copy">
-                            Continue without logging in. Your registration will use the public guest form for payer and attendee details.
+                            Continue without logging in. Your registration will use the public guest form for payer and
+                            attendee details.
                         </p>
                         <ul class="choice-points">
                             <li>No member account is required.</li>
@@ -357,7 +322,8 @@
 
             <aside class="summary-card">
                 @if ($event->poster)
-                    <img src="{{ URL::asset('uploads/events/' . $event->poster) }}" alt="{{ $event->title }}" class="poster">
+                    <img src="{{ URL::asset('uploads/events/' . $event->poster) }}" alt="{{ $event->title }}"
+                        class="poster">
                 @else
                     <div class="poster"></div>
                 @endif
@@ -404,11 +370,10 @@
                 </div>
 
                 <p class="phase-note">
-                    Members can sign in for the dashboard-backed flow, while guests can now complete the public registration form and continue to payment.
+                    Members can sign in for the dashboard-backed flow, while guests can now complete the public
+                    registration form and continue to payment.
                 </p>
             </aside>
         </section>
     </div>
-</body>
-
-</html>
+@endsection
