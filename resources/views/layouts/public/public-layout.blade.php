@@ -44,6 +44,46 @@
             color: var(--navy);
             min-height: 100vh;
         }
+
+        a {
+            color: inherit;
+        }
+
+        .page-shell {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 28px 20px 56px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 24px;
+        }
+
+        .topbar a {
+            text-decoration: none;
+            font-weight: 700;
+            color: var(--navy);
+        }
+
+        .brand-link,
+        .back-link {
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .brand-link {
+            color: var(--navy);
+            letter-spacing: -0.02em;
+        }
+
+        .back-link {
+            color: var(--navy-soft);
+            font-size: 14px;
+        }
     </style>
     @stack('head-styles')
 </head>

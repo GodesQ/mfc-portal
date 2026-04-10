@@ -203,6 +203,11 @@
                                                 </td>
                                             </tr>
                                             <tr>
+                                                <td>Early Bird Discount</td>
+                                                <td class="text-end text-success">- ₱
+                                                    {{ number_format($transaction->early_bird_discount, 2) }}</td>
+                                            </tr>
+                                            <tr>
                                                 <td>Convenience Fee</td>
                                                 <td class="text-end">₱
                                                     {{ number_format($transaction->convenience_fee, 2) }}</td>

@@ -19,6 +19,9 @@
             <input type="hidden" name="event_id" id="event-id-field" value="{{ $event->id }}">
             <input type="hidden" name="event_registration_fee" id="event-registration-fee-field"
                 value="{{ $event->reg_fee }}">
+            <input type="hidden" id="event-early-bird-discount-field" value="{{ $event->early_bird_discount }}">
+            <input type="hidden" id="event-early-bird-enabled-field"
+                value="{{ $event->is_early_bird_enabled ? 1 : 0 }}">
             <div class="row mb-3">
                 <div class="col-xl-8">
                     <div class="card">
@@ -102,6 +105,12 @@
                                                 <td>Sub Total :</td>
                                                 <td class="text-end" id="registration-subtotal">₱
                                                     {{ number_format($event->reg_fee, 2) }}</td>
+                                            </tr>
+                                            <tr id="registration-early-bird-row"
+                                                @if (! $event->is_early_bird_enabled || (float) $event->reg_fee <= 0) class="d-none" @endif>
+                                                <td>Early Bird Discount :</td>
+                                                <td class="text-end text-success" id="registration-early-bird-discount">
+                                                    ₱ 0.00</td>
                                             </tr>
                                             <tr>
                                                 <td>Donation : </td>
@@ -359,9 +368,13 @@
         function computeTotalAmount() {
             let user_ids = document.querySelectorAll(".user-id");
             let eventRegistrationFee = document.querySelector('#event-registration-fee-field').value;
+            let earlyBirdDiscount = parseFloat(document.querySelector('#event-early-bird-discount-field').value || '0') || 0;
+            let isEarlyBirdEnabled = document.querySelector('#event-early-bird-enabled-field').value === '1';
             let donation_amount = document.getElementById("donation-field").value ?? 0;
             let convenience_fee = 10.00;
-            
+            let subtotal = parseFloat(eventRegistrationFee) * user_ids.length;
+            let appliedEarlyBirdDiscount = isEarlyBirdEnabled && parseFloat(eventRegistrationFee) > 0 && user_ids.length > 0 ?
+                Math.min(earlyBirdDiscount, parseFloat(eventRegistrationFee)) : 0;
 
             let total_convenience_fee = 0;
 
@@ -369,14 +382,11 @@
                 total_convenience_fee += convenience_fee;
             }
 
-            let totalAmount = (0 + total_convenience_fee) + parseFloat(donation_amount);
-            
-            if (user_ids.length > 0) {
-                for (let i = 0; i < user_ids.length; i++) {
-                    totalAmount += parseFloat(eventRegistrationFee);
-                }
-            }
+            let totalAmount = subtotal - appliedEarlyBirdDiscount + total_convenience_fee + parseFloat(donation_amount);
 
+            $('#registration-subtotal').html(`₱ ${subtotal.toFixed(2)}`);
+            $('#registration-early-bird-discount').html(`₱ ${appliedEarlyBirdDiscount.toFixed(2)}`);
+            $('#registration-early-bird-row').toggleClass('d-none', appliedEarlyBirdDiscount <= 0);
             $('#registration-convenience-fee').html(`₱ ${total_convenience_fee.toFixed(2)}`);
             $('#registration-pax').html(`${user_ids.length} x`);
             $('#registration-total').html(`₱ ${totalAmount.toFixed(2)}`);
@@ -391,5 +401,7 @@
 
             computeTotalAmount();
         });
+
+        computeTotalAmount();
     </script>
 @endsection

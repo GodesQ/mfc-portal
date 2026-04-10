@@ -1,72 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.public.public-layout')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $event->title }} Guest Registration | MFC Events</title>
-    <link rel="shortcut icon" href="{{ URL::asset('build/images/favicon.ico') }}">
-    @include('layouts.head-css')
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+@push('head-styles')
     <style>
-        :root {
-            --navy: #1e2d4e;
-            --navy-soft: #31456f;
-            --gold: #f5c518;
-            --gold-soft: #ffe28b;
-            --surface: #ffffff;
-            --canvas: #f4f7fc;
-            --border: #dbe3f0;
-            --text: #20314b;
-            --muted: #6d7b95;
-            --danger: #c53a4d;
-            --shadow: 0 20px 60px rgba(30, 45, 78, 0.12);
-            --radius-lg: 24px;
-            --radius-md: 18px;
-            --radius-sm: 12px;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: 'Inter', sans-serif;
-            color: var(--text);
-            background:
-                radial-gradient(circle at top right, rgba(245, 197, 24, 0.18), transparent 24%),
-                linear-gradient(180deg, #eef3fb 0%, var(--canvas) 44%, #f7f9fd 100%);
-        }
-
-        a {
-            color: inherit;
-        }
-
-        .page-shell {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 28px 20px 56px;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 24px;
-        }
-
-        .topbar a {
-            text-decoration: none;
-            font-weight: 700;
-            color: var(--navy);
-        }
-
         .hero {
             display: grid;
             grid-template-columns: minmax(0, 1.45fr) minmax(320px, 0.95fr);
@@ -351,9 +286,9 @@
             }
         }
     </style>
-</head>
+@endpush
 
-<body>
+@section('content')
     @php
         $tshirtSizes = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL'];
         $areaOptions = [
@@ -435,8 +370,7 @@
 
                             <div class="field">
                                 <label for="payer_email">Email</label>
-                                <input id="payer_email" name="payer_email" type="email"
-                                    value="{{ old('payer_email') }}">
+                                <input id="payer_email" name="payer_email" type="email" value="{{ old('payer_email') }}">
                                 @error('payer_email')
                                     <span class="error">{{ $message }}</span>
                                 @enderror
@@ -692,6 +626,10 @@
                             <strong>Registration Fee</strong>
                             <span id="registration-fee">Php {{ number_format($event->reg_fee, 2) }}</span>
                         </div>
+                        <div class="summary-row @if (!$event->is_early_bird_enabled || (float) $event->reg_fee <= 0) d-none @endif" id="early-bird-row">
+                            <strong>Early Bird Discount</strong>
+                            <span id="early-bird-discount">Php 0.00</span>
+                        </div>
                         <div class="summary-row">
                             <strong>Convenience Fee</strong>
                             <span id="convenience-fee">Php 10.00</span>
@@ -707,43 +645,6 @@
                             {{ number_format($event->reg_fee + 10 + (float) old('donation', 0), 2) }}</span>
                     </div>
                 </section>
-
-                {{-- <section class="card event-card">
-                    @if ($event->poster)
-                        <img src="{{ URL::asset('uploads/events/' . $event->poster) }}" alt="{{ $event->title }}"
-                            class="poster">
-                    @else
-                        <div class="poster"></div>
-                    @endif
-
-                    <div class="fee-chip">Registration Fee: Php {{ number_format($event->reg_fee, 2) }}</div>
-                    <h2 class="event-title">{{ $event->title }}</h2>
-
-                    <div class="event-meta">
-                        <div class="meta-row">
-                            <strong>Date</strong>
-                            <span>
-                                {{ Carbon::parse($event->start_date)->format('F d, Y') }}
-                                @if ($event->end_date && $event->end_date !== $event->start_date)
-                                    to {{ Carbon::parse($event->end_date)->format('F d, Y') }}
-                                @endif
-                            </span>
-                        </div>
-                        <div class="meta-row">
-                            <strong>Time</strong>
-                            <span>{{ Carbon::parse($event->time)->format('h:i A') }}</span>
-                        </div>
-                        <div class="meta-row">
-                            <strong>Location</strong>
-                            <span>{{ $event->location }}</span>
-                        </div>
-                    </div>
-                    <hr>
-                    <div class="event-description">
-                        <h3>Description</h3>
-                        {!! $event->description !!}
-                    </div>
-                </section> --}}
             </aside>
         </div>
     </div>
@@ -755,9 +656,13 @@
             const totalAmount = document.getElementById('total-amount');
             const registrationFeeLabel = document.getElementById('registration-fee');
             const convenienceFeeLabel = document.getElementById('convenience-fee');
+            const earlyBirdDiscountLabel = document.getElementById('early-bird-discount');
+            const earlyBirdRow = document.getElementById('early-bird-row');
             const attendeesList = document.getElementById('attendees-list');
             const addAttendeeButton = document.getElementById('add-attendee-btn');
             const registrationFee = {{ json_encode((float) $event->reg_fee) }};
+            const earlyBirdDiscount = {{ json_encode((float) $event->early_bird_discount) }};
+            const isEarlyBirdEnabled = {{ $event->is_early_bird_enabled ? 'true' : 'false' }};
             const convenienceFee = 10;
             const tshirtSizes = @json($tshirtSizes);
             const sections = @json($sections->pluck('name')->values());
@@ -857,10 +762,15 @@
             const updateSummary = function() {
                 const donation = Math.max(parseFloat(donationInput.value || '0') || 0, 0);
                 const count = attendeeCount() + 1;
+                const appliedEarlyBirdDiscount = isEarlyBirdEnabled && registrationFee > 0 ?
+                    Math.min(earlyBirdDiscount, registrationFee) : 0;
                 donationSummary.textContent = formatPhp(donation);
                 registrationFeeLabel.textContent = formatPhp(registrationFee * count);
+                earlyBirdDiscountLabel.textContent = formatPhp(appliedEarlyBirdDiscount);
+                earlyBirdRow.classList.toggle('d-none', appliedEarlyBirdDiscount <= 0);
                 convenienceFeeLabel.textContent = formatPhp(convenienceFee * count);
-                totalAmount.textContent = formatPhp((registrationFee * count) + (convenienceFee * count) +
+                totalAmount.textContent = formatPhp((registrationFee * count) - appliedEarlyBirdDiscount + (
+                        convenienceFee * count) +
                     donation);
             };
 
@@ -885,6 +795,4 @@
             updateSummary();
         });
     </script>
-</body>
-
-</html>
+@endsection

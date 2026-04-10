@@ -25,13 +25,29 @@ class UsersController extends Controller
     $breadcrumb = "Users";
     // Define section mappings
     $sectionMap = [
-      'kids' => ['section_id' => 1, 'btn_color' => 'btn-danger'],
-      'youth' => ['section_id' => 2, 'btn_color' => 'btn-primary'],
-      'singles' => ['section_id' => 3, 'btn_color' => 'btn-success'],
-      'handmaids' => ['section_id' => 4, 'btn_color' => 'btn-red'],
-      'servants' => ['section_id' => 5, 'btn_color' => 'btn-warning'],
-      'couples' => ['section_id' => 6, 'btn_color' => 'btn-info'],
+      'kids' => ['section_id' => 1, 'btn_color' => 'btn-danger', 'logo' => 'kids-logo.png'],
+      'youth' => ['section_id' => 2, 'btn_color' => 'btn-primary', 'logo' => 'youth-logo.png'],
+      'singles' => ['section_id' => 3, 'btn_color' => 'btn-success', 'logo' => 'singles-logo.png'],
+      'handmaids' => ['section_id' => 4, 'btn_color' => 'btn-red', 'logo' => 'handmaid-logo.png'],
+      'servants' => ['section_id' => 5, 'btn_color' => 'btn-warning', 'logo' => 'servant-logo.png'],
+      'couples' => ['section_id' => 6, 'btn_color' => 'btn-info', 'logo' => 'couples-logo.png'],
     ];
+
+    $sectionAssets = collect($sectionMap)->mapWithKeys(function ($config, $slug) {
+      return [$config['section_id'] => [
+        'slug' => $slug,
+        'logo' => $config['logo'],
+        'color' => match ($slug) {
+          'kids' => '#fa6b02',
+          'youth' => '#0066ab',
+          'singles' => '#1c8265',
+          'servants' => '#ffad09',
+          'handmaids' => '#ee2c2e',
+          'couples' => '#2a81d9',
+          default => '#7852a9',
+        },
+      ]];
+    })->all();
 
     // Set default section values
     $btn_color = 'btn-info';
@@ -43,12 +59,34 @@ class UsersController extends Controller
     }
 
     // Query the users based on the section
-    $users = $section_id ? User::where('section_id', $section_id)->get() : User::all();
+    $users = $section_id
+      ? User::with('section')->where('section_id', $section_id)->get()
+      : User::with('section')->get();
 
     if ($request->ajax()) {
       return DataTables::of($users)
-        ->editColumn('section', function ($row) {
-          return $row->section->name ?? 'N/A';
+        ->editColumn('section', function ($row) use ($sectionAssets) {
+          if (!$row->section) {
+            return 'N/A';
+          }
+
+          $sectionAsset = $sectionAssets[$row->section_id] ?? null;
+          $sectionName = e($row->section->name);
+
+          if (!$sectionAsset) {
+            return $sectionName;
+          }
+
+          $logoPath = asset('build/images/' . $sectionAsset['logo']);
+
+          $badgeColor = $sectionAsset['color'] ?? '#7852a9';
+
+          return "
+            <div class='badge d-inline-flex align-items-center gap-1' style='background: {$badgeColor}'>
+              <img src='{$logoPath}' alt='{$sectionName} logo' height='16'>
+              <span class='text-capitalize'>{$sectionName}</span>
+            </div>
+          ";
         })
         ->addColumn('actions', function ($user) {
           $actions = "<div class='hstack gap-2'>
@@ -61,7 +99,7 @@ class UsersController extends Controller
         ->addColumn('name', function ($user) {
           return $user->first_name . ' ' . $user->last_name;
         })
-        ->rawColumns(['actions', 'name'])
+        ->rawColumns(['section', 'actions', 'name'])
         ->make(true);
     }
 

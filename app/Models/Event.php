@@ -21,6 +21,8 @@ class Event extends Model
         'latitude',
         'longitude',
         'reg_fee',
+        'is_early_bird_enabled',
+        'early_bird_discount',
         'description',
         'area',
         'options',
@@ -39,6 +41,8 @@ class Event extends Model
         'section_ids' => 'array',
         'is_open_for_non_community' => 'boolean',
         'is_enable_event_registration' => 'boolean',
+        'is_early_bird_enabled' => 'boolean',
+        'early_bird_discount' => 'decimal:2',
     ];
 
     // public function section() {

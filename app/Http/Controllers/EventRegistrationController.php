@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Enum\PaymentType;
 use App\Http\Requests\EventRegistration\GuestStoreRequest;
 use App\Http\Requests\EventRegistration\StoreRequest;
+use App\Mail\EarlyBirdDiscountMail;
 use App\Models\Event;
 use App\Models\EventAttendance;
 use App\Models\EventRegistration;
@@ -18,6 +19,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Str as SupportStr;
 use Str;
@@ -146,6 +148,8 @@ class EventRegistrationController extends Controller
 
     public function saveGuestRegistration(GuestStoreRequest $request, Event $event)
     {
+        $earlyBirdNotification = null;
+
         try {
             DB::beginTransaction();
 
@@ -167,8 +171,9 @@ class EventRegistrationController extends Controller
             $donation = (float) $request->input('donation', 0);
             $convenienceFee = 10.00;
             $totalConvenienceFee = $attendees->count() * $convenienceFee;
-            $registrationSubtotal = $attendees->count() * (float) $event->reg_fee;
-            $totalAmount = $registrationSubtotal + $donation + $totalConvenienceFee;
+            $pricing = $this->calculateRegistrationPricing($event, $attendees->count(), 0);
+            $registrationSubtotal = $pricing['sub_amount'];
+            $totalAmount = $pricing['total_amount'] + $donation + $totalConvenienceFee;
 
             $this->checkExistingGuestRegistrationRecord($event, $attendees->all());
 
@@ -183,6 +188,7 @@ class EventRegistrationController extends Controller
                 'donation' => $donation,
                 'convenience_fee' => $totalConvenienceFee,
                 'sub_amount' => $registrationSubtotal,
+                'early_bird_discount' => $pricing['early_bird_discount'],
                 'total_amount' => $totalAmount,
                 'payment_mode' => 'N/A',
                 'payment_type' => PaymentType::EVENT_REGISTRATION,
@@ -196,7 +202,8 @@ class EventRegistrationController extends Controller
                     'event_id' => $event->id,
                     'user_id' => null,
                     'mfc_id_number' => null,
-                    'amount' => $event->reg_fee,
+                    'amount' => $pricing['amounts'][$index],
+                    'early_bird_discount' => $pricing['discounts'][$index],
                     'registered_by' => null,
                     'registered_at' => Carbon::now(),
                 ]);
@@ -215,6 +222,13 @@ class EventRegistrationController extends Controller
                 ]);
             }
 
+            $earlyBirdNotification = $this->buildEarlyBirdNotificationPayload(
+                $event,
+                $pricing['early_bird_discount'],
+                $request->payer_email,
+                $request->payer_first_name
+            );
+
             $paymentRequestModel = $this->paymayaService->createRequestModel($transaction, [
                 'firstname' => $request->payer_first_name,
                 'lastname' => $request->payer_last_name,
@@ -229,6 +243,8 @@ class EventRegistrationController extends Controller
 
             DB::commit();
 
+            $this->sendEarlyBirdNotification($earlyBirdNotification);
+
             return redirect($paymentResponse['redirectUrl']);
         } catch (Exception $exception) {
             DB::rollBack();
@@ -241,11 +257,15 @@ class EventRegistrationController extends Controller
 
     public function save_registration(StoreRequest $request)
     {
+        $earlyBirdNotification = null;
+
         try {
             DB::beginTransaction();
             $event = Event::where('id', $request->event_id)->first();
             $users_count = count($request->users);
             $auth_user = Auth::user();
+            $selectedUsers = User::whereIn('id', $request->users)->get()->keyBy('id');
+            $primaryUserIndex = $this->determinePrimaryMemberIndex($request->users, $auth_user);
 
             $convenience_fee = 10.00;
             $total_convenience_fee = 0;
@@ -256,12 +276,8 @@ class EventRegistrationController extends Controller
 
             $this->checkExistingRegistrationRecord($request);
 
-            // Add the request donation in total amount
-            $total_amount = (0 + $total_convenience_fee) + $request->donation;
-
-            for ($i = 0; $i < $users_count; $i++) {
-                $total_amount += $event->reg_fee;
-            }
+            $pricing = $this->calculateRegistrationPricing($event, $users_count, $primaryUserIndex);
+            $total_amount = $pricing['total_amount'] + $total_convenience_fee + (float) $request->donation;
 
             $transaction_code = generateTransactionCode();
             $reference_code = generateReferenceCode();
@@ -276,7 +292,8 @@ class EventRegistrationController extends Controller
                 'payer_contact_number' => $auth_user->contact_number,
                 'donation' => $request->donation,
                 'convenience_fee' => $total_convenience_fee,
-                'sub_amount' => $event->reg_fee,
+                'sub_amount' => $pricing['sub_amount'],
+                'early_bird_discount' => $pricing['early_bird_discount'],
                 'total_amount' => $total_amount,
                 'payment_mode' => "N/A",
                 'payment_type' => PaymentType::EVENT_REGISTRATION,
@@ -284,9 +301,10 @@ class EventRegistrationController extends Controller
             ]);
 
             foreach ($request->users as $index => $user_id) {
-                $user = User::where('id', $user_id)->first();
+                $user = $selectedUsers->get($user_id);
 
                 $registration_code = "REG" . date("y-m") . "-" . Str::upper(Str::random(7));
+                $isPrimaryUser = $index === $primaryUserIndex;
 
                 $event_registration = EventRegistration::create([
                     "registration_code" => $registration_code,
@@ -294,14 +312,15 @@ class EventRegistrationController extends Controller
                     'event_id' => $event->id,
                     'user_id' => $user->id,
                     'mfc_id_number' => $user->mfc_id_number,
-                    'amount' => $event->reg_fee,
+                    'amount' => $pricing['amounts'][$index],
+                    'early_bird_discount' => $pricing['discounts'][$index],
                     'registered_by' => $auth_user->id,
                     'registered_at' => Carbon::now(),
                 ]);
 
                 EventUserDetail::create([
                     'event_registration_id' => $event_registration->id,
-                    'user_type' => ($user->id === $auth_user->id || ($user->id !== $auth_user->id && $index === 0)) ? 'primary' : 'normal',
+                    'user_type' => $isPrimaryUser ? 'primary' : 'normal',
                     'first_name' => $user->first_name,
                     'last_name' => $user->last_name,
                     'email' => $user->email,
@@ -312,6 +331,14 @@ class EventRegistrationController extends Controller
                     'address' => optional($user->user_details)->address,
                 ]);
             }
+
+            $primaryUser = $selectedUsers->get($request->users[$primaryUserIndex] ?? null);
+            $earlyBirdNotification = $this->buildEarlyBirdNotificationPayload(
+                $event,
+                $pricing['early_bird_discount'],
+                $primaryUser?->email,
+                $primaryUser?->first_name
+            );
 
             $paymaya_user_details = [
                 'firstname' => $auth_user->first_name,
@@ -327,6 +354,8 @@ class EventRegistrationController extends Controller
             ]);
 
             DB::commit();
+
+            $this->sendEarlyBirdNotification($earlyBirdNotification);
 
             return redirect($payment_response['redirectUrl']);
 
@@ -433,5 +462,78 @@ class EventRegistrationController extends Controller
     private function normalizeGuestIdentityValue(?string $value): string
     {
         return SupportStr::of((string) $value)->trim()->lower()->value();
+    }
+
+    private function calculateRegistrationPricing(Event $event, int $attendeeCount, int $primaryIndex): array
+    {
+        $registrationFee = (float) $event->reg_fee;
+        $subAmount = $registrationFee * $attendeeCount;
+        $appliedDiscount = $this->resolveEarlyBirdDiscount($event);
+        $discounts = array_fill(0, $attendeeCount, 0.00);
+        $amounts = array_fill(0, $attendeeCount, $registrationFee);
+
+        if ($attendeeCount > 0 && $appliedDiscount > 0 && array_key_exists($primaryIndex, $amounts)) {
+            $discounts[$primaryIndex] = $appliedDiscount;
+            $amounts[$primaryIndex] = max($registrationFee - $appliedDiscount, 0);
+        }
+
+        return [
+            'sub_amount' => $subAmount,
+            'early_bird_discount' => $appliedDiscount,
+            'discounts' => $discounts,
+            'amounts' => $amounts,
+            'total_amount' => array_sum($amounts),
+        ];
+    }
+
+    private function resolveEarlyBirdDiscount(Event $event): float
+    {
+        if (!$event->is_early_bird_enabled) {
+            return 0.00;
+        }
+
+        $registrationFee = (float) $event->reg_fee;
+        if ($registrationFee <= 0) {
+            return 0.00;
+        }
+
+        return min((float) $event->early_bird_discount, $registrationFee);
+    }
+
+    private function determinePrimaryMemberIndex(array $userIds, User $authUser): int
+    {
+        $normalizedUserIds = array_map('intval', $userIds);
+        $authIndex = array_search($authUser->id, $normalizedUserIds, true);
+
+        return $authIndex === false ? 0 : (int) $authIndex;
+    }
+
+    private function buildEarlyBirdNotificationPayload(Event $event, float $discount, ?string $email, ?string $name): ?array
+    {
+        if ($discount <= 0 || blank($email)) {
+            return null;
+        }
+
+        return [
+            'email' => $email,
+            'name' => $name ?: 'Attendee',
+            'event_title' => $event->title,
+            'discount' => $discount,
+        ];
+    }
+
+    private function sendEarlyBirdNotification(?array $payload): void
+    {
+        if (!$payload) {
+            return;
+        }
+
+        try {
+            Mail::to($payload['email'])->send(
+                new EarlyBirdDiscountMail($payload['name'], $payload['event_title'], $payload['discount'])
+            );
+        } catch (Exception $exception) {
+            report($exception);
+        }
     }
 }

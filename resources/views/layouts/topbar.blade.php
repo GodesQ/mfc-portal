@@ -226,41 +226,45 @@
                     </div>
                 </div>
 
-                <div class="dropdown ms-sm-3 header-item topbar-user ">
-                    <button type="button" class="btn material-shadow-none" id="page-header-user-dropdown"
-                        data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="d-flex align-items-center">
-                            <img class="rounded-circle header-profile-user"
-                                src="@if (Auth::user()->avatar != '') {{ URL::asset('uploads/avatars/' . Auth::user()->avatar) }}@else{{ URL::asset('build/images/users/avatar-1.jpg') }} @endif"
-                                alt="Header Avatar">
-                            <span class="text-start ms-xl-2">
-                                <span
-                                    class="d-none d-xl-inline-block ms-1 fw-medium user-name-text text-capitalize">{{ Auth::user()->first_name . ' ' . Auth::user()->last_name }}</span>
-                                @php
-                                    $role = Spatie\Permission\Models\Role::find(auth()->user()->role_id);
-                                @endphp
-                                <span
-                                    class="d-none d-xl-block ms-1 fs-12 user-name-sub-text text-capitalize">{{ $role->name == 'super_admin' ? 'Super Admin' : $role->name }}</span>
+                @auth
+                    <div class="dropdown ms-sm-3 header-item topbar-user ">
+                        <button type="button" class="btn material-shadow-none" id="page-header-user-dropdown"
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="d-flex align-items-center">
+
+                                <img class="rounded-circle header-profile-user"
+                                    src="@if (Auth::user()->avatar != '') {{ URL::asset('uploads/avatars/' . Auth::user()->avatar) }}@else{{ URL::asset('build/images/users/avatar-1.jpg') }} @endif"
+                                    alt="Header Avatar">
+
+                                <span class="text-start ms-xl-2">
+                                    <span
+                                        class="d-none d-xl-inline-block ms-1 fw-medium user-name-text text-capitalize">{{ Auth::user()->first_name . ' ' . Auth::user()->last_name }}</span>
+                                    @php
+                                        $role = Spatie\Permission\Models\Role::find(auth()->user()->role_id);
+                                    @endphp
+                                    <span
+                                        class="d-none d-xl-block ms-1 fs-12 user-name-sub-text text-capitalize">{{ $role->name == 'super_admin' ? 'Super Admin' : $role->name }}</span>
+                                </span>
                             </span>
-                        </span>
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-end">
-                        <!-- item-->
-                        <h6 class="dropdown-header text-capitalize">Welcome {{ Auth::user()->first_name }}!</h6>
-                        <a class="dropdown-item" href="{{ route('users.profile', ['user' => Auth::user()->id]) }}"><i
-                                class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span
-                                class="align-middle">Profile</span></a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item " href="javascript:void();"
-                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
-                                class="bx bx-power-off font-size-16 align-middle me-1"></i> <span
-                                key="t-logout">@lang('translation.logout')</span></a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST"
-                            style="display: none;">
-                            @csrf
-                        </form>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <!-- item-->
+                            <h6 class="dropdown-header text-capitalize">Welcome {{ Auth::user()->first_name }}!</h6>
+                            <a class="dropdown-item" href="{{ route('users.profile', ['user' => Auth::user()->id]) }}"><i
+                                    class="mdi mdi-account-circle text-muted fs-16 align-middle me-1"></i> <span
+                                    class="align-middle">Profile</span></a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item " href="javascript:void();"
+                                onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i
+                                    class="bx bx-power-off font-size-16 align-middle me-1"></i> <span
+                                    key="t-logout">@lang('translation.logout')</span></a>
+                            <form id="logout-form" action="{{ route('logout') }}" method="POST"
+                                style="display: none;">
+                                @csrf
+                            </form>
+                        </div>
                     </div>
-                </div>
+                @endauth
             </div>
         </div>
     </div>

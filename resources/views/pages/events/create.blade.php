@@ -229,6 +229,27 @@
                                 </div>
 
                                 <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label class="form-label d-block">Early Bird Discount</label>
+                                        <div class="form-check form-switch mb-2">
+                                            <input type="checkbox" class="form-check-input"
+                                                name="is_early_bird_enabled" id="is_early_bird_enabled"
+                                                value="1">
+                                            <label for="is_early_bird_enabled" class="form-check-label">Enable Early
+                                                Bird for paid registrations</label>
+                                        </div>
+                                        <div class="form-icon">
+                                            <input type="text" oninput="validateDigit(this)" id="early_bird_discount"
+                                                class="form-control form-control-icon" name="early_bird_discount"
+                                                placeholder="0.00" disabled>
+                                            <i class="fst-normal">₱</i>
+                                        </div>
+                                        <small class="text-muted">Only the primary attendee gets this discount per
+                                            booking.</small>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
                                     <label class="form-label d-block">&nbsp;</label>
                                     <div class="d-flex flex-column flex-md-row gap-3 mt-md-2">
                                         <div class="form-check form-radio-primary">
@@ -341,12 +362,15 @@
             setUpFlatPicker(dateInput, timeInput);
             setUpQuillEditor();
             setUpFilePond();
+            syncEarlyBirdFields();
 
             $('#event-form').on('submit', function(e) {
                 e.preventDefault();
             });
 
             document.getElementById('addNewEvent').addEventListener('click', submitCreatedEvent);
+            document.getElementById('event_reg_fee').addEventListener('input', syncEarlyBirdFields);
+            document.getElementById('is_early_bird_enabled').addEventListener('change', syncEarlyBirdFields);
             initializeLocationSearch();
         });
 
@@ -459,6 +483,19 @@
                 acceptedFileTypes: ['image/*'],
                 allowMultiple: false,
             });
+        };
+
+        const syncEarlyBirdFields = () => {
+            const enableField = document.getElementById('is_early_bird_enabled');
+            const discountField = document.getElementById('early_bird_discount');
+            const registrationFee = parseFloat(document.getElementById('event_reg_fee').value || '0') || 0;
+            const shouldEnableDiscount = enableField.checked && registrationFee > 0;
+
+            discountField.disabled = !shouldEnableDiscount;
+
+            if (!shouldEnableDiscount) {
+                discountField.value = '';
+            }
         };
 
         const removeFieldsBorder = () => {

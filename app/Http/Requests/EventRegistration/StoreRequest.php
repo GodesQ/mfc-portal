@@ -24,6 +24,8 @@ class StoreRequest extends FormRequest
         return [
             'event_id' => 'required|exists:events,id',
             "users" => "required|array",
+            "users.*" => "required|exists:users,id|distinct",
+            'donation' => 'nullable|numeric|min:0',
         ];
     }
 

@@ -51,6 +51,15 @@
                                 <div class="fw-bold mb-1">Registration Fee</div>
                                 <div class="fw-normal">₱ {{ number_format($event_registration->event->reg_fee, 2) }}</div>
                             </div>
+                            <div class="my-3">
+                                <div class="fw-bold mb-1">Early Bird Discount</div>
+                                <div class="fw-normal text-success">₱
+                                    {{ number_format($event_registration->early_bird_discount, 2) }}</div>
+                            </div>
+                            <div class="my-3">
+                                <div class="fw-bold mb-1">Charged Amount</div>
+                                <div class="fw-normal">₱ {{ number_format($event_registration->amount, 2) }}</div>
+                            </div>
                         </div>
                     </div>
                 </div>

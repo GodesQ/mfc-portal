@@ -67,36 +67,29 @@
                                     <a href="{{ route('users.index', ['section' => 'all']) }}"
                                         class="nav-link {{ preg_match('/^dashboard\/directory\/all/', Request::path()) ? 'active' : '' }}">@lang('translation.all')</a>
                                 </li>
-                                <li
-                                    class="nav-item {{ preg_match('/^dashboard\/directory\/all/', Request::path()) ? 'active' : '' }}">
-                                    <a href="{{ route('users.index', ['section' => 'kids']) }}"
-                                        class="nav-link {{ preg_match('/^dashboard\/directory\/kids/', Request::path()) ? 'active' : '' }}">@lang('translation.kids')</a>
-                                </li>
-                                <li
-                                    class="nav-item {{ preg_match('/^dashboard\/directory\/youth/', Request::path()) ? 'active' : '' }}">
-                                    <a href="{{ route('users.index', ['section' => 'youth']) }}"
-                                        class="nav-link {{ preg_match('/^dashboard\/directory\/youth/', Request::path()) ? 'active' : '' }}">@lang('translation.youth')</a>
-                                </li>
-                                <li
-                                    class="nav-item {{ preg_match('/^dashboard\/directory\/singles/', Request::path()) ? 'active' : '' }}">
-                                    <a href="{{ route('users.index', ['section' => 'singles']) }}"
-                                        class="nav-link {{ preg_match('/^dashboard\/directory\/singles/', Request::path()) ? 'active' : '' }}">@lang('translation.singles')</a>
-                                </li>
-                                <li
-                                    class="nav-item {{ preg_match('/^dashboard\/directory\/servants/', Request::path()) ? 'active' : '' }}">
-                                    <a href="{{ route('users.index', ['section' => 'servants']) }}"
-                                        class="nav-link {{ preg_match('/^dashboard\/directory\/servants/', Request::path()) ? 'active' : '' }}">@lang('translation.servants')</a>
-                                </li>
-                                <li
-                                    class="nav-item {{ preg_match('/^dashboard\/directory\/handmaids/', Request::path()) ? 'active' : '' }}">
-                                    <a href="{{ route('users.index', ['section' => 'handmaids']) }}"
-                                        class="nav-link {{ preg_match('/^dashboard\/directory\/handmaids/', Request::path()) ? 'active' : '' }}">@lang('translation.handmaids')</a>
-                                </li>
-                                <li
-                                    class="nav-item {{ preg_match('/^dashboard\/directory\/couples/', Request::path()) ? 'active' : '' }}">
-                                    <a href="{{ route('users.index', ['section' => 'couples']) }}"
-                                        class="nav-link {{ preg_match('/^dashboard\/directory\/couples/', Request::path()) ? 'active' : '' }}">@lang('translation.couples')</a>
-                                </li>
+                                @php
+                                    $directorySections = [
+                                        'kids' => 'kids-logo.png',
+                                        'youth' => 'youth-logo.png',
+                                        'singles' => 'singles-logo.png',
+                                        'servants' => 'servant-logo.png',
+                                        'handmaids' => 'handmaid-logo.png',
+                                        'couples' => 'couples-logo.png',
+                                    ];
+                                @endphp
+                                @foreach ($directorySections as $section => $logo)
+                                    <li
+                                        class="nav-item {{ preg_match('/^dashboard\/directory\/' . $section . '/', Request::path()) ? 'active' : '' }}">
+                                        <a href="{{ route('users.index', ['section' => $section]) }}"
+                                            class="nav-link {{ preg_match('/^dashboard\/directory\/' . $section . '/', Request::path()) ? 'active' : '' }}">
+                                            <span class="d-inline-flex align-items-center gap-2">
+                                                <img src="{{ URL::asset('build/images/' . $logo) }}"
+                                                    alt="{{ ucfirst($section) }} logo" height="18">
+                                                <span>@lang('translation.' . $section)</span>
+                                            </span>
+                                        </a>
+                                    </li>
+                                @endforeach
                             </ul>
                         </div>
                     </li>

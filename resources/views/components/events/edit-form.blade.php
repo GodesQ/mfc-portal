@@ -151,6 +151,26 @@
                             </div>
                         </div>
                     </div>
+                    <div class="col-lg-12 border border-gray-800 rounded p-2 mb-3">
+                        <div class="">
+                            <label class="form-label d-block">Early Bird Discount</label>
+                            <div class="form-check form-switch mb-2">
+                                <input type="checkbox" class="form-check-input" name="is_early_bird_enabled"
+                                    id="is-early-bird-enabled-checkbox" value="1" @checked($event->is_early_bird_enabled)>
+                                <label for="is-early-bird-enabled-checkbox" class="form-check-label">Enable Early
+                                    Bird
+                                    for paid registrations</label>
+                            </div>
+                            <div class="form-icon">
+                                <input type="text" oninput="validateDigit(this)" id="early-bird-discount-field"
+                                    class="form-control form-control-icon" name="early_bird_discount" placeholder="0.00"
+                                    value="{{ $event->early_bird_discount }}" @disabled(!$event->is_early_bird_enabled || (float) $event->reg_fee <= 0)>
+                                <i class="fst-normal">₱</i>
+                            </div>
+                            <small class="text-muted mt-2">Only the primary attendee gets this discount per
+                                booking.</small>
+                        </div>
+                    </div>
                     <div class="col-lg-6">
                         <div class="mb-3">
                             <label class="form-label" for="event-date-field">Event Date <span
@@ -179,8 +199,9 @@
                         <div class="mb-3">
                             <label for="event-location-field" class="form-label">Location <span
                                     class="text-danger">*</span></label>
-                            <input type="text" class="form-control" name="location" placeholder="Event Location..."
-                                required id="event-location-field" value="{{ $event->location }}">
+                            <input type="text" class="form-control" name="location"
+                                placeholder="Event Location..." required id="event-location-field"
+                                value="{{ $event->location }}">
                             <input type="hidden" name="latitude" id="event-latitude-field"
                                 value="{{ $event->latitude }}">
                             <input type="hidden" name="longitude" id="event-longitude-field"
@@ -312,6 +333,19 @@
         updatePublicLink($("#event-id-field").val(), this.checked);
     });
 
+    function syncEditEarlyBirdField() {
+        const enableField = document.getElementById('is-early-bird-enabled-checkbox');
+        const discountField = document.getElementById('early-bird-discount-field');
+        const registrationFee = parseFloat(document.getElementById('event-reg-fee').value || '0') || 0;
+        const shouldEnableDiscount = enableField.checked && registrationFee > 0;
+
+        discountField.disabled = !shouldEnableDiscount;
+
+        if (!shouldEnableDiscount) {
+            discountField.value = '';
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         const snowEditorData = {
             theme: 'snow',
@@ -359,6 +393,11 @@
             acceptedFileTypes: ['image/*'],
             allowMultiple: false,
         });
+
+        syncEditEarlyBirdField();
+        document.getElementById('event-reg-fee').addEventListener('input', syncEditEarlyBirdField);
+        document.getElementById('is-early-bird-enabled-checkbox').addEventListener('change',
+            syncEditEarlyBirdField);
 
         initializeEditLocationSearch();
 

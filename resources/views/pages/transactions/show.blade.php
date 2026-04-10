@@ -116,6 +116,11 @@
                                     <h5 class="fs-14 mb-0">₱<span id="total-amount">
                                             {{ number_format($transaction->sub_amount, 2) }}</span></h5>
                                 </div>
+                                <div class="col-lg-4 col-6">
+                                    <p class="text-muted mb-2 text-uppercase fw-semibold">Early Bird Discount</p>
+                                    <h5 class="fs-14 mb-0 text-success">₱<span>
+                                            {{ number_format($transaction->early_bird_discount, 2) }}</span></h5>
+                                </div>
                                 <!--end col-->
                                 <div class="col-lg-4 col-6">
                                     <p class="text-muted mb-2 text-uppercase fw-semibold">Total Amount</p>

@@ -11,7 +11,7 @@ class EventRegistration extends Model
 {
     use HasFactory;
     protected $table = "event_registrations";
-    protected $fillable = ["transaction_id", "registration_code", "event_id", "user_id", "mfc_id_number", "amount", "registered_by", "registered_at"];
+    protected $fillable = ["transaction_id", "registration_code", "event_id", "user_id", "mfc_id_number", "amount", "early_bird_discount", "registered_by", "registered_at"];
 
     public function user(): BelongsTo
     {

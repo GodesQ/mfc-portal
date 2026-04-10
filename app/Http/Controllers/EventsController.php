@@ -32,6 +32,14 @@ class EventsController extends Controller
 
         if ($request->ajax()) {
             $sectionNames = Section::query()->pluck('name', 'id');
+            $sectionAssets = [
+                'kids' => ['logo' => 'kids-logo.png', 'color' => '#fa6b02'],
+                'youth' => ['logo' => 'youth-logo.png', 'color' => '#0066ab'],
+                'singles' => ['logo' => 'singles-logo.png', 'color' => '#1c8265'],
+                'servants' => ['logo' => 'servant-logo.png', 'color' => '#ffad09'],
+                'handmaids' => ['logo' => 'handmaid-logo.png', 'color' => '#ee2c2e'],
+                'couples' => ['logo' => 'couples-logo.png', 'color' => '#2a81d9'],
+            ];
             $events = Event::query();
 
             return DataTables::of($events)
@@ -57,16 +65,7 @@ class EventsController extends Controller
 
                     return $actions;
                 })
-                ->addColumn('section', function ($event) use ($sectionNames) {
-                    $sectionColors = [
-                        'kids' => '#fa6b02',
-                        'youth' => '#0066ab',
-                        'singles' => '#1c8265',
-                        'servants' => '#ffad09',
-                        'handmaids' => '#ee2c2e',
-                        'couples' => '#2a81d9',
-                    ];
-
+                ->addColumn('section', function ($event) use ($sectionAssets, $sectionNames) {
                     $output = "<div class='d-flex flex-wrap gap-1'>";
 
                     foreach ((array) $event->section_ids as $sectionId) {
@@ -76,8 +75,18 @@ class EventsController extends Controller
                             continue;
                         }
 
-                        $color = $sectionColors[$sectionName] ?? '#7852a9';
-                        $output .= "<div class='badge' style='background: {$color}'>{$sectionName}</div>";
+                        $sectionSlug = strtolower($sectionName);
+                        $asset = $sectionAssets[$sectionSlug] ?? null;
+                        $logo = $asset ? asset('build/images/' . $asset['logo']) : null;
+                        $color = $asset['color'] ?? '#7852a9';
+                        $escapedName = e($sectionName);
+
+                        $output .= "
+                            <div class='badge d-inline-flex align-items-center gap-1' style='background: {$color}'>
+                                " . ($logo ? "<img src='{$logo}' alt='{$escapedName} logo' height='16'>" : '') . "
+                                <span class='text-capitalize'>{$escapedName}</span>
+                            </div>
+                        ";
                     }
 
                     $output .= "</div>";
@@ -142,6 +151,8 @@ class EventsController extends Controller
                 'area' => $request->type == 5 ? auth()->user()->area : null,
                 'start_date' => $start_date,
                 'end_date' => $end_date,
+                'is_early_bird_enabled' => $request->has('is_early_bird_enabled') && (float) $request->reg_fee > 0,
+                'early_bird_discount' => $request->has('is_early_bird_enabled') ? $request->input('early_bird_discount', 0) : 0,
                 'is_open_for_non_community' => $request->has('is_open_for_non_community'),
                 'is_enable_event_registration' => $request->has('is_enable_event_registration'),
             ]));
@@ -230,6 +241,8 @@ class EventsController extends Controller
                 'poster' => $filename,
                 'start_date' => $start_date,
                 'end_date' => $end_date,
+                'is_early_bird_enabled' => $request->has('is_early_bird_enabled') && (float) $request->reg_fee > 0,
+                'early_bird_discount' => $request->has('is_early_bird_enabled') ? $request->input('early_bird_discount', 0) : 0,
                 'is_open_for_non_community' => $request->has('is_open_for_non_community'),
                 'is_enable_event_registration' => $request->has('is_enable_event_registration'),
             ]));

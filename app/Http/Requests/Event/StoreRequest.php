@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Event;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class StoreRequest extends FormRequest
 {
@@ -30,9 +31,27 @@ class StoreRequest extends FormRequest
             'location' => ['required', 'string', 'max:255'],
             'latitude' => ['nullable', 'numeric'],
             'longitude' => ['nullable', 'numeric'],
-            'reg_fee' => ['required'],
+            'reg_fee' => ['required', 'numeric', 'min:0'],
+            'is_early_bird_enabled' => ['nullable', 'boolean'],
+            'early_bird_discount' => ['nullable', 'numeric', 'min:0'],
             'poster' => ['required', 'file', 'mimes:jpeg,png,jpg'],
             'description' => ['required', 'string'],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator) {
+            if (! $this->boolean('is_early_bird_enabled')) {
+                return;
+            }
+
+            $regFee = (float) $this->input('reg_fee', 0);
+            $discount = (float) $this->input('early_bird_discount', 0);
+
+            if ($discount > $regFee) {
+                $validator->errors()->add('early_bird_discount', 'The early bird discount cannot exceed the registration fee.');
+            }
+        });
     }
 }

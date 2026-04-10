@@ -2,45 +2,12 @@
 
 @push('head-styles')
     <style>
-        a {
-            color: inherit;
-        }
-
-        .page-shell {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 32px 20px 56px;
-        }
-
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-
-        .brand-link,
-        .back-link {
-            text-decoration: none;
-            font-weight: 700;
-        }
-
-        .brand-link {
-            color: var(--navy);
-            letter-spacing: -0.02em;
-        }
-
-        .back-link {
-            color: var(--navy-soft);
-            font-size: 14px;
-        }
-
         .hero {
             display: grid;
             grid-template-columns: minmax(0, 1.4fr) minmax(300px, 0.9fr);
             gap: 24px;
             align-items: stretch;
+            margin-bottom: 20px;
         }
 
         .hero-card,
@@ -274,10 +241,10 @@
             <div class="hero-card">
                 <div class="eyebrow">
                     <i class="ri-ticket-2-line"></i>
-                    Public Event Registration
+                    Event Registration
                 </div>
 
-                <h1>Choose how you want to continue for {{ $event->title }}.</h1>
+                <h1>Choose how you want to continue</h1>
                 <p class="hero-copy">
                     Members can sign in and use the regular event registration form. Guests can continue without
                     creating an account and will complete registration on the public form.
@@ -290,11 +257,6 @@
                             Continue with your member account so your registration stays linked to your existing profile
                             and MFC ID.
                         </p>
-                        <ul class="choice-points">
-                            <li>Sign in first if you are not logged in yet.</li>
-                            <li>After login, you will return to this event automatically.</li>
-                            <li>Use the existing member registration flow.</li>
-                        </ul>
                         <a href="{{ route('events.register.member', ['event' => $event->id]) }}" class="btn-primary">
                             <i class="ri-login-box-line"></i>
                             Register as Member
@@ -307,11 +269,6 @@
                             Continue without logging in. Your registration will use the public guest form for payer and
                             attendee details.
                         </p>
-                        <ul class="choice-points">
-                            <li>No member account is required.</li>
-                            <li>The public form collects payer and attendee details for checkout.</li>
-                            <li>Your registration continues directly to the Maya payment flow.</li>
-                        </ul>
                         <a href="{{ route('events.register.guest', ['event' => $event->id]) }}" class="btn-secondary">
                             <i class="ri-user-add-line"></i>
                             Register as Guest
@@ -368,11 +325,6 @@
                     <small>Registration Fee</small>
                     <div class="fee-amount">Php {{ number_format($event->reg_fee, 2) }}</div>
                 </div>
-
-                <p class="phase-note">
-                    Members can sign in for the dashboard-backed flow, while guests can now complete the public
-                    registration form and continue to payment.
-                </p>
             </aside>
         </section>
     </div>
