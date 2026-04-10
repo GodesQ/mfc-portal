@@ -492,12 +492,23 @@ class EventRegistrationController extends Controller
             return 0.00;
         }
 
+        if ($this->eventHasExistingRegistrations($event)) {
+            return 0.00;
+        }
+
         $registrationFee = (float) $event->reg_fee;
         if ($registrationFee <= 0) {
             return 0.00;
         }
 
         return min((float) $event->early_bird_discount, $registrationFee);
+    }
+
+    private function eventHasExistingRegistrations(Event $event): bool
+    {
+        return EventRegistration::query()
+            ->where('event_id', $event->id)
+            ->exists();
     }
 
     private function determinePrimaryMemberIndex(array $userIds, User $authUser): int

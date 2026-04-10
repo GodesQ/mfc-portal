@@ -59,7 +59,6 @@ class PaymayaService
                 "success" => route('payments.success') . "?transaction_id=" . $transaction->transaction_code,
                 "failed" => route('payments.failed') . "?transaction_id=" . $transaction->transaction_code,
                 "canceled" => route('payments.cancelled') . "?transaction_id=" . $transaction->transaction_code,
-
             ],
             "requestReferenceNumber" => $transaction->reference_code,
         ];
