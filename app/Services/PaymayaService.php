@@ -54,6 +54,10 @@ class PaymayaService
             "buyer" => [
                 "firstName" => $paymaya_user_details['firstname'] ?? '',
                 "lastName" => $paymaya_user_details['lastname'] ?? '',
+                "contact" => [
+                    "email" => $paymaya_user_details['email'] ?? '',
+                    "phone" => $paymaya_user_details['phone_number'] ?? '',
+                ],
             ],
             "redirectUrl" => [
                 "success" => route('payments.success') . "?transaction_id=" . $transaction->transaction_code,

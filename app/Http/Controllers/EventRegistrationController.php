@@ -232,6 +232,8 @@ class EventRegistrationController extends Controller
             $paymentRequestModel = $this->paymayaService->createRequestModel($transaction, [
                 'firstname' => $request->payer_first_name,
                 'lastname' => $request->payer_last_name,
+                'email' => $request->payer_email,
+                'phone' => $this->normalizePhoneNumber($request->payer_contact_number),
             ]);
 
             $paymentResponse = $this->paymayaService->pay($paymentRequestModel);
@@ -343,6 +345,8 @@ class EventRegistrationController extends Controller
             $paymaya_user_details = [
                 'firstname' => $auth_user->first_name,
                 'lastname' => $auth_user->last_name,
+                'email' => $auth_user->email,
+                'phone_number' => $this->normalizePhoneNumber($auth_user->contact_number),
             ];
 
             $payment_request_model = $this->paymayaService->createRequestModel($transaction, $paymaya_user_details);
@@ -457,6 +461,25 @@ class EventRegistrationController extends Controller
             || strcasecmp((string) $event->status, 'Active') !== 0,
             404
         );
+    }
+
+    private function normalizePhoneNumber(?string $phoneNumber): string
+    {
+        if (blank($phoneNumber)) {
+            return '';
+        }
+
+        $normalized = preg_replace('/[^\d]/', '', $phoneNumber);
+
+        if (Str::startsWith($normalized, '63')) {
+            return '0' . substr($normalized, 2);
+        }
+
+        if (Str::startsWith($normalized, '0')) {
+            return $normalized;
+        }
+
+        return '0' . $normalized;
     }
 
     private function normalizeGuestIdentityValue(?string $value): string
