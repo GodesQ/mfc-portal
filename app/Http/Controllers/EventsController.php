@@ -57,8 +57,15 @@ class EventsController extends Controller
                     return "<span class='badge {$badgeClass}'>{$status}</span>";
                 })
                 ->addColumn('actions', function ($event) {
+                    $publicLinkAction = '';
+
+                    if ($event->is_open_for_non_community) {
+                        $publicLinkAction = "<a href='" . route('events.show', ['identifier' => $event->id]) . "' class='btn btn-soft-info btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Public Event Link' target='_blank' rel='noopener noreferrer'><i class='ri-links-line align-bottom'></i></a>";
+                    }
+
                     $actions = "<div class='hstack gap-2'>
                     <a href='" . route('events.registrations.index', ['event' => $event->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Registration List'><i class='ri-file-list-3-line align-bottom'></i></a>
+                    {$publicLinkAction}
                     <a href='" . route('events.edit', ['event' => $event->id]) . "' class='btn btn-soft-success btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit'><i class='ri-pencil-fill align-bottom'></i></a>
                     <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $event->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
                 </div>";
