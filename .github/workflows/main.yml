@@ -67,9 +67,11 @@ jobs:
         run: php artisan migrate --force
 
       - name: Run feature tests compact
+        if: ${{ hashFiles('tests/Feature/**/*Test.php') != '' }}
         run: php artisan test --testsuite=Feature --compact
 
       - name: Run unit tests compact
+        if: ${{ hashFiles('tests/Unit/**/*Test.php') != '' }}
         run: php artisan test --testsuite=Unit --compact
 
   deploy:
