@@ -42,7 +42,7 @@
                                 <p class="text-muted">Sign in to continue to MFC Portal</p>
                             </div>
                             <div class="p-2 mt-4">
-                                <form action="{{ route('login') }}" method="POST">
+                                <form action="{{ route('login.store') }}" method="POST">
                                     @csrf
                                     <div class="mb-3">
                                         <label for="username" class="form-label">Username/Email <span class="text-danger">*</span></label>

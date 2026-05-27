@@ -242,8 +242,7 @@
                                     @php
                                         $role = Spatie\Permission\Models\Role::find(auth()->user()->role_id);
                                     @endphp
-                                    <span
-                                        class="d-none d-xl-block ms-1 fs-12 user-name-sub-text text-capitalize">{{ $role->name == 'super_admin' ? 'Super Admin' : $role->name }}</span>
+
                                 </span>
                             </span>
                         </button>
