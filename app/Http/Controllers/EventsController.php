@@ -64,6 +64,7 @@ class EventsController extends Controller
                     }
 
                     $actions = "<div class='hstack gap-2'>
+                    <a href='" . route('events.tickets.index', ['event' => $event->id]) . "' class='btn btn-soft-warning btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Manage Tickets'>Manage</a>
                     <a href='" . route('events.registrations.index', ['event' => $event->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Registration List'><i class='ri-file-list-3-line align-bottom'></i></a>
                     {$publicLinkAction}
                     <a href='" . route('events.edit', ['event' => $event->id]) . "' class='btn btn-soft-success btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit'><i class='ri-pencil-fill align-bottom'></i></a>

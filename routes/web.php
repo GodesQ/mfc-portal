@@ -6,6 +6,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\EventAttendanceController;
+use App\Http\Controllers\EventTicketController;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\EventRegistrationController;
 use App\Http\Controllers\HomeController;
@@ -90,6 +91,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('events/calendar', [EventsController::class, 'calendar'])->name('events.calendar');
     Route::get('events/all', [EventsController::class, 'all'])->name('events.all');
     Route::get('events/full-calendar', [EventsController::class, 'fullCalendar'])->name('events.full_calendar');
+    Route::prefix('events/{event}/tickets')->name('events.tickets.')->group(function () {
+      Route::get('/', [EventTicketController::class, 'index'])->name('index');
+      Route::get('/create', [EventTicketController::class, 'create'])->name('create');
+      Route::post('/', [EventTicketController::class, 'store'])->name('store');
+      Route::get('/{ticket}/edit', [EventTicketController::class, 'edit'])->name('edit');
+      Route::match(['put', 'patch'], '/{ticket}', [EventTicketController::class, 'update'])->name('update');
+      Route::delete('/{ticket}', [EventTicketController::class, 'destroy'])->name('destroy');
+    });
     Route::resource('/events', EventsController::class)->except(['show']);
 
     Route::get('/events/registrations/{id}', [EventRegistrationController::class, 'show'])->name('events.registrations.show');
