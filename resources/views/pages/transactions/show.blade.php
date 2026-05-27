@@ -59,7 +59,12 @@
                                                         @endif
                                                     </p>
                                                 </td>
-                                                <td>{{ $item['payment_type'] }}</td>
+                                                <td>
+                                                    {{ $item['payment_type'] }}
+                                                    @if (!empty($item['ticket_name']))
+                                                        <p class="text-muted mb-0">{{ $item['ticket_name'] }}</p>
+                                                    @endif
+                                                </td>
                                                 <td>{{ $item['date'] }}</td>
                                                 <td class="text-end">₱ {{ number_format($item['amount'], 2) }}</td>
                                             </tr>

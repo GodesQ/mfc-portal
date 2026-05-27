@@ -14,6 +14,7 @@ class Transaction extends Model
         "transaction_code", 
         "reference_code",
         "received_from_id",
+        "ticket_id",
         "payer_first_name",
         "payer_last_name",
         "payer_email",
@@ -33,6 +34,11 @@ class Transaction extends Model
 
     public function received_from_user() : BelongsTo {
         return $this->belongsTo(User::class,"received_from_id");
+    }
+
+    public function ticket(): BelongsTo
+    {
+        return $this->belongsTo(Ticket::class);
     }
 
     public function getPayerNameAttribute(): string
