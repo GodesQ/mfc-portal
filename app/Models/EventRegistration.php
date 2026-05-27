@@ -11,7 +11,7 @@ class EventRegistration extends Model
 {
     use HasFactory;
     protected $table = "event_registrations";
-    protected $fillable = ["transaction_id", "registration_code", "event_id", "user_id", "mfc_id_number", "amount", "early_bird_discount", "registered_by", "registered_at"];
+    protected $fillable = ["transaction_id", "registration_code", "event_id", "ticket_id", "user_id", "mfc_id_number", "amount", "early_bird_discount", "registered_by", "registered_at"];
 
     public function user(): BelongsTo
     {
@@ -31,6 +31,11 @@ class EventRegistration extends Model
     public function event(): BelongsTo
     {
         return $this->belongsTo(Event::class, "event_id");
+    }
+
+    public function ticket(): BelongsTo
+    {
+        return $this->belongsTo(Ticket::class, "ticket_id");
     }
 
     public function transaction(): BelongsTo

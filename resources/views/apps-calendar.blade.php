@@ -13,8 +13,8 @@
         }
 
         /* .fc-h-event .fc-event-main {
-                                    color: #141414;
-                                } */
+                                                            color: #141414;
+                                                        } */
 
         @media (min-width: 1024px) {
             .offcanvas-end {
@@ -44,43 +44,6 @@
                                 {{ auth()->user()->can('create-event') ? null : 'disabled' }}><i class="mdi mdi-plus"></i>
                                 Create New
                                 Event</button>
-                            {{-- <div class="mt-3">
-                                <h3>Legends</h3>
-                                <div class="row">
-                                    <div class="col-6">
-                                        <div class="py-2 px-2 my-2 text-white rounded" style="background: #7852a9;">
-                                            Multiple Selection
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="py-2 px-2 my-2 text-white rounded" style="background: #fd6a08;">
-                                            Kids
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="py-2 px-2 my-2 text-white rounded" style="background: #0362a4;">
-                                            Youth
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="py-2 px-2 my-2 text-white rounded" style="background: #0ab39c;">
-                                            Singles
-                                        </div>
-                                    </div>
-                                    <div class="col-6">
-                                        <div class="py-2 px-2 my-2 text-white rounded" style="background: #f7b84b;">
-                                            Servants
-                                        </div>
-                                    </div>
-                                    
-                                    <div class="py-2 px-2 my-2 text-white rounded" style="background: #2883d3;">
-                                        Handmaids
-                                    </div>
-                                    <div class="py-2 px-2 my-2 text-white rounded" style="background: #f06548;">
-                                        Couples
-                                    </div>
-                                </div>
-                            </div> --}}
                         </div>
                     </div>
                     @if (auth()->user()->hasRole('member'))
@@ -182,14 +145,6 @@
                                         <div class="flex-grow-1">
                                             <h6 class="d-block fw-semibold mb-0"> <span id="event-location-tag"></span>
                                             </h6>
-                                        </div>
-                                    </div>
-                                    <div class="d-flex align-items-center mb-2">
-                                        <div class="flex-shrink-0 me-3">
-                                            <i class="ri-money-dollar-box-line text-muted fs-16"></i>
-                                        </div>
-                                        <div class="flex-grow-1">
-                                            <p class="d-block fw-semibold mb-0" id="event-registrationfee-tag"></p>
                                         </div>
                                     </div>
                                     <div class="d-flex mb-3">
@@ -304,106 +259,8 @@
                 </div> <!-- end modal dialog-->
             </div> <!-- end modal-->
             <!-- end modal-->
-
-            <!-- right offcanvas -->
-            {{-- <div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight"
-                aria-labelledby="offcanvasRightLabel">
-                <div class="offcanvas-header">
-                    <h5 id="offcanvasRightLabel">Event Attendance</h5>
-                    <div class="d-flex justify-content-between align-items-center gap-2">
-                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-                        aria-label="Close"></button>
-                    </div>
-                </div>
-                <div class="attendance-container offcanvas-body" style="flex-grow: 0 !important; padding: 0 20px !important;">
-                    <div class="border-bottom p-2">
-                        <h4>Event Details</h4>
-                    </div>
-                    <div class="event-details-container py-2">
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="flex-shrink-0 me-3">
-                                <i class="ri-file-text-line text-muted fs-16"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h6 class="d-block fw-semibold mb-0" id="event-attendance-title">
-                                   
-                                </h6>
-                            </div>
-                        </div>
-                        <div class="d-flex mb-2">
-                            <div class="flex-grow-1 d-flex align-items-center">
-                                <div class="flex-shrink-0 me-3">
-                                    <i class="ri-calendar-event-line text-muted fs-16"></i>
-                                </div>
-                                <div class="flex-grow-1">
-                                    <h6 class="d-block fw-semibold mb-0" id="event-attendance-date">
-                                       
-                                    </h6>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="flex-shrink-0 me-3">
-                                <i class="ri-time-line text-muted fs-16"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h6 class="d-block fw-semibold mb-0" id="event-attendance-time">
-                                   
-                                </h6>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="flex-shrink-0 me-3">
-                                <i class="ri-map-pin-line text-muted fs-16"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <h6 class="d-block fw-semibold mb-0">
-                                    <span id="event-attendance-location">
-                                        
-                                    </span>
-                                </h6>
-                            </div>
-                        </div>
-                        <div class="d-flex align-items-center mb-3">
-                            <div class="flex-shrink-0 me-3">
-                                <i class="ri-money-dollar-box-line text-muted fs-16"></i>
-                            </div>
-                            <div class="flex-grow-1">
-                                <p class="d-block fw-semibold mb-0" id="event-attendance-registrationfee">
-                                    ₱ 
-                                </p>
-                            </div>
-                        </div>
-                        <button class="btn btn-primary btn-sm">List of Attendees</button>
-                    </div>
-                    <div class="border-bottom p-2 d-flex justify-content-between align-items-center gap-5">
-                        <h4>Users</h4>
-                        <div class="input-group">
-                            <input type="search" class="form-control" id="attendance-user-search-field"
-                                    aria-label="Example text with two button addons" placeholder="Search user...">
-                            <button class="btn btn-primary" id="search-event-user-btn">Search <i class="ri-search-2-line"></i></button>
-                        </div>
-                        <button id="attendance-report-btn" class="btn btn-primary btn-block">Report</button>
-                    </div>
-                    <div class="noresult">
-                        <div class="text-center">
-                            <lord-icon src="https://cdn.lordicon.com/msoeawqm.json" trigger="loop" id="search-icon"
-                                colors="primary:#121331,secondary:#08a88a" style="width:75px;height:75px">
-                            </lord-icon>
-                            <h5 class="mt-2">Search user first</h5>
-                        </div>
-                    </div>
-                    <div class="users-list d-flex flex-wrap gap-3 py-3" id="attendeesDiv">
-                    </div>
-                </div>
-            </div> --}}
-            <!-- end right offcanvas -->
         </div>
     </div> <!-- end row-->
-
-    {{-- <input type="text" id="event_location">
-    <input type="text" id="latitude">
-    <input type="text" id="longitude"> --}}
     <!-- Create Modal -->
     @component('components.new_events_modal')
         @slot('route')
@@ -428,118 +285,6 @@
     <script src="{{ URL::asset('build/js/pages/form-file-upload.init.js') }}"></script>
     <script src="{{ URL::asset('build/libs/sweetalert2/sweetalert2.all.min.js') }}"></script>
     <script src="{{ URL::asset('build/js/app.js') }}"></script>
-
-    {{-- <script>
-        $("#attendances-btn").click((e) => {
-            let event_id = e.target.getAttribute('data-event-id');
-            $('#event-modal').modal('hide');
-
-            // CLear event details for fresh event details ui
-            clearEventAttendanceDetails();
-
-            $.ajax({
-                method: "GET",
-                url: `/events/show/${event_id}`,
-                success: function (response) {
-                    dispayEventAttendanceDetails(response.event);
-                }
-            });
-        });
-
-        $("#search-event-user-btn").click((e) => {
-            let event_id = e.target.getAttribute('data-event-id');
-            let search_query = document.querySelector('#attendance-user-search-field').value;
-            let attendeesDiv = document.getElementById('attendeesDiv');
-
-            if(!search_query) {
-                attendeesDiv.innerHTML = '';
-                $('.noresult').show();  
-                return toastr.warning("Please filled the search input.");
-            }
-            
-            // First, Remove the attendance div for fresh ui
-            attendeesDiv.innerHTML = ''; // Clear previous content
-
-            $.ajax({
-                url: `/dashboard/attendances/events/${event_id}/users?search=${search_query}`,
-                method: "GET",
-                success: function (response) {
-                    if(response.users.length <= 0) return toastr.error("No users found");
-                    dispayUsersChecklist(response.users, attendeesDiv, event_id);
-                }
-            }).done(data => {
-                $('.noresult').hide();
-            })
-
-        })
-
-        function dispayEventAttendanceDetails(event) {
-            document.querySelector('#event-attendance-title').innerHTML = event.title;
-            document.querySelector('#event-attendance-date').innerHTML = event.start_date + " to " + event.end_date;
-            document.querySelector('#event-attendance-time').innerHTML = event.time;
-            document.querySelector('#event-attendance-location').innerHTML = event.location;
-            document.querySelector('#event-attendance-registrationfee').innerHTML = parseInt(event.reg_fee).toFixed(2);
-        }
-
-        // Display users checkbox
-        function dispayUsersChecklist(users, attendeesDiv, event_id) {
-            users.forEach(user => {
-                let container = document.createElement('div');
-                container.style.width = "45%";
-                container.style.cursor = 'pointer';
-                container.classList.add('p-2', 'shadow', 'bg-white');
-                container.innerHTML = `<input class="form-check-input user-attendance-checkbox" style="margin-right: 10px;" type="checkbox" 
-                                            id="${user.id}" data-event-id="${event_id}" ${user.checked ? 'checked' : ''}>
-                                        <label class="form-check-label" for="${user.id}">
-                                            ${user.first_name} ${user.last_name} <br>
-                                            <div class="text-muted">${user?.section?.name}</div>
-                                        </label>`;
-                attendeesDiv.appendChild(container);
-            });
-
-            // Attach event listeners to the dynamically added checkboxes
-            let userAttendanceCheckboxes = document.querySelectorAll(".user-attendance-checkbox");
-            userAttendanceCheckboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', handleUserAttendance);
-            });
-
-            function handleUserAttendance(e) {
-                let event_id = e.target.getAttribute('data-event-id');
-                let checked = e.target.checked ? 1 : 0;
-                let token = "{{ csrf_token() }}";
-
-                $.ajax({
-                    method: "POST",
-                    url: "{{ route('attendances.save') }}",
-                    data: {
-                        _token: token,
-                        event_id: event_id,
-                        user_id: e.target.id,
-                        checked: checked,
-                    },
-                    success: function (response) {
-                        toastr.success(response.message, "Success");
-                    },
-                    error: function(XMLHttpRequest, textStatus, errorThrown) {
-                        alert("some error");
-                    }
-                })
-            }
-        }
-
-        function clearEventAttendanceDetails() {
-            document.querySelector('#event-attendance-title').innerHTML = "";
-            document.querySelector('#event-attendance-date').innerHTML = "";
-            document.querySelector('#event-attendance-time').innerHTML = "";
-            document.querySelector('#event-attendance-location').innerHTML = "";
-            document.querySelector('#event-attendance-registrationfee').innerHTML = "";
-        }
-
-        $('#attendance-report-btn').click(e => {
-            let event_id = e.target.getAttribute('data-event-id');
-            location.href = `/dashboard/attendances/report/${event_id}`;
-        })
-    </script> --}}
 
     {{-- Google Location Places Search Javascript --}}
     <script

@@ -11,6 +11,7 @@ use App\Models\EventAttendance;
 use App\Models\EventRegistration;
 use App\Models\EventUserDetail;
 use App\Models\Section;
+use App\Models\Ticket;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Services\PaymayaService;
@@ -96,15 +97,17 @@ class EventRegistrationController extends Controller
 
     public function show(Request $request, $id)
     {
-        $event_registration = EventRegistration::with('event', 'transaction', 'user.user_details', 'event_user_detail')->findOrFail($id);
+        $event_registration = EventRegistration::with('event', 'ticket', 'transaction.ticket', 'user.user_details', 'event_user_detail')->findOrFail($id);
 
         return view('pages.event-registrations.show', compact('event_registration'));
     }
 
-    public function register(Request $request)
+    public function showPrivateRegistration(Request $request)
     {
         $endPoint = "Event Registration";
-        $event = Event::where('id', $request->event_id)->first();
+        $event = Event::with(['tickets' => function ($query) {
+            $query->withCount('eventRegistrations')->latest();
+        }])->where('id', $request->event_id)->first();
 
         $this->ensurePublicRegistrationAvailable($event);
 
@@ -257,13 +260,26 @@ class EventRegistrationController extends Controller
         }
     }
 
-    public function save_registration(StoreRequest $request)
+    public function savePrivateRegistration(StoreRequest $request)
     {
         $earlyBirdNotification = null;
 
         try {
             DB::beginTransaction();
+
             $event = Event::where('id', $request->event_id)->first();
+            $this->ensurePublicRegistrationAvailable($event);
+
+            $ticket = Ticket::query()
+                ->whereKey($request->ticket_id)
+                ->where('event_id', $event->id)
+                ->lockForUpdate()
+                ->first();
+
+            if (! $ticket) {
+                throw new Exception('The selected ticket is not available for this event.', 422);
+            }
+
             $users_count = count($request->users);
             $auth_user = Auth::user();
             $selectedUsers = User::whereIn('id', $request->users)->get()->keyBy('id');
@@ -277,9 +293,11 @@ class EventRegistrationController extends Controller
             }
 
             $this->checkExistingRegistrationRecord($request);
+            $this->ensureTicketCapacityAvailable($ticket, $users_count);
 
-            $pricing = $this->calculateRegistrationPricing($event, $users_count, $primaryUserIndex);
-            $total_amount = $pricing['total_amount'] + $total_convenience_fee + (float) $request->donation;
+            $donation = (float) $request->input('donation', 0);
+            $pricing = $this->calculateTicketRegistrationPricing($event, $ticket, $users_count, $primaryUserIndex);
+            $total_amount = $pricing['total_amount'] + $total_convenience_fee + $donation;
 
             $transaction_code = generateTransactionCode();
             $reference_code = generateReferenceCode();
@@ -288,11 +306,12 @@ class EventRegistrationController extends Controller
                 'transaction_code' => $transaction_code,
                 'reference_code' => $reference_code,
                 'received_from_id' => auth()->user()->id,
+                'ticket_id' => $ticket->id,
                 'payer_first_name' => $auth_user->first_name,
                 'payer_last_name' => $auth_user->last_name,
                 'payer_email' => $auth_user->email,
                 'payer_contact_number' => $auth_user->contact_number,
-                'donation' => $request->donation,
+                'donation' => $donation,
                 'convenience_fee' => $total_convenience_fee,
                 'sub_amount' => $pricing['sub_amount'],
                 'early_bird_discount' => $pricing['early_bird_discount'],
@@ -312,6 +331,7 @@ class EventRegistrationController extends Controller
                     "registration_code" => $registration_code,
                     'transaction_id' => $transaction->id,
                     'event_id' => $event->id,
+                    'ticket_id' => $ticket->id,
                     'user_id' => $user->id,
                     'mfc_id_number' => $user->mfc_id_number,
                     'amount' => $pricing['amounts'][$index],
@@ -365,7 +385,7 @@ class EventRegistrationController extends Controller
 
         } catch (Exception $exception) {
             DB::rollBack();
-            return back()->with('fail', $exception->getMessage());
+            return back()->withInput()->with('fail', $exception->getMessage());
         }
     }
 
@@ -509,6 +529,28 @@ class EventRegistrationController extends Controller
         ];
     }
 
+    private function calculateTicketRegistrationPricing(Event $event, Ticket $ticket, int $attendeeCount, int $primaryIndex): array
+    {
+        $ticketPrice = $ticket->is_free ? 0.00 : (float) $ticket->price;
+        $subAmount = $ticketPrice * $attendeeCount;
+        $appliedDiscount = $this->resolveTicketEarlyBirdDiscount($event, $ticketPrice);
+        $discounts = array_fill(0, $attendeeCount, 0.00);
+        $amounts = array_fill(0, $attendeeCount, $ticketPrice);
+
+        if ($attendeeCount > 0 && $appliedDiscount > 0 && array_key_exists($primaryIndex, $amounts)) {
+            $discounts[$primaryIndex] = $appliedDiscount;
+            $amounts[$primaryIndex] = max($ticketPrice - $appliedDiscount, 0);
+        }
+
+        return [
+            'sub_amount' => $subAmount,
+            'early_bird_discount' => $appliedDiscount,
+            'discounts' => $discounts,
+            'amounts' => $amounts,
+            'total_amount' => array_sum($amounts),
+        ];
+    }
+
     private function resolveEarlyBirdDiscount(Event $event): float
     {
         if (!$event->is_early_bird_enabled) {
@@ -525,6 +567,40 @@ class EventRegistrationController extends Controller
         }
 
         return min((float) $event->early_bird_discount, $registrationFee);
+    }
+
+    private function resolveTicketEarlyBirdDiscount(Event $event, float $ticketPrice): float
+    {
+        if (!$event->is_early_bird_enabled) {
+            return 0.00;
+        }
+
+        if ($this->eventHasExistingRegistrations($event)) {
+            return 0.00;
+        }
+
+        if ($ticketPrice <= 0) {
+            return 0.00;
+        }
+
+        return min((float) $event->early_bird_discount, $ticketPrice);
+    }
+
+    private function ensureTicketCapacityAvailable(Ticket $ticket, int $requestedQuantity): void
+    {
+        if ($ticket->is_unlimited) {
+            return;
+        }
+
+        $totalTickets = (int) $ticket->total_number_of_tickets;
+        $usedTickets = EventRegistration::query()
+            ->where('ticket_id', $ticket->id)
+            ->count();
+        $remainingTickets = max($totalTickets - $usedTickets, 0);
+
+        if ($requestedQuantity > $remainingTickets) {
+            throw new Exception('The selected ticket does not have enough available slots for this registration.', 422);
+        }
     }
 
     private function eventHasExistingRegistrations(Event $event): bool

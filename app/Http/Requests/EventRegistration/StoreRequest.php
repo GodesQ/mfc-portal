@@ -23,6 +23,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'event_id' => 'required|exists:events,id',
+            'ticket_id' => 'required|exists:tickets,id',
             "users" => "required|array",
             "users.*" => "required|exists:users,id|distinct",
             'donation' => 'nullable|numeric|min:0',
@@ -39,6 +40,7 @@ class StoreRequest extends FormRequest
         return [
             'users.required' => 'The users are required.',
             'users.array' => 'The users field must be an array.',
+            'ticket_id.required' => 'Please select a ticket.',
         ];
     }
 }

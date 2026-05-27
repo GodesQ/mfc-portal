@@ -52,13 +52,13 @@ class TransactionController extends Controller
 
   public function show(Request $request, $id)
   {
-    $transaction = Transaction::where('id', $id)->with('received_from_user')->first();
+    $transaction = Transaction::where('id', $id)->with('received_from_user', 'ticket')->first();
 
     $items = [];
 
     if ($transaction->payment_type == PaymentType::EVENT_REGISTRATION) {
       $items = EventRegistration::where('transaction_id', $transaction->id)
-        ->with('user', 'event_user_detail')
+        ->with('user', 'event_user_detail', 'ticket')
         ->get()
         ->map(function ($row) {
         return [
@@ -66,6 +66,7 @@ class TransactionController extends Controller
           'name' => $row->display_name,
           'mfc_id_number' => $row->display_mfc_id_number,
           'payment_type' => "Event Registration",
+          'ticket_name' => $row->ticket?->ticket_name,
           'date' => Carbon::parse($row->created_at)->format('M d, Y'),
           'amount' => $row->amount,
         ];
@@ -79,6 +80,7 @@ class TransactionController extends Controller
           'name' => ($row->user->first_name ?? " ") . ' ' . ($row->user->last_name ?? " "),
           'mfc_id_number' => ($row->user->mfc_id_number ?? " "),
           'payment_type' => "Tithe",
+          'ticket_name' => null,
           'date' => Carbon::parse($row->created_at)->format('M d, Y'),
           'amount' => $row->amount,
         ];

@@ -17,13 +17,83 @@
         <form action="{{ route('events.register.post') }}" method="POST" id="register-form">
             @csrf
             <input type="hidden" name="event_id" id="event-id-field" value="{{ $event->id }}">
-            <input type="hidden" name="event_registration_fee" id="event-registration-fee-field"
-                value="{{ $event->reg_fee }}">
             <input type="hidden" id="event-early-bird-discount-field" value="{{ $event->early_bird_discount }}">
             <input type="hidden" id="event-early-bird-enabled-field"
                 value="{{ $event->is_early_bird_enabled ? 1 : 0 }}">
+            @php
+                $availableTicketIds = $event->tickets
+                    ->filter(fn ($ticket) => $ticket->is_unlimited || (int) $ticket->total_number_of_tickets - (int) $ticket->event_registrations_count > 0)
+                    ->pluck('id');
+                $selectedTicketId = old('ticket_id');
+
+                if (! $selectedTicketId || ! $availableTicketIds->contains((int) $selectedTicketId)) {
+                    $selectedTicketId = $availableTicketIds->first();
+                }
+            @endphp
             <div class="row mb-3">
                 <div class="col-xl-8">
+                    <div class="card">
+                        <div class="card-header border-bottom-dashed">
+                            <h5 class="card-title mb-0">Select Ticket</h5>
+                        </div>
+                        <div class="card-body">
+                            @forelse ($event->tickets as $ticket)
+                                @php
+                                    $usedTickets = (int) $ticket->event_registrations_count;
+                                    $remainingTickets = $ticket->is_unlimited
+                                        ? null
+                                        : max((int) $ticket->total_number_of_tickets - $usedTickets, 0);
+                                    $isSoldOut = ! $ticket->is_unlimited && $remainingTickets <= 0;
+                                    $ticketPrice = $ticket->is_free ? 0.00 : (float) $ticket->price;
+                                @endphp
+                                <label class="border rounded p-3 d-block mb-3 @if ($isSoldOut) bg-light text-muted @endif"
+                                    for="ticket-{{ $ticket->id }}">
+                                    <div class="form-check">
+                                        <input class="form-check-input ticket-option" type="radio" name="ticket_id"
+                                            id="ticket-{{ $ticket->id }}" value="{{ $ticket->id }}"
+                                            data-price="{{ $ticketPrice }}"
+                                            data-name="{{ $ticket->ticket_name }}"
+                                            data-remaining="{{ $ticket->is_unlimited ? '' : $remainingTickets }}"
+                                            @checked((int) $selectedTicketId === $ticket->id)
+                                            @disabled($isSoldOut)>
+                                        <div class="form-check-label w-100">
+                                            <div class="d-flex justify-content-between gap-3">
+                                                <div>
+                                                    <h6 class="mb-1">{{ $ticket->ticket_name }}</h6>
+                                                    @if ($ticket->description)
+                                                        <div class="text-muted">{!! nl2br(e($ticket->description)) !!}</div>
+                                                    @endif
+                                                </div>
+                                                <div class="text-end flex-shrink-0">
+                                                    <div class="fw-semibold">
+                                                        @if ($ticket->is_free || (float) $ticket->price <= 0)
+                                                            Free
+                                                        @else
+                                                            ₱ {{ number_format($ticket->price, 2) }}
+                                                        @endif
+                                                    </div>
+                                                    <small class="{{ $isSoldOut ? 'text-danger' : 'text-muted' }}">
+                                                        @if ($ticket->is_unlimited)
+                                                            Unlimited
+                                                        @elseif ($isSoldOut)
+                                                            Sold out
+                                                        @else
+                                                            {{ $remainingTickets }} left
+                                                        @endif
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </label>
+                            @empty
+                                <div class="alert alert-warning mb-0">
+                                    Registration is unavailable until tickets are configured for this event.
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+
                     <div class="card">
                         <div class="card-body">
                             <div class="row g-2">
@@ -32,7 +102,7 @@
                                         <input type="text" class="form-control" id="mfc-user-id-input"
                                             aria-label="Example text with two button addons" placeholder="Search MFC ID">
                                         <button type="button" class="btn btn-primary" id="search-mfc-user-btn" data-bs-toggle="modal"
-                                            data-bs-target=".user-modal">Search</button>
+                                            data-bs-target=".user-modal" @disabled($availableTicketIds->isEmpty())>Search</button>
                                     </div>
                                     <div class="modal fade user-modal" tabindex="-1" role="dialog"
                                         aria-labelledby="mySmallModalLabel" aria-hidden="true">
@@ -55,7 +125,7 @@
 
                                         <button type="button" class="btn btn-primary" id="register-self-btn"
                                             data-mfc-id="{{ auth()->user()->mfc_id_number }}"
-                                            data-user-id="{{ auth()->user()->id }}">
+                                            data-user-id="{{ auth()->user()->id }}" @disabled($availableTicketIds->isEmpty())>
                                             I will register myself <i class="ri-add-fill me-1 align-bottom"></i>
                                         </button>
                                     </div>
@@ -69,7 +139,8 @@
                     <div class="products"></div>
 
                     <div class="text-end mb-4">
-                        <button type="submit" class="btn btn-success btn-label right ms-auto">
+                        <button type="submit" class="btn btn-success btn-label right ms-auto" id="register-submit-btn"
+                            @disabled($availableTicketIds->isEmpty())>
                             <i class="ri-arrow-right-line label-icon align-bottom fs-16 ms-2"></i> Register
                         </button>
                     </div>
@@ -102,12 +173,14 @@
                                     <table class="table table-borderless mb-0">
                                         <tbody>
                                             <tr>
-                                                <td>Sub Total :</td>
-                                                <td class="text-end" id="registration-subtotal">₱
-                                                    {{ number_format($event->reg_fee, 2) }}</td>
+                                                <td>Selected Ticket :</td>
+                                                <td class="text-end" id="registration-ticket">None</td>
                                             </tr>
-                                            <tr id="registration-early-bird-row"
-                                                @if (! $event->is_early_bird_enabled || (float) $event->reg_fee <= 0) class="d-none" @endif>
+                                            <tr>
+                                                <td>Sub Total :</td>
+                                                <td class="text-end" id="registration-subtotal">₱ 0.00</td>
+                                            </tr>
+                                            <tr id="registration-early-bird-row" class="d-none">
                                                 <td>Early Bird Discount :</td>
                                                 <td class="text-end text-success" id="registration-early-bird-discount">
                                                     ₱ 0.00</td>
@@ -204,7 +277,7 @@
                                             </div>
                                             <div class="flex-grow-1">
                                                 <p class="d-block fw-semibold mb-0" id="event-registrationfee-tag">
-                                                    ₱ {{ number_format($event->reg_fee, 2) }}
+                                                    Ticket based
                                                 </p>
                                             </div>
                                         </div>
@@ -232,6 +305,26 @@
     @endif
     <script>
         let searchBtn = document.querySelector('#search-mfc-user-btn');
+        let ticketOptions = document.querySelectorAll('.ticket-option');
+
+        function getSelectedTicket() {
+            return document.querySelector('.ticket-option:checked');
+        }
+
+        function getSelectedTicketPrice() {
+            const selectedTicket = getSelectedTicket();
+            return selectedTicket ? parseFloat(selectedTicket.dataset.price || '0') || 0 : 0;
+        }
+
+        function getSelectedTicketRemaining() {
+            const selectedTicket = getSelectedTicket();
+
+            if (!selectedTicket || selectedTicket.dataset.remaining === '') {
+                return null;
+            }
+
+            return parseInt(selectedTicket.dataset.remaining, 10);
+        }
 
         searchBtn.addEventListener('click', function(e) {
             let searchInput = document.querySelector('#mfc-user-id-input');
@@ -278,6 +371,19 @@
         }
 
         function handleUserEventRegistration(mfc_id_number, user_id) {
+            let selectedTicket = getSelectedTicket();
+
+            if (!selectedTicket) {
+                return toastr.warning("Please select a ticket first.");
+            }
+
+            let remainingTickets = getSelectedTicketRemaining();
+            let currentUserCount = document.querySelectorAll(".user-id").length;
+
+            if (remainingTickets !== null && currentUserCount >= remainingTickets) {
+                return toastr.warning("The selected ticket does not have enough available slots.");
+            }
+
             if (!userExists(user_id)) {
                 displayMember(mfc_id_number);
             } else {
@@ -367,14 +473,15 @@
 
         function computeTotalAmount() {
             let user_ids = document.querySelectorAll(".user-id");
-            let eventRegistrationFee = document.querySelector('#event-registration-fee-field').value;
+            let selectedTicket = getSelectedTicket();
+            let ticketPrice = getSelectedTicketPrice();
             let earlyBirdDiscount = parseFloat(document.querySelector('#event-early-bird-discount-field').value || '0') || 0;
             let isEarlyBirdEnabled = document.querySelector('#event-early-bird-enabled-field').value === '1';
-            let donation_amount = document.getElementById("donation-field").value ?? 0;
+            let donation_amount = parseFloat(document.getElementById("donation-field").value || '0') || 0;
             let convenience_fee = 10.00;
-            let subtotal = parseFloat(eventRegistrationFee) * user_ids.length;
-            let appliedEarlyBirdDiscount = isEarlyBirdEnabled && parseFloat(eventRegistrationFee) > 0 && user_ids.length > 0 ?
-                Math.min(earlyBirdDiscount, parseFloat(eventRegistrationFee)) : 0;
+            let subtotal = ticketPrice * user_ids.length;
+            let appliedEarlyBirdDiscount = isEarlyBirdEnabled && ticketPrice > 0 && user_ids.length > 0 ?
+                Math.min(earlyBirdDiscount, ticketPrice) : 0;
 
             let total_convenience_fee = 0;
 
@@ -384,6 +491,7 @@
 
             let totalAmount = subtotal - appliedEarlyBirdDiscount + total_convenience_fee + parseFloat(donation_amount);
 
+            $('#registration-ticket').text(selectedTicket ? selectedTicket.dataset.name : 'None');
             $('#registration-subtotal').html(`₱ ${subtotal.toFixed(2)}`);
             $('#registration-early-bird-discount').html(`₱ ${appliedEarlyBirdDiscount.toFixed(2)}`);
             $('#registration-early-bird-row').toggleClass('d-none', appliedEarlyBirdDiscount <= 0);
@@ -400,6 +508,31 @@
 
 
             computeTotalAmount();
+        });
+
+        ticketOptions.forEach(option => {
+            option.addEventListener('change', computeTotalAmount);
+        });
+
+        document.getElementById("register-form").addEventListener('submit', function(e) {
+            let userCount = document.querySelectorAll(".user-id").length;
+            let selectedTicket = getSelectedTicket();
+            let remainingTickets = getSelectedTicketRemaining();
+
+            if (!selectedTicket) {
+                e.preventDefault();
+                return toastr.warning("Please select a ticket.");
+            }
+
+            if (userCount < 1) {
+                e.preventDefault();
+                return toastr.warning("Please add at least one attendee.");
+            }
+
+            if (remainingTickets !== null && userCount > remainingTickets) {
+                e.preventDefault();
+                return toastr.warning("The selected ticket does not have enough available slots.");
+            }
         });
 
         computeTotalAmount();

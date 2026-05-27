@@ -48,8 +48,14 @@
                                 </div>
                             </div>
                             <div class="my-3">
-                                <div class="fw-bold mb-1">Registration Fee</div>
-                                <div class="fw-normal">₱ {{ number_format($event_registration->event->reg_fee, 2) }}</div>
+                                <div class="fw-bold mb-1">Ticket</div>
+                                <div class="fw-normal">{{ $event_registration->ticket?->ticket_name ?? 'Legacy Registration Fee' }}</div>
+                            </div>
+                            <div class="my-3">
+                                <div class="fw-bold mb-1">Ticket Price</div>
+                                <div class="fw-normal">
+                                    ₱ {{ number_format($event_registration->ticket ? ($event_registration->ticket->is_free ? 0 : $event_registration->ticket->price) : $event_registration->event->reg_fee, 2) }}
+                                </div>
                             </div>
                             <div class="my-3">
                                 <div class="fw-bold mb-1">Early Bird Discount</div>
