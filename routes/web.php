@@ -91,6 +91,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('events/calendar', [EventsController::class, 'calendar'])->name('events.calendar');
         Route::get('events/all', [EventsController::class, 'all'])->name('events.all');
         Route::get('events/full-calendar', [EventsController::class, 'fullCalendar'])->name('events.full_calendar');
+        Route::get('events/{event}/ticket-settings', [EventsController::class, 'ticketSettings'])
+            ->name('events.ticket_settings.edit');
+        Route::match(['put', 'patch'], 'events/{event}/ticket-settings', [EventsController::class, 'updateTicketSettings'])
+            ->name('events.ticket_settings.update');
         Route::prefix('events/{event}/tickets')->name('events.tickets.')->group(function () {
             Route::get('/', [EventTicketController::class, 'index'])->name('index');
             Route::get('/create', [EventTicketController::class, 'create'])->name('create');

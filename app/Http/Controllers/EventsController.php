@@ -11,6 +11,8 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Str;
 use Yajra\DataTables\DataTables;
 
 class EventsController extends Controller
@@ -60,16 +62,47 @@ class EventsController extends Controller
                     $publicLinkAction = '';
 
                     if ($event->is_open_for_non_community) {
-                        $publicLinkAction = "<a href='" . route('events.show', ['identifier' => $event->id]) . "' class='btn btn-soft-info btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Public Event Link' target='_blank' rel='noopener noreferrer'><i class='ri-links-line align-bottom'></i></a>";
+                        $publicLinkAction = "<li>
+                            <a href='" . route('events.show', ['identifier' => $event->id]) . "' class='dropdown-item' target='_blank' rel='noopener noreferrer'>
+                                <i class='ri-links-line align-bottom me-2 text-info'></i> Public Event Link
+                            </a>
+                        </li>";
                     }
 
-                    $actions = "<div class='hstack gap-2'>
-                    <a href='" . route('events.tickets.index', ['event' => $event->id]) . "' class='btn btn-soft-warning btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Manage Tickets'>Manage</a>
-                    <a href='" . route('events.registrations.index', ['event' => $event->id]) . "' class='btn btn-soft-primary btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Registration List'><i class='ri-file-list-3-line align-bottom'></i></a>
-                    {$publicLinkAction}
-                    <a href='" . route('events.edit', ['event' => $event->id]) . "' class='btn btn-soft-success btn-sm' data-bs-toggle='tooltip' data-bs-placement='top' title='Edit'><i class='ri-pencil-fill align-bottom'></i></a>
-                    <button type='button' class='btn btn-soft-danger btn-sm remove-btn' id='" . $event->id . "' data-bs-toggle='tooltip' data-bs-placement='top' title='Remove'><i class='ri-delete-bin-5-fill align-bottom'></i></button>
-                </div>";
+                    $actions = "<div class='dropdown'>
+                        <button type='button' class='btn btn-soft-secondary btn-sm btn-icon' data-bs-toggle='dropdown' aria-expanded='false' aria-label='Event actions'>
+                            <i class='ri-more-2-fill'></i>
+                        </button>
+                        <ul class='dropdown-menu dropdown-menu-end'>
+                            <li>
+                                <a href='" . route('events.tickets.index', ['event' => $event->id]) . "' class='dropdown-item'>
+                                    <i class='ri-coupon-3-line align-bottom me-2 text-warning'></i> Manage Tickets
+                                </a>
+                            </li>
+                            <li>
+                                <a href='" . route('events.registrations.index', ['event' => $event->id]) . "' class='dropdown-item'>
+                                    <i class='ri-file-list-3-line align-bottom me-2 text-primary'></i> Registration List
+                                </a>
+                            </li>
+                            <li>
+                                <a href='" . route('events.ticket_settings.edit', ['event' => $event->id]) . "' class='dropdown-item'>
+                                    <i class='ri-settings-3-line align-bottom me-2 text-secondary'></i> Ticket Settings
+                                </a>
+                            </li>
+                            {$publicLinkAction}
+                            <li>
+                                <a href='" . route('events.edit', ['event' => $event->id]) . "' class='dropdown-item'>
+                                    <i class='ri-pencil-fill align-bottom me-2 text-success'></i> Edit
+                                </a>
+                            </li>
+                            <li><hr class='dropdown-divider'></li>
+                            <li>
+                                <button type='button' class='dropdown-item text-danger remove-btn' id='" . $event->id . "'>
+                                    <i class='ri-delete-bin-5-fill align-bottom me-2'></i> Remove
+                                </button>
+                            </li>
+                        </ul>
+                    </div>";
 
                     return $actions;
                 })
@@ -211,6 +244,51 @@ class EventsController extends Controller
         return view('pages.events.edit', compact('event', 'endPoint', 'sections'));
     }
 
+    public function ticketSettings(Event $event)
+    {
+        abort_if(! auth()->user()->hasRole('super_admin'), 403);
+
+        $endPoint = 'Ticket Settings';
+
+        return view('pages.events.ticket-settings', compact('event', 'endPoint'));
+    }
+
+    public function updateTicketSettings(Request $request, Event $event)
+    {
+        abort_if(! auth()->user()->hasRole('super_admin'), 403);
+
+        $validated = $request->validate([
+            'ticket_logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:3072'],
+            'ticket_image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
+            'ticket_instructions' => ['nullable', 'string'],
+        ]);
+
+        $event->fill([
+            'ticket_instructions' => $validated['ticket_instructions'] ?? null,
+        ]);
+
+        foreach (['ticket_logo', 'ticket_image'] as $field) {
+            if (! $request->hasFile($field)) {
+                continue;
+            }
+
+            $event->{$field} = $this->storeTicketAsset($request, $event, $field);
+        }
+
+        $event->save();
+
+        if ($request->expectsJson()) {
+            return response()->json([
+                'status' => true,
+                'message' => 'Ticket settings successfully updated.',
+            ]);
+        }
+
+        return redirect()
+            ->route('events.ticket_settings.edit', $event)
+            ->with('success', 'Ticket settings successfully updated.');
+    }
+
     /**
      * Update the specified resource in storage.
      */
@@ -288,6 +366,31 @@ class EventsController extends Controller
             'status' => TRUE,
             'message' => "Event Successfully Deleted"
         ]);
+    }
+
+    private function storeTicketAsset(Request $request, Event $event, string $field): string
+    {
+        $file = $request->file($field);
+        $uploadPath = public_path('uploads/events');
+        $extension = $file->getClientOriginalExtension();
+        $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $filename = implode('_', [
+            'event',
+            $event->id,
+            Str::kebab($field),
+            time(),
+            Str::slug($originalName),
+        ]) . ".{$extension}";
+
+        File::ensureDirectoryExists($uploadPath);
+
+        if ($event->{$field}) {
+            File::delete($uploadPath . '/' . $event->{$field});
+        }
+
+        $file->move($uploadPath, $filename);
+
+        return $filename;
     }
 
     public function calendar(Request $request)

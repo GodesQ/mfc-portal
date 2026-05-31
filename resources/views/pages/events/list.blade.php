@@ -59,34 +59,34 @@
 
                 $('[data-bs-toggle="tooltip"]').tooltip();
 
-                $('.remove-btn').click(function() {
-                    var id = $(this).attr('id');
+            });
 
-                    showDeleteMessage({
-                        message: '<strong class="text-danger">Removing this event</strong> will remove all of the information from our database.',
-                        deleteFunction: function() {
-                            $.ajax({
-                                url: `/dashboard/events/${id}`,
-                                method: "DELETE",
-                                data: {
-                                    id: id,
-                                    _token: "{{ csrf_token() }}"
-                                },
-                                success: function(response) {
-                                    showSuccessMessage(response.message);
-                                    $('#events_datatable').DataTable().ajax
-                                        .reload(null,
-                                            false
-                                        ); // false to keep the current page
-                                },
-                                error: function(xhr, status, error) {
-                                    showErrorMessage(xhr.statusText);
-                                }
-                            });
-                        }
-                    });
+            $('#events_datatable').on('click', '.remove-btn', function() {
+                var id = $(this).attr('id');
+
+                showDeleteMessage({
+                    message: '<strong class="text-danger">Removing this event</strong> will remove all of the information from our database.',
+                    deleteFunction: function() {
+                        $.ajax({
+                            url: `/dashboard/events/${id}`,
+                            method: "DELETE",
+                            data: {
+                                id: id,
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                showSuccessMessage(response.message);
+                                $('#events_datatable').DataTable().ajax
+                                    .reload(null,
+                                        false
+                                    ); // false to keep the current page
+                            },
+                            error: function(xhr, status, error) {
+                                showErrorMessage(xhr.statusText);
+                            }
+                        });
+                    }
                 });
-
             });
 
             function initializeTables() {

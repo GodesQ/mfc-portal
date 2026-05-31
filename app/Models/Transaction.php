@@ -10,6 +10,10 @@ class Transaction extends Model
 {
     use HasFactory;
     protected $table = "transactions";
+    protected $casts = [
+        'invoice_emailed_at' => 'datetime',
+    ];
+
     protected $fillable = [
         "transaction_code", 
         "reference_code",
@@ -29,7 +33,8 @@ class Transaction extends Model
         "checkout_id",
         "payment_link",
         'transaction_response_json',
-        "status"
+        "status",
+        "invoice_emailed_at",
     ];
 
     public function received_from_user() : BelongsTo {

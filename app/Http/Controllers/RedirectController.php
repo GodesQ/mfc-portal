@@ -3,20 +3,24 @@
 namespace App\Http\Controllers;
 
 use App\Enum\PaymentType;
+use App\Mail\EventRegistrationInvoiceMail;
 use App\Models\EventRegistration;
 use App\Models\Tithe;
 use App\Models\Transaction;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use Throwable;
 
 class RedirectController extends Controller
 {
     function payment_success(Request $request)
     {
         try {
-            $transaction = Transaction::where('transaction_code', $request->transaction_id)->first();
+            $transaction = Transaction::where('transaction_code', $request->transaction_id)->firstOrFail();
 
             $items = [];
 
@@ -28,9 +32,13 @@ class RedirectController extends Controller
             ]);
 
             if ($transaction->payment_type == PaymentType::EVENT_REGISTRATION) {
-                $items = EventRegistration::where('transaction_id', $transaction->id)
-                    ->with('user', 'event', 'event_user_detail')
-                    ->get()
+                $eventRegistrations = EventRegistration::where('transaction_id', $transaction->id)
+                    ->with('user', 'event', 'ticket', 'event_user_detail', 'transaction')
+                    ->get();
+
+                $this->sendEventRegistrationInvoice($transaction, $eventRegistrations);
+
+                $items = $eventRegistrations
                     ->map(function ($row) {
                         return [
                             'id' => $row->id,
@@ -87,6 +95,35 @@ class RedirectController extends Controller
         } catch (Exception $exception) {
             Log::error('Payment Canceled Exception', [$exception]);
             abort(500);
+        }
+    }
+
+    private function sendEventRegistrationInvoice(Transaction $transaction, Collection $registrations): void
+    {
+        if (
+            $transaction->payment_type !== PaymentType::EVENT_REGISTRATION
+            || blank($transaction->payer_email)
+            || $transaction->invoice_emailed_at
+            || $registrations->isEmpty()
+        ) {
+            return;
+        }
+
+        try {
+            Mail::to($transaction->payer_email)->send(
+                new EventRegistrationInvoiceMail($transaction, $registrations)
+            );
+
+            $transaction->update([
+                'invoice_emailed_at' => now(),
+            ]);
+        } catch (Throwable $exception) {
+            Log::error('Event registration invoice email failed', [
+                'transaction_id' => $transaction->id,
+                'error' => $exception->getMessage(),
+            ]);
+
+            report($exception);
         }
     }
 }
