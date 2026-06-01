@@ -371,26 +371,51 @@ class EventsController extends Controller
     private function storeTicketAsset(Request $request, Event $event, string $field): string
     {
         $file = $request->file($field);
-        $uploadPath = public_path('uploads/events');
+        $directory = $this->ticketAssetDirectory($event, $field);
+        $uploadPath = public_path($directory);
         $extension = $file->getClientOriginalExtension();
         $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        $safeOriginalName = Str::limit(Str::slug($originalName) ?: Str::kebab($field), 80, '');
         $filename = implode('_', [
             'event',
             $event->id,
             Str::kebab($field),
             time(),
-            Str::slug($originalName),
+            $safeOriginalName,
         ]) . ".{$extension}";
 
         File::ensureDirectoryExists($uploadPath);
 
         if ($event->{$field}) {
-            File::delete($uploadPath . '/' . $event->{$field});
+            $this->deleteTicketAsset($event->{$field});
         }
 
         $file->move($uploadPath, $filename);
 
-        return $filename;
+        return "{$directory}/{$filename}";
+    }
+
+    private function ticketAssetDirectory(Event $event, string $field): string
+    {
+        return match ($field) {
+            'ticket_logo' => "events/tickets/logos/event-{$event->id}-ticket-logo",
+            'ticket_image' => "events/tickets/images/event-{$event->id}-ticket-image",
+            default => throw new \InvalidArgumentException("Unsupported ticket asset field [{$field}]."),
+        };
+    }
+
+    private function deleteTicketAsset(string $storedPath): void
+    {
+        $storedPath = ltrim($storedPath, '/');
+        $paths = [public_path($storedPath)];
+
+        if (! Str::contains($storedPath, '/')) {
+            $paths[] = public_path('uploads/events/' . $storedPath);
+        }
+
+        foreach (array_unique($paths) as $path) {
+            File::delete($path);
+        }
     }
 
     public function calendar(Request $request)

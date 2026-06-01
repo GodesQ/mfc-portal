@@ -74,8 +74,13 @@
                                 <label for="ticket-logo-field" class="form-label">Ticket Logo</label>
                                 <div class="ticket-asset-preview mb-3">
                                     @if ($event->ticket_logo)
-                                        <img src="{{ URL::asset('uploads/events/' . $event->ticket_logo) }}"
-                                            alt="{{ $event->title }} ticket logo">
+                                        @php
+                                            $ticketLogoPath = ltrim($event->ticket_logo, '/');
+                                            $ticketLogoUrl = \Illuminate\Support\Str::contains($ticketLogoPath, '/')
+                                                ? URL::asset($ticketLogoPath)
+                                                : URL::asset('uploads/events/' . $ticketLogoPath);
+                                        @endphp
+                                        <img src="{{ $ticketLogoUrl }}" alt="{{ $event->title }} ticket logo">
                                     @else
                                         <span class="text-muted">No logo uploaded</span>
                                     @endif
@@ -89,8 +94,13 @@
                                 <label for="ticket-image-field" class="form-label">Ticket Image</label>
                                 <div class="ticket-asset-preview ticket-image-preview mb-3">
                                     @if ($event->ticket_image)
-                                        <img src="{{ URL::asset('uploads/events/' . $event->ticket_image) }}"
-                                            alt="{{ $event->title }} ticket image">
+                                        @php
+                                            $ticketImagePath = ltrim($event->ticket_image, '/');
+                                            $ticketImageUrl = \Illuminate\Support\Str::contains($ticketImagePath, '/')
+                                                ? URL::asset($ticketImagePath)
+                                                : URL::asset('uploads/events/' . $ticketImagePath);
+                                        @endphp
+                                        <img src="{{ $ticketImageUrl }}" alt="{{ $event->title }} ticket image">
                                     @else
                                         <span class="text-muted">No image uploaded</span>
                                     @endif

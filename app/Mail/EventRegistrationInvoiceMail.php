@@ -82,13 +82,18 @@ class EventRegistrationInvoiceMail extends Mailable
             ->output();
     }
 
-    private function eventAssetDataUri(?string $filename): ?string
+    private function eventAssetDataUri(?string $storedPath): ?string
     {
-        if (blank($filename)) {
+        if (blank($storedPath)) {
             return null;
         }
 
-        $path = public_path('uploads/events/' . $filename);
+        $storedPath = ltrim($storedPath, '/');
+        $path = public_path($storedPath);
+
+        if (! File::exists($path) && ! str_contains($storedPath, '/')) {
+            $path = public_path('uploads/events/' . $storedPath);
+        }
 
         if (! File::exists($path)) {
             return null;

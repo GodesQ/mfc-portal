@@ -173,6 +173,19 @@
             $instructions =
                 $ticket['ticket_instructions'] ?:
                 '<p>Please present your digital or printed confirmation at the registration desk.</p>';
+            $assetUrl = function (?string $storedPath) {
+                if (blank($storedPath)) {
+                    return null;
+                }
+
+                $storedPath = ltrim($storedPath, '/');
+
+                return str_contains($storedPath, '/')
+                    ? asset($storedPath)
+                    : asset('uploads/events/' . $storedPath);
+            };
+            $ticketImageSrc = $ticket['ticket_image_data_uri'] ?? $assetUrl($event?->ticket_image);
+            $ticketLogoSrc = $ticket['ticket_logo_data_uri'] ?? $assetUrl($event?->ticket_logo);
         @endphp
 
         <div class="ticket-page @if ($loop->last) last-page @endif">
@@ -180,15 +193,15 @@
                 <table class="ticket-table">
                     <tr>
                         <td class="poster-cell">
-                            @if ($ticket['ticket_image_data_uri'])
-                                <img src="{{ $ticket['ticket_image_data_uri'] }}"
-                                    style="object-fit: cover; object-position: center;" alt="Ticket image">
+                            @if ($ticketImageSrc)
+                                <img src="{{ $ticketImageSrc }}" style="object-fit: cover; object-position: center;"
+                                    alt="Ticket image">
                             @else
                                 <div class="poster-placeholder">Ticket Image</div>
                             @endif
                         </td>
                         <td class="details-cell">
-                            <h1>{{ $event?->title ?: 'Event Registration' }}</h1>
+                            <h1>{{ $event?->title ?: 'Event Registrat   ion' }}</h1>
                             <div class="location">{{ $event?->location ?: 'N/A' }}</div>
                             <div class="date">{{ $eventDate }} {{ $eventTime }}</div>
 
@@ -264,8 +277,8 @@
                             </div>
                             <div class="attendee-name">{{ $ticket['attendee_name'] }}</div>
                             <div class="logo-box">
-                                @if ($ticket['ticket_logo_data_uri'])
-                                    <img src="{{ $ticket['ticket_logo_data_uri'] }}" alt="Ticket logo">
+                                @if ($ticketLogoSrc)
+                                    <img src="{{ $ticketLogoSrc }}" alt="Ticket logo">
                                 @else
                                     <div class="logo-placeholder">Ticket Logo</div>
                                 @endif
