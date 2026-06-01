@@ -138,7 +138,7 @@ class RedirectController extends Controller
     {
         if (
             $transaction->payment_type !== PaymentType::TITHE
-            || blank($transaction->payer_email)
+            || blank($transaction->received_from_user?->email)
             || $transaction->invoice_emailed_at
             || $tithes->isEmpty()
         ) {
@@ -146,7 +146,7 @@ class RedirectController extends Controller
         }
 
         try {
-            Mail::to($transaction->payer_email)->send(
+            Mail::to($transaction->received_from_user->email ?? null)->send(
                 new TithePaymentMail($transaction, $tithes)
             );
 
