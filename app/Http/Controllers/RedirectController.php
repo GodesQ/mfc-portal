@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Enum\PaymentType;
 use App\Mail\EventRegistrationInvoiceMail;
+use App\Mail\TithePaymentMail;
 use App\Models\EventRegistration;
 use App\Models\Tithe;
 use App\Models\Transaction;
@@ -28,7 +29,7 @@ class RedirectController extends Controller
 
             $transaction->update([
                 'status' => 'paid',
-                'payment_mode' => 'maya',
+                'payment_mode' => $fundSource ?? 'maya',
             ]);
 
             if ($transaction->payment_type == PaymentType::EVENT_REGISTRATION) {
@@ -53,7 +54,11 @@ class RedirectController extends Controller
             }
 
             if ($transaction->payment_type == PaymentType::TITHE) {
-                $items = Tithe::where('transaction_id', $transaction->id)->get()->map(function ($row) {
+                $tithes = Tithe::where('transaction_id', $transaction->id)
+                    ->with('user')
+                    ->get();
+
+                $items = $tithes->map(function ($row) {
                     return [
                         'id' => $row->id,
                         'name' => ($row->user->first_name ?? " ") . ' ' . ($row->user->last_name ?? " "),
@@ -67,8 +72,10 @@ class RedirectController extends Controller
 
                 Tithe::where('transaction_id', $transaction->id)->update([
                     'status' => 'paid',
-                    'payment_mode' => 'maya',
+                    'payment_mode' => $fundSource ?? 'maya',
                 ]);
+
+                $this->sendTithePaymentEmail($transaction, $tithes);
             }
 
             return view('pages.payments.redirect-success', compact('transaction', 'items'));
@@ -119,6 +126,35 @@ class RedirectController extends Controller
             ]);
         } catch (Throwable $exception) {
             Log::error('Event registration invoice email failed', [
+                'transaction_id' => $transaction->id,
+                'error' => $exception->getMessage(),
+            ]);
+
+            report($exception);
+        }
+    }
+
+    private function sendTithePaymentEmail(Transaction $transaction, Collection $tithes): void
+    {
+        if (
+            $transaction->payment_type !== PaymentType::TITHE
+            || blank($transaction->payer_email)
+            || $transaction->invoice_emailed_at
+            || $tithes->isEmpty()
+        ) {
+            return;
+        }
+
+        try {
+            Mail::to($transaction->payer_email)->send(
+                new TithePaymentMail($transaction, $tithes)
+            );
+
+            $transaction->update([
+                'invoice_emailed_at' => now(),
+            ]);
+        } catch (Throwable $exception) {
+            Log::error('Tithe payment email failed', [
                 'transaction_id' => $transaction->id,
                 'error' => $exception->getMessage(),
             ]);
