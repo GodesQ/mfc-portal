@@ -181,11 +181,15 @@
                 $storedPath = ltrim($storedPath, '/');
 
                 return str_contains($storedPath, '/')
-                    ? asset($storedPath)
-                    : asset('uploads/events/' . $storedPath);
+                    ? URL::asset($storedPath)
+                    : URL::asset('uploads/events/' . $storedPath);
             };
-            $ticketImageSrc = $ticket['ticket_image_data_uri'] ?? $assetUrl($event?->ticket_image);
-            $ticketLogoSrc = $ticket['ticket_logo_data_uri'] ?? $assetUrl($event?->ticket_logo);
+            $ticketImageSrc = filled($ticket['ticket_image_data_uri'] ?? null)
+                ? $ticket['ticket_image_data_uri']
+                : $assetUrl($event?->ticket_image);
+            $ticketLogoSrc = filled($ticket['ticket_logo_data_uri'] ?? null)
+                ? $ticket['ticket_logo_data_uri']
+                : $assetUrl($event?->ticket_logo);
         @endphp
 
         <div class="ticket-page @if ($loop->last) last-page @endif">

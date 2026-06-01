@@ -23,7 +23,8 @@
 </head>
 
 <body style="margin: 0; padding: 0; background: #eef1f5; color: #182233; font-family: Arial, Helvetica, sans-serif;">
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse; background: #eef1f5;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
+        style="border-collapse: collapse; background: #eef1f5;">
         <tr>
             <td align="center" style="padding: 8px 12px 0;">
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
@@ -36,7 +37,7 @@
                                     <td align="left" style="vertical-align: top;">
                                         <div
                                             style="display: inline-block; background: #ffd761; color: #101827; font-size: 15px; font-weight: 700; line-height: 1; padding: 2px 4px;">
-                                            ClickPass
+                                            MFC Portal
                                         </div>
                                     </td>
                                     <td align="right"
@@ -165,12 +166,14 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td style="color: #182233; font-size: 12px; line-height: 1.7; padding: 36px 20px 34px;">
+                                    <td
+                                        style="color: #182233; font-size: 12px; line-height: 1.7; padding: 36px 20px 34px;">
                                         <p style="margin: 0 0 18px;">Hi {{ $payerName }},</p>
 
                                         <p style="margin: 0 0 18px;">
                                             Thank you for purchasing your ticket at
-                                            <span style="background: #ffd761; color: #101827; font-weight: 700;">ClickPass</span>.
+                                            <span style="background: #ffd761; color: #101827; font-weight: 700;">MFC
+                                                Portal</span>.
                                         </p>
 
                                         <p style="margin: 0 0 6px;">
@@ -186,7 +189,8 @@
 
                                         <p style="margin: 0 0 6px;">Best regards,</p>
                                         <p style="margin: 0;">
-                                            <span style="background: #ffd761; color: #101827; font-weight: 700;">ClickPass</span>
+                                            <span style="background: #ffd761; color: #101827; font-weight: 700;">MFC
+                                                Portal</span>
                                         </p>
                                     </td>
                                 </tr>
@@ -206,9 +210,10 @@
                         </td>
                     </tr>
                     <tr>
-                        <td align="center" style="color: #5b6878; font-size: 10px; line-height: 1.5; padding: 28px 16px;">
+                        <td align="center"
+                            style="color: #5b6878; font-size: 10px; line-height: 1.5; padding: 28px 16px;">
                             This is an automated transactional email from
-                            <span style="background: #ffd761; color: #101827; font-weight: 700;">ClickPass</span>.
+                            <span style="background: #ffd761; color: #101827; font-weight: 700;">MFC Portal</span>.
                         </td>
                     </tr>
                 </table>
