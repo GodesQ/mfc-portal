@@ -50,7 +50,8 @@
 
         .poster-cell img {
             display: block;
-            height: 100%;
+            height: 325px;
+            max-height: 325px;
             object-fit: cover;
             width: 100%;
         }
