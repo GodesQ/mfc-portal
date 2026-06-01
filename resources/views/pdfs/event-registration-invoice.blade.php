@@ -27,7 +27,7 @@
 
         .ticket-frame,
         .instructions {
-            border: 2px solid #ff2d6f;
+            border: 2px solid #0a2967;
         }
 
         .ticket-frame {
