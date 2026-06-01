@@ -36,7 +36,7 @@
                                 <tr>
                                     <td align="left" style="vertical-align: top;">
                                         <div
-                                            style="display: inline-block; color: #101827; font-size: 15px; font-weight: 700; line-height: 1; padding: 2px 4px;">
+                                            style="display: inline-block; color: #fff; font-size: 15px; font-weight: 700; line-height: 1; padding: 2px 4px;">
                                             MFC Portal
                                         </div>
                                     </td>
@@ -172,7 +172,7 @@
 
                                         <p style="margin: 0 0 18px;">
                                             Thank you for purchasing your ticket at
-                                            <span style=" color: #101827; font-weight: 700;">MFC
+                                            <span style=" color: #fff; font-weight: 700;">MFC
                                                 Portal</span>.
                                         </p>
 
@@ -189,7 +189,7 @@
 
                                         <p style="margin: 0 0 6px;">Best regards,</p>
                                         <p style="margin: 0;">
-                                            <span style=" color: #101827; font-weight: 700;">MFC
+                                            <span style=" color: #fff; font-weight: 700;">MFC
                                                 Portal</span>
                                         </p>
                                     </td>
@@ -213,7 +213,7 @@
                         <td align="center"
                             style="color: #5b6878; font-size: 10px; line-height: 1.5; padding: 28px 16px;">
                             This is an automated transactional email from
-                            <span style=" color: #101827; font-weight: 700;">MFC Portal</span>.
+                            <span style=" color: #fff; font-weight: 700;">MFC Portal</span>.
                         </td>
                     </tr>
                 </table>
