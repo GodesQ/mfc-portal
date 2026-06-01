@@ -168,12 +168,11 @@
     @foreach ($registrations as $ticket)
         @php
             $event = $ticket['event'];
-            $eventDate = $event?->start_date
-                ? \Carbon\Carbon::parse($event->start_date)->format('M d, Y')
-                : 'N/A';
+            $eventDate = $event?->start_date ? \Carbon\Carbon::parse($event->start_date)->format('M d, Y') : 'N/A';
             $eventTime = $event?->time ?: 'N/A';
-            $instructions = $ticket['ticket_instructions']
-                ?: '<p>Please present your digital or printed confirmation at the registration desk.</p>';
+            $instructions =
+                $ticket['ticket_instructions'] ?:
+                '<p>Please present your digital or printed confirmation at the registration desk.</p>';
         @endphp
 
         <div class="ticket-page @if ($loop->last) last-page @endif">
@@ -182,7 +181,8 @@
                     <tr>
                         <td class="poster-cell">
                             @if ($ticket['ticket_image_data_uri'])
-                                <img src="{{ $ticket['ticket_image_data_uri'] }}" alt="Ticket image">
+                                <img src="{{ $ticket['ticket_image_data_uri'] }}"
+                                    style="object-fit: cover; object-position: center;" alt="Ticket image">
                             @else
                                 <div class="poster-placeholder">Ticket Image</div>
                             @endif
@@ -216,7 +216,8 @@
                                     </td>
                                     <td>
                                         <span class="label">Early Bird</span>
-                                        <span class="value">{{ number_format($ticket['early_bird_discount'], 2) }}</span>
+                                        <span
+                                            class="value">{{ number_format($ticket['early_bird_discount'], 2) }}</span>
                                     </td>
                                     <td>
                                         <span class="label">Coupon</span>
